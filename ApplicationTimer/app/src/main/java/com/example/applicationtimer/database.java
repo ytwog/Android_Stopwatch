@@ -5,12 +5,14 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -26,8 +28,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 
-public class database extends AppCompatActivity {
 
+public class database extends Fragment {
+    public View rootView;
     protected TableLayout tableManage;
     protected Button buttonBackMang;
     protected Button buttonBackCanc;
@@ -43,14 +46,12 @@ public class database extends AppCompatActivity {
     protected boolean accuracyFlag;
     @Override
 
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_database);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        rootView = inflater.inflate(R.layout.activity_database, container, false);
 
         //Отмена фокусировки на EditText'ы
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         //Предустановка переменных
         shownBefore = 0;
@@ -59,15 +60,15 @@ public class database extends AppCompatActivity {
         arrTime = new TextView[101];
 
         //Сохранение элементов экрана
-        tableManage = (TableLayout) findViewById(R.id.tableManage);
-        buttonBackMang = (Button) findViewById(R.id.buttonBackManage);
-        buttonBackCanc = (Button) findViewById(R.id.buttonCancel);
+        tableManage = (TableLayout) rootView.findViewById(R.id.tableManage);
+        buttonBackMang = (Button) rootView.findViewById(R.id.buttonBackManage);
+        buttonBackCanc = (Button) rootView.findViewById(R.id.buttonCancel);
 
         //Получение значений из главного меню
-        OverallNumber = getIntent().getIntExtra("ManageNumber", 30);
-        arrTiming = getIntent().getLongArrayExtra("ManageTime");
-        arrIDNumber = getIntent().getIntArrayExtra("ManageArray");
-        accuracyFlag = getIntent().getBooleanExtra("ManageAccuracy", true);
+        OverallNumber = getActivity().getIntent().getIntExtra("ManageNumber", 30);
+        arrTiming = new long[101];getActivity().getIntent().getLongArrayExtra("ManageTime");
+        arrIDNumber = new int[101];//getActivity().getIntent().getIntArrayExtra("ManageArray");
+        accuracyFlag = getActivity().getIntent().getBooleanExtra("ManageAccuracy", true);
 
         //****************Установка слотов на кнопки***********************
 
@@ -75,8 +76,8 @@ public class database extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent returnIntent = new Intent();
-                setResult(RESULT_CANCELED, returnIntent);
-                finish();
+                getActivity().setResult(getActivity().RESULT_CANCELED, returnIntent);
+                getActivity().finish();
             }
         };
 
@@ -85,8 +86,8 @@ public class database extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent returnIntent = new Intent();
-                setResult(RESULT_OK, returnIntent);
-                finish();
+                getActivity().setResult(getActivity().RESULT_OK, returnIntent);
+                getActivity().finish();
             }
         };
         buttonBackMang.setOnClickListener(Signal_Back);
@@ -96,7 +97,7 @@ public class database extends AppCompatActivity {
 
         //Заполнение таблицы информацией
         showTable();
-
+        return rootView;
     }
 
     //Заполнение таблицы информацией
@@ -106,10 +107,10 @@ public class database extends AppCompatActivity {
 
         //
         for(int i = 0; i < OverallNumber; i++) {
-            arrRow[i] = new TableRow(database.this);
+            arrRow[i] = new TableRow(getActivity());
             arrRow[i].setX((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()));
             tableManage.addView(arrRow[i]);
-            arrText[i] = new TextView(database.this);
+            arrText[i] = new TextView(getActivity());
             arrText[i].setText(String.valueOf(arrIDNumber[i]));
             arrText[i].setPadding(5,5,5,0);
             arrRow[i].addView(arrText[i]);
@@ -120,7 +121,7 @@ public class database extends AppCompatActivity {
             long milliseconds = (int)(RunnerTime%1000);
             //Space Sp = new Space(database.this);
             //arrRow[i].addView(Sp);
-            arrTime[i] = new TextView(database.this);
+            arrTime[i] = new TextView(getActivity());
             arrTime[i].setPadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics()),5,5,0);
             if(accuracyFlag)
                 arrTime[i].setText((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs);

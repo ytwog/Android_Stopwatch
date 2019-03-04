@@ -12,6 +12,7 @@ import android.preference.PreferenceActivity;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.DragEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,10 +45,12 @@ import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.util.Vector;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static java.lang.Math.sqrt;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Fragment {
 
+    public View rootView;
     protected Button buttonStart;
     protected Button buttonReset;
     protected Button buttonManage;
@@ -196,12 +200,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
 
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onResume() {
+        super.onResume();
+        setChronology();
+        textTimer.setText(SData.getAccuracyFlag() ? "00:00" : "00:00.00");
+        //Обновление кнопок
+        deleteButtons();
+        createButtons();
+    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        rootView = inflater.inflate(R.layout.activity_main, container, false);
         //Предустановка переменных
         dataExist = false;
         isStarted = false;
@@ -216,12 +226,12 @@ public class MainActivity extends AppCompatActivity {
 
         setChronology();
         //Сохранение элементов окна
-        buttonManage = (Button) findViewById(R.id.Button_Manage);
-        buttonStart = (Button) findViewById(R.id.Button_Start);
-        buttonReset = (Button) findViewById(R.id.button_Reset);
-        textTimer = (TextView)findViewById(R.id.text_Timer);
-        buttonSettings = (ImageButton) findViewById(R.id.button_Settings);
-        tableLayout = (TableLayout) findViewById(R.id.tableLayout);
+        buttonManage = (Button) rootView.findViewById(R.id.Button_Manage);
+        buttonStart = (Button) rootView.findViewById(R.id.Button_Start);
+        buttonReset = (Button) rootView.findViewById(R.id.button_Reset);
+        textTimer = (TextView)rootView.findViewById(R.id.text_Timer);
+        buttonSettings = (ImageButton) rootView.findViewById(R.id.button_Settings);
+        tableLayout = (TableLayout) rootView.findViewById(R.id.tableLayout);
         textTimer.setText(SData.getAccuracyFlag() ? "00:00" : "00:00.00");
 
         //Создание кнопок
@@ -283,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent Settingsintent = new Intent(MainActivity.this, SettingsActivity.class);
+                Intent Settingsintent = new Intent(getActivity().getApplicationContext(), SettingsActivity.class);
                 //Передача значений в activity
                 Settingsintent.putExtra("Settings1", SData.getRunners());
                 Settingsintent.putExtra("Settings2", SData.getStaticButtons());
@@ -311,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
                 //startActivity(TabbedIntent);
                 //
                 //-----------------------!------------------------\\
-                Intent Manageintent = new Intent(MainActivity.this, database.class);
+                Intent Manageintent = new Intent(getActivity().getApplicationContext(), database.class);
                 //Передача значений в activity
                 Manageintent.putExtra("ManageNumber", SData.getRunners());
                 Manageintent.putExtra("ManageTime", TempTime);
@@ -319,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
                 Manageintent.putExtra("ManageAccuracy", SData.getAccuracyFlag());
                 //Manageintent.putExtra("ManageTime", ArrayTime);
                 startActivityForResult(Manageintent, 2);
-                
+
             }
         };
 
@@ -328,10 +338,11 @@ public class MainActivity extends AppCompatActivity {
         buttonSettings.setOnClickListener(Signal_Settings);
         buttonManage.setOnClickListener(Signal_Manage);
         //**********************************************
+        return rootView;
     }
 
     //Получение значений из activity
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Проверка на нажатие отмены
         if (data == null || resultCode == RESULT_CANCELED) {
             return;
@@ -431,7 +442,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             // отрываем поток для записи
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
-                    openFileOutput("config.cfg", MODE_PRIVATE)));
+                    getActivity().openFileOutput("config.cfg", getActivity().MODE_PRIVATE)));
             // пишем данные
             bw.write("[runnersNumber]\n");                                  // Метка 1
             bw.write(String.valueOf(SData.getRunners()) + "\n");            // Количество кнопок
@@ -458,7 +469,7 @@ public class MainActivity extends AppCompatActivity {
 
             // открываем поток для чтения
             BufferedReader br = new BufferedReader(new InputStreamReader(
-                    openFileInput("config.cfg")));
+                    getActivity().openFileInput("config.cfg")));
             String str = "";
             // читаем содержимое
             int stage = 0;
@@ -510,7 +521,7 @@ public class MainActivity extends AppCompatActivity {
         boolean eachToOther = (numY*numX == SData.getRunners());
         numY += (eachToOther && SData.getRunners() > 1) ? 1 : 0;
 
-        Display display = getWindowManager().getDefaultDisplay();
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
         int widthDevice = display.getWidth();  // deprecated
         int heightDevice = display.getHeight();
         int maxWidth = 345;
@@ -526,12 +537,12 @@ public class MainActivity extends AppCompatActivity {
         arrButtons = new Button[numY][numX];
         buttonsCreated = true;
         for(int i = 0; i < numY; i++){
-            arrRows[i] = new TableRow(MainActivity.this);
+            arrRows[i] = new TableRow(getActivity());
             //arrRows[i].setY(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics()));
             tableLayout.addView(arrRows[i]);
             for(int j = 0; j < numX; j++){
                 if((i + 1 == numY) && (SData.runnerNum < i*(numX) + j+1)) break;
-                arrButtons[i][j] = new Button(MainActivity.this);
+                arrButtons[i][j] = new Button(getActivity());
                 arrButtons[i][j].setPadding(5,5,5,5);
                 arrButtons[i][j].setId(i*(numX) + j);
                 Typeface font_style = Typeface.create("sans-serif", Typeface.NORMAL);
@@ -547,7 +558,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if(SData.getRunners() > 1) {
-            buttonEachLap = new Button(MainActivity.this);
+            buttonEachLap = new Button(getActivity());
             buttonEachLap.setText(R.string._eachLap);
             buttonEachLap.setLayoutParams(new TableRow.LayoutParams(
                     (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width, getResources().getDisplayMetrics()),
@@ -555,7 +566,7 @@ public class MainActivity extends AppCompatActivity {
                     (float) 105));
             buttonEachLap.setTextSize(5 + 40 * everyWidth / maxWidth);
             if (eachToOther) {
-                arrRows[numY] = new TableRow(MainActivity.this);
+                arrRows[numY] = new TableRow(getActivity());
                 arrRows[numY].addView(buttonEachLap);
                 tableLayout.addView(arrRows[numY]);
             } else {

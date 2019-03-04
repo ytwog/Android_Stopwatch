@@ -3,6 +3,7 @@ package com.example.applicationtimer;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Rect;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,7 +13,9 @@ import android.util.Log;
 import java.util.*;
 
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -26,8 +29,9 @@ import android.widget.TextView;
 
 import java.sql.Time;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends Fragment {
 
+    public View rootView;
     protected Button buttonAccept;
     protected Button buttonDecline;
     protected TextView textStatic;
@@ -48,33 +52,31 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
 
 
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layoutsettings);
+        rootView = inflater.inflate(R.layout.layoutsettings, container, false);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //Сохранение элементов окна
-        buttonAccept = (Button)findViewById(R.id.button_Accept);
-        buttonDecline = (Button)findViewById(R.id.button_Decline);
-        textStatic = (TextView) findViewById(R.id.text_Static);
-        texterr = (TextView) findViewById(R.id.text_Err);
-        checkStatic = (CheckBox) findViewById(R.id.check_Static);
-        editRunners = (EditText) findViewById(R.id.edit_runners);
-        editLaps = (EditText) findViewById(R.id.edit_laps);
-        editRunnersNames = (EditText) findViewById(R.id.edit_RunnersNames);
-        editTimeUntil = (EditText) findViewById(R.id.edit_TimeUntil);
-        buttonDeleteText = (ImageButton) findViewById(R.id.button_DeleteText);
-        radio1 = (RadioButton) findViewById(R.id.radio_1);
-        radioGroup1 = (RadioGroup) findViewById(R.id.radioGroup1);
+        buttonAccept = (Button)rootView.findViewById(R.id.button_Accept);
+        buttonDecline = (Button)rootView.findViewById(R.id.button_Decline);
+        textStatic = (TextView) rootView.findViewById(R.id.text_Static);
+        texterr = (TextView) rootView.findViewById(R.id.text_Err);
+        checkStatic = (CheckBox) rootView.findViewById(R.id.check_Static);
+        editRunners = (EditText) rootView.findViewById(R.id.edit_runners);
+        editLaps = (EditText) rootView.findViewById(R.id.edit_laps);
+        editRunnersNames = (EditText) rootView.findViewById(R.id.edit_RunnersNames);
+        editTimeUntil = (EditText) rootView.findViewById(R.id.edit_TimeUntil);
+        buttonDeleteText = (ImageButton) rootView.findViewById(R.id.button_DeleteText);
+        radio1 = (RadioButton) rootView.findViewById(R.id.radio_1);
+        radioGroup1 = (RadioGroup) rootView.findViewById(R.id.radioGroup1);
         //Получение значений из главного меню
-        OverallNumber = getIntent().getIntExtra("Settings1", 30);
+        OverallNumber = 30;
         editRunners.setText(String.valueOf(OverallNumber));
-        checkStatic.setChecked(getIntent().getBooleanExtra("Settings2", true));
-        editLaps.setText(String.valueOf(getIntent().getIntExtra("Settings3", 10)));
-        radioGroup1.check(getIntent().getBooleanExtra("Settings4", true) ? R.id.radio_1 : R.id.radio_2);
-        editTimeUntil.setText(String.valueOf(getIntent().getIntExtra("Settings5", 10)));
-        arrIDNumber = getIntent().getIntArrayExtra("Settings6");
+        checkStatic.setChecked(true);
+        editLaps.setText(String.valueOf(10));
+        radioGroup1.check(true ? R.id.radio_1 : R.id.radio_2);
+        editTimeUntil.setText(String.valueOf(10));
+        arrIDNumber = new int[101];//getIntent().getIntArrayExtra("Settings6");
         //Установка ограничений на ввод числа бегущих
         editRunners.addTextChangedListener(new TextWatcher() {
             private String before;
@@ -221,13 +223,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         };
         editRunnersNames.setOnFocusChangeListener(FocusUpdated);
-        findViewById(R.id.buttonConfirm1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNames();
-            }
-        });
-
         View.OnFocusChangeListener FocusUpdated2 = new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -235,20 +230,14 @@ public class SettingsActivity extends AppCompatActivity {
             }
         };
         editRunners.setOnFocusChangeListener(FocusUpdated2);
-        findViewById(R.id.buttonConfirm2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setRunners();
-            }
-        });
         //***********-Установка слотов на кнопки***************
         //Кнопка отмены
         View.OnClickListener Signal_Decline = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent returnIntent = new Intent();
-                setResult(RESULT_CANCELED, returnIntent);
-                finish();
+                getActivity().setResult(getActivity().RESULT_CANCELED, returnIntent);
+                getActivity().finish();
             }
         };
         //Кнопка принять
@@ -265,10 +254,10 @@ public class SettingsActivity extends AppCompatActivity {
                     int Runners = Integer.parseInt(editRunners.getText().toString());
                     if (Runners != 0) returnIntent.putExtra("runnersNumber", Runners);
                     returnIntent.putExtra("runnersIDs", arrIDNumber);
-                    findViewById(R.id.radioGroup1);
+                    getActivity().findViewById(R.id.radioGroup1);
                     returnIntent.putExtra("accuracy", (radioGroup1.getCheckedRadioButtonId() == R.id.radio_1) ? true : false);
-                    setResult(RESULT_OK, returnIntent);
-                    finish();
+                    getActivity().setResult(getActivity().RESULT_OK, returnIntent);
+                    getActivity().finish();
                 }
             }
         };
@@ -283,6 +272,7 @@ public class SettingsActivity extends AppCompatActivity {
         buttonDecline.setOnClickListener(Signal_Decline);
         buttonAccept.setOnClickListener(Signal_Accept);
         //************************************************
+        return rootView;
     }
 
     void setRunners(){

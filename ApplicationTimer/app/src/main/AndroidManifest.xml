@@ -16,24 +16,10 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".TabbedStopwatch"
-            android:label="@string/title_activity_tabbed_stopwatch"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
-            android:name=".database"
-            android:label="@string/_fullName"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.applicationtimer.MainActivity" />
-        </activity>
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/_fullName" />
-        <activity android:name=".MainActivity">
-            android:label="@string/_fullName"
+            android:label="@string/_fullName">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
