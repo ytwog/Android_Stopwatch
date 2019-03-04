@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/text_TimeUntil"
+        android:layout_width="177dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/_TimeUntil"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toStartOf="@+id/edit_TimeUntil"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/text_LapsNum"
+        app:layout_constraintTop_toBottomOf="@+id/text_Runners" />
+
+    <Button
+        android:id="@+id/button_Accept"
+        android:layout_width="127dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="44dp"
+        android:layout_marginRight="44dp"
+        android:text="@string/_OK_str"
+        app:layout_constraintBottom_toBottomOf="@+id/button_Decline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/button_Decline" />
+
+    <Button
+        android:id="@+id/button_Decline"
+        android:layout_width="142dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="48dp"
+        android:text="@string/_cancel_str"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_Accept"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/text_Runners"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/_participantNumSettings"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toStartOf="@+id/edit_runners"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/text_TimeUntil"
+        app:layout_constraintTop_toBottomOf="@+id/edit_RunnersNames" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/_settings_str"
+        android:textColor="@android:color/holo_orange_dark"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/edit_runners"
+        android:layout_width="48dp"
+        android:layout_height="37dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:text="30"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="@+id/text_Runners"
+        app:layout_constraintEnd_toStartOf="@+id/buttonConfirm2"
+        app:layout_constraintTop_creator="50"
+        app:layout_constraintTop_toTopOf="@+id/text_Runners" />
+
+    <EditText
+        android:id="@+id/edit_TimeUntil"
+        android:layout_width="48dp"
+        android:layout_height="37dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:text="10"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="@+id/text_TimeUntil"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_creator="50"
+        app:layout_constraintTop_toTopOf="@+id/text_TimeUntil"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/text_Static"
+        android:layout_width="231dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/_StaticButtons"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toStartOf="@+id/check_Static"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/text_Accur"
+        app:layout_constraintTop_toBottomOf="@+id/text_TimeUntil" />
+
+    <TextView
+        android:id="@+id/text_Accur"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/_accuracy_text"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toStartOf="@+id/check_Static"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_Static" />
+
+    <CheckBox
+        android:id="@+id/check_Static"
+        style="@android:style/Widget.DeviceDefault.Light.CompoundButton.CheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        app:layout_constraintBottom_toBottomOf="@+id/text_Static"
+        app:layout_constraintEnd_toEndOf="@+id/radioGroup1"
+        app:layout_constraintTop_toTopOf="@+id/text_Static"
+        app:layout_constraintVertical_bias="0.19" />
+
+    <TextView
+        android:id="@+id/text_LapsNum"
+        android:layout_width="166dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/_lapsNum_str"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toStartOf="@+id/edit_laps"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/text_Static"
+        app:layout_constraintTop_toBottomOf="@+id/text_TimeUntil" />
+
+    <EditText
+        android:id="@+id/edit_laps"
+        android:layout_width="46dp"
+        android:layout_height="37dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:text="10"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintBottom_toBottomOf="@+id/text_LapsNum"
+        app:layout_constraintEnd_toEndOf="@+id/check_Static"
+        app:layout_constraintTop_toTopOf="@+id/text_LapsNum" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkedButton="@+id/radio_1"
+        app:layout_constraintEnd_toEndOf="@+id/edit_TimeUntil"
+        app:layout_constraintTop_toTopOf="@+id/text_Accur">
+
+        <RadioButton
+            android:id="@+id/radio_1"
+            android:layout_width="121dp"
+            android:layout_height="24dp"
+            android:checked="true"
+            android:text="@string/_withoutMilis_text"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/text_Accur"
+            app:layout_constraintEnd_toEndOf="@+id/check_Static"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/radio_2"
+            app:layout_constraintTop_toTopOf="@+id/text_Accur" />
+
+        <RadioButton
+            android:id="@+id/radio_2"
+            android:layout_width="128dp"
+            android:layout_height="23dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/_tenthMilis_text"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radio_1" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/edit_RunnersNames"
+        android:layout_width="176dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toStartOf="@+id/button_DeleteText"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/text_Runners"
+        app:layout_constraintTop_toBottomOf="@+id/runnerText" />
+
+    <TextView
+        android:id="@+id/runnerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/_runners_str"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toStartOf="@+id/edit_RunnersNames"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/text_Err"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:textColor="@android:color/holo_red_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/runnerText"
+        app:layout_constraintEnd_toEndOf="@+id/edit_RunnersNames"
+        app:layout_constraintHorizontal_bias="0.231"
+        app:layout_constraintStart_toEndOf="@+id/runnerText"
+        app:layout_constraintTop_toTopOf="@+id/runnerText"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageButton
+        android:id="@+id/button_DeleteText"
+        android:layout_width="31dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_RunnersNames"
+        app:layout_constraintEnd_toEndOf="@+id/edit_runners"
+        app:layout_constraintStart_toStartOf="@+id/edit_runners"
+        app:layout_constraintTop_toBottomOf="@+id/text_Err"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@android:drawable/ic_delete" />
+
+    <Button
+        android:id="@+id/buttonConfirm1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_Confirm_str"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/button_DeleteText"
+        app:layout_constraintEnd_toEndOf="@+id/buttonConfirm2"
+        app:layout_constraintTop_toTopOf="@+id/button_DeleteText"
+        app:layout_constraintVertical_bias="0.3" />
+
+    <Button
+        android:id="@+id/buttonConfirm2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_Confirm_str"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/text_Runners"
+        app:layout_constraintEnd_toEndOf="@+id/edit_TimeUntil"
+        app:layout_constraintTop_toTopOf="@+id/text_Runners"
+        app:layout_constraintVertical_bias="0.523" />
+
+</android.support.constraint.ConstraintLayout>

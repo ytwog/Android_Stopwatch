@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Секундомер</string>
+    <string name="_start_str">Старт</string>
+    <string name="_stop_str">Стоп</string>
+    <string name="_OK_str">Принять</string>
+    <string name="_cancel_str">Отмена</string>
+    <string name="_participantNumber">" участников"</string>
+    <string name="_participantNumSettings">Количество участников:</string>
+    <string name="_settings_str">Настройки</string>
+    <string name="Reset_str">Сброс</string>
+    <string name="_StaticButtons">Статическое положение кнопок</string>
+    <string name="_StaticTrue">Кнопки статичны</string>
+    <string name="_StaticFalse">Кнопки динамичны</string>
+    <string name="_lapsNum_str">Количество кругов</string>
+    <string name="_LapsInfo">" кругов"</string>
+    <string name="_ShowInfo">Отображать настройки</string>
+    <string name="_fullName">Групповой секундомер</string>
+    <string name="_result_str">Результаты</string>
+    <string name="_manage_str">Результаты</string>
+    <string name="_TimeUntil">Минимальное количество секунд на круг</string>
+    <string name="_eachLap">Круг</string>
+    <string name="_accuracy_text">Точность показаний</string>
+    <string name="_withoutMilis_text">Секунды</string>
+    <string name="_tenthMilis_text">Миллисекунды</string>
+    <string name="_runners_str">Номера участников</string>
+    <string name="_participant_str">Участник</string>
+    <string name="_time_str">Время</string>
+    <string name="_Confirm_str">Применить</string>
+    <string name="title_activity_tabbed_stopwatch">TabbedStopwatch</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+</resources>
