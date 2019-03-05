@@ -7,17 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".database">
 
-    <Button
-        android:id="@+id/buttonBackManage"
-        android:layout_width="112dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginRight="28dp"
-        android:text="@string/_OK_str"
-        app:layout_constraintEnd_toStartOf="@+id/guideline5"
-        app:layout_constraintTop_toTopOf="@+id/guideline3" />
-
     <TextView
         android:id="@+id/textResult"
         android:layout_width="wrap_content"
@@ -77,25 +66,6 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="94dp" />
 
-    <Button
-        android:id="@+id/buttonCancel"
-        android:layout_width="112dp"
-        android:layout_height="47dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:enabled="false"
-        android:text="@string/_cancel_str"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonBackManage"
-        app:layout_constraintEnd_toStartOf="@+id/buttonBackManage"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/guideline6"
-        app:layout_constraintTop_toTopOf="@+id/buttonBackManage"
-        app:layout_constraintVertical_bias="0.013" />
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
@@ -127,7 +97,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_end="88dp" />
+        app:layout_constraintGuide_end="47dp" />
 
     <android.support.constraint.Barrier
         android:id="@+id/barrier"

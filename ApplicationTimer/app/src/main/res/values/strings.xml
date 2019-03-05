@@ -20,8 +20,8 @@
     <string name="_TimeUntil">Минимальное количество секунд на круг</string>
     <string name="_eachLap">Круг</string>
     <string name="_accuracy_text">Точность показаний</string>
-    <string name="_withoutMilis_text">Секунды</string>
-    <string name="_tenthMilis_text">Миллисекунды</string>
+    <string name="_withoutMilis_text">00:00</string>
+    <string name="_tenthMilis_text">00:00.00</string>
     <string name="_runners_str">Номера участников</string>
     <string name="_participant_str">Участник</string>
     <string name="_time_str">Время</string>

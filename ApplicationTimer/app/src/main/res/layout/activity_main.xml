@@ -8,7 +8,7 @@
 
     <TableRow
         android:id="@+id/tableRow"
-        android:layout_width="wrap_content"
+        android:layout_width="287dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
@@ -21,9 +21,8 @@
 
         <Button
             android:id="@+id/Button_Start"
-            android:layout_width="99dp"
+            android:layout_width="140dp"
             android:layout_height="48dp"
-            android:background="@color/design_default_color_primary"
             android:text="@string/_start_str"
             android:textColor="@android:color/background_light"
             android:textSize="18sp"
@@ -36,32 +35,12 @@
 
         <Button
             android:id="@+id/button_Reset"
-            android:layout_width="72dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/Reset_str"
             tools:layout_editor_absoluteX="115dp"
             tools:layout_editor_absoluteY="5dp" />
 
-        <Space
-            android:layout_width="2dp"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/Button_Manage"
-            android:layout_width="114dp"
-            android:layout_height="match_parent"
-            android:text="@string/_manage_str"
-            android:textSize="12sp"
-            tools:layout_editor_absoluteX="204dp"
-            tools:layout_editor_absoluteY="4dp" />
-
-        <ImageButton
-            android:id="@+id/button_Settings"
-            android:layout_width="52dp"
-            android:layout_height="match_parent"
-            app:srcCompat="@android:drawable/ic_menu_manage"
-            tools:layout_editor_absoluteX="336dp"
-            tools:layout_editor_absoluteY="4dp" />
     </TableRow>
 
     <TableLayout

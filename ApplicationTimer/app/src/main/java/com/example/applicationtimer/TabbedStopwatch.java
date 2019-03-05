@@ -1,5 +1,6 @@
 package com.example.applicationtimer;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
@@ -55,8 +57,16 @@ import static java.lang.Math.sqrt;
 
 public class TabbedStopwatch extends AppCompatActivity {
     //Данные фрагментов
+    static String currentTime;
+    static protected TableRow arrRowData[];
+    static protected long arrTiming[];
+    static protected TextView arrTextData[];
+    static protected TextView arrTimeData[];
+    static protected SettingsActivity Tab3;
+    static protected database Tab2;
+    static protected MainActivity Tab1;
     static protected boolean buttonsCreated = false;
-    static long startTime=0L, timeInMilliseconds=0L, timeSwapBuffer=0L, updateTime=0L;
+    static long startTime=0L, timeInMilliseconds=0L, timeSwapBuffer, updateTime=0L;
     static int secs, mins, milliseconds;
     static protected boolean dataExist;
     static protected boolean isStarted = false;
@@ -166,9 +176,7 @@ public class TabbedStopwatch extends AppCompatActivity {
         public    View rootView;
         protected Button buttonStart;
         protected Button buttonReset;
-        protected Button buttonManage;
         protected Button buttonEachLap;
-        protected ImageButton buttonSettings;
         protected TextView textTimer;
         protected TableLayout tableLayout;
         protected Button arrButtons[][];
@@ -190,7 +198,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                 if(SData.getAccuracyFlag())
                     textTimer.setText((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs);
                 else {
-                    textTimer.setText((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs +":"+
+                    textTimer.setText((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs +"."+
                             ((milliseconds/10) < 10 ? "0" : "") + (milliseconds/10) );
                 }
 
@@ -201,7 +209,6 @@ public class TabbedStopwatch extends AppCompatActivity {
                         if(arrButtons[i / (SData.getFieldX())][i% (SData.getFieldX())].getVisibility() == View.INVISIBLE)
                             if(runData[i].passSecond() == false){
                                 arrButtons[i / (SData.getFieldX())][i% (SData.getFieldX())].setVisibility(View.VISIBLE);
-                                //arrButtons[i / (SData.getFieldX())][i% (SData.getFieldX())].setText(String.valueOf(runData[i].timeHidden));
                             }
                     }
                 customHandler.postDelayed(this, 0);
@@ -210,11 +217,51 @@ public class TabbedStopwatch extends AppCompatActivity {
         Handler customHandler = new Handler();
 
         @Override
+        public void onPause() {
+            super.onPause();
+            currentTime = textTimer.getText().toString();
+        }
 
         public void onResume() {
             super.onResume();
+            if(BuiltOnce) {
+                SData.setTimeUntilSHown(Integer.parseInt(Tab3.editTimeUntil.getText().toString()));
+                SData.setLaps(Integer.parseInt(Tab3.editLaps.getText().toString()));
+                if(Tab3.radioGroup1.getCheckedRadioButtonId() != (SData.getAccuracyFlag() ? R.id.radio_1 : R.id.radio_2)) {
+                    if(Tab3.radioGroup1.getCheckedRadioButtonId() == R.id.radio_1) {
+                        currentTime = currentTime.substring(0, 5);
+                    }
+                    else {
+                        timeInMilliseconds = SystemClock.uptimeMillis()-startTime;
+                        updateTime = timeSwapBuffer+timeInMilliseconds;
+                        secs = ((int)updateTime/1000);
+                        mins = secs/60;
+                        secs %= 60;
+                        milliseconds = (int)(updateTime%1000);
+                        currentTime += "."+((milliseconds/10) < 10 ? "0" : "") + (milliseconds/10);
+                    }
+                }
+                textTimer.setText(currentTime);
+                SData.setAccuracyFlag(Tab3.radioGroup1.getCheckedRadioButtonId() == R.id.radio_1 ? true : false);
+                showTable();
+                for(int i = 0; i < SData.getRunners(); i++) {
+                    if (runData[i].isHidden) {
+                        arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].setVisibility(View.INVISIBLE);
+                    } else {
+                        if (SData.getLaps() - runData[i].getLapsTaken() == 3) {
+                            arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].getBackground().setColorFilter(Color.rgb(0xFB, 0xA0, 0x15), PorterDuff.Mode.MULTIPLY);
+
+                        } else if (SData.getLaps() - runData[i].getLapsTaken() == 2) {
+                            arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].getBackground().setColorFilter(Color.rgb(0xFB, 0x10, 0x15), PorterDuff.Mode.MULTIPLY);
+                        } else if (SData.getLaps() - runData[i].getLapsTaken() == 1) {
+                            arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].getBackground().setColorFilter(Color.rgb(0xFF, 0xFF, 0xFF), PorterDuff.Mode.MULTIPLY);
+                            arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].setEnabled(false);
+                        }
+                    }
+                }
+            }
+            else BuiltOnce = true;
             setChronology();
-            textTimer.setText(SData.getAccuracyFlag() ? "00:00" : "00:00.00");
             //Обновление кнопок
             deleteButtons();
             createButtons();
@@ -223,9 +270,17 @@ public class TabbedStopwatch extends AppCompatActivity {
 
             super.onCreate(savedInstanceState);
             rootView = inflater.inflate(R.layout.activity_main, container, false);
+            //Сохранение элементов окна
+            buttonStart = (Button) rootView.findViewById(R.id.Button_Start);
+            buttonReset = (Button) rootView.findViewById(R.id.button_Reset);
+            textTimer = (TextView)rootView.findViewById(R.id.text_Timer);
+            tableLayout = (TableLayout) rootView.findViewById(R.id.tableLayout);
+
             //Предустановка переменных
             if(!BuiltOnce) {
-                BuiltOnce = true;
+                arrTiming = new long[101];
+                textTimer.setText(SData.getAccuracyFlag() ? "00:00" : "00:00.00");
+                timeSwapBuffer=0L;
                 dataExist = false;
                 isStarted = false;
                 arrIDNumber = new int[101];
@@ -235,18 +290,14 @@ public class TabbedStopwatch extends AppCompatActivity {
                 for (int i = 0; i < 101; i++)
                     runData[i] = new RunnerData();
             }
-            //Сохранение элементов окна
-            buttonManage = (Button) rootView.findViewById(R.id.Button_Manage);
-            buttonStart = (Button) rootView.findViewById(R.id.Button_Start);
-            buttonReset = (Button) rootView.findViewById(R.id.button_Reset);
-            textTimer = (TextView)rootView.findViewById(R.id.text_Timer);
-            buttonSettings = (ImageButton) rootView.findViewById(R.id.button_Settings);
-            tableLayout = (TableLayout) rootView.findViewById(R.id.tableLayout);
-            textTimer.setText(SData.getAccuracyFlag() ? "00:00" : "00:00.00");
 
             if(isStarted) {
-                buttonStart.setBackgroundColor(Color.rgb(0xE5, 0x21, 0x3F));
+                buttonStart.getBackground().setColorFilter(Color.rgb(0xE5, 0x21, 0x3F), PorterDuff.Mode.MULTIPLY);
                 buttonStart.setText(R.string._stop_str);
+            }
+            else {
+                buttonStart.getBackground().setColorFilter(Color.rgb(0x3F, 0x51, 0xB5), PorterDuff.Mode.MULTIPLY);
+                buttonStart.setText(R.string._start_str);
             }
             //Загрузка настроек
             setChronology();
@@ -261,21 +312,18 @@ public class TabbedStopwatch extends AppCompatActivity {
                     if(isStarted) {
                         //Когда секундомер останавливаем
                         buttonStart.setText(R.string._start_str);
-                        buttonStart.setBackgroundColor(Color.rgb(0x3F, 0x51, 0xB5));
+                        buttonStart.getBackground().setColorFilter(Color.rgb(0x3F, 0x51, 0xB5), PorterDuff.Mode.MULTIPLY);
                         timeSwapBuffer += timeInMilliseconds;
                         customHandler.removeCallbacks(updateTimeThread);
-                        buttonManage.setEnabled(true);
                     }
                     else {
                         //Когда стартует секундомер
                         if(dataExist) {
                             buttonReset.callOnClick();
                         }
-                        buttonStart.setBackgroundColor(Color.rgb(0xE5, 0x21, 0x3F));
+                        buttonStart.getBackground().setColorFilter(Color.rgb(0xE5, 0x21, 0x3F), PorterDuff.Mode.MULTIPLY);
                         startTime = SystemClock.uptimeMillis();
                         customHandler.postDelayed(updateTimeThread, 0);
-                        buttonSettings.setEnabled(false);
-                        buttonManage.setEnabled(false);
                         buttonStart.setText(R.string._stop_str);
                     }
                     isStarted = !isStarted;
@@ -285,10 +333,13 @@ public class TabbedStopwatch extends AppCompatActivity {
             View.OnClickListener Signal_Reset = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    for(int i = 0; i < 101; i++) {
+                        arrTiming[i] = 0;
+                    }
                     dataExist = false;
                     buttonStart.setEnabled(true);
                     isStarted = false;
-                    buttonStart.setBackgroundColor(Color.rgb(0x3F, 0x51, 0xB5));
+                    buttonStart.getBackground().setColorFilter(Color.rgb(0x3F, 0x51, 0xB5), PorterDuff.Mode.MULTIPLY);
                     buttonStart.setText(R.string._start_str);
                     timeSwapBuffer += timeInMilliseconds;
                     customHandler.removeCallbacks(updateTimeThread);
@@ -297,90 +348,15 @@ public class TabbedStopwatch extends AppCompatActivity {
                     for(int i = 0; i < 99; i++) {
                         runData[i].reset();
                     }
-                    buttonSettings.setEnabled(true);
-                    buttonManage.setEnabled(true);
                     deleteButtons();
                     createButtons();
                 }
             };
 
-            //Кнопка перехода в настройки
-            View.OnClickListener Signal_Settings = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Intent Settingsintent = new Intent(getActivity().getApplicationContext(), SettingsActivity.class);
-                    //Передача значений в activity
-                    Settingsintent.putExtra("Settings1", SData.getRunners());
-                    Settingsintent.putExtra("Settings2", SData.getStaticButtons());
-                    Settingsintent.putExtra("Settings3", SData.getLaps());
-                    Settingsintent.putExtra("Settings4", SData.getAccuracyFlag());
-                    Settingsintent.putExtra("Settings5", SData.getTimeUntilShown());
-                    Settingsintent.putExtra("Settings6", arrIDNumber);
-                    startActivityForResult(Settingsintent, 1);
-                }
-            };
-            //Кнопка перехода в управление
-            View.OnClickListener Signal_Manage = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    for(int i = 0; i < SData.getRunners(); i++) {
-                        arrIDNumber[i] = runData[i].getIDNumber();
-                    }
-                    long TempTime[] = new long[101];
-                    for(int i = 0; i < SData.getRunners(); i++) {
-                        TempTime[i] = runData[i].lastTime;
-                    }
-                    Intent Manageintent = new Intent(getActivity().getApplicationContext(), database.class);
-                    //Передача значений в activity
-                    Manageintent.putExtra("ManageNumber", SData.getRunners());
-                    Manageintent.putExtra("ManageTime", TempTime);
-                    Manageintent.putExtra("ManageArray", arrIDNumber);
-                    Manageintent.putExtra("ManageAccuracy", SData.getAccuracyFlag());
-                    //Manageintent.putExtra("ManageTime", ArrayTime);
-                    startActivityForResult(Manageintent, 2);
-
-                }
-            };
-
             buttonStart.setOnClickListener(Signal_Start);
             buttonReset.setOnClickListener(Signal_Reset);
-            buttonSettings.setOnClickListener(Signal_Settings);
-            buttonManage.setOnClickListener(Signal_Manage);
             //**********************************************
             return rootView;
-        }
-
-        //Получение значений из activity
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            // Проверка на нажатие отмены
-            if (data == null || resultCode == RESULT_CANCELED) {
-                return;
-            }
-
-            if(requestCode == 1) {
-                //Значения из настроек
-                int tempNumb = SData.getRunners();
-                SData.setTimeUntilSHown(data.getIntExtra("timeUntil", 10000));
-                SData.setRunners(data.getIntExtra("runnersNumber", 30));
-                SData.setLaps(data.getIntExtra("lapsNumber", 10));
-                SData.setStaticButtons(data.getBooleanExtra("staticFlag", true));
-                SData.setAccuracyFlag(data.getBooleanExtra("accuracy", true));
-                arrIDNumber = data.getIntArrayExtra("runnersIDs");
-                textTimer.setText(SData.getAccuracyFlag() ? "00:00" : "00:00.000");
-
-
-            } else {
-                //Значения из управления
-
-            }
-            setChronology();
-            textTimer.setText(SData.getAccuracyFlag() ? "00:00" : "00:00.00");
-            //FilePrint(SData);
-            //Обновление кнопок
-            deleteButtons();
-            createButtons();
-
         }
 
         View.OnClickListener Signal_EachLap = new View.OnClickListener() {
@@ -394,9 +370,6 @@ public class TabbedStopwatch extends AppCompatActivity {
 
         final View.OnClickListener Signal_NumeralButton = new View.OnClickListener() {
             public void onClick(View v) {
-                //  for(int i = 0; i < SData.getRunners(); i++) {
-                //      arrRows[i].removeView(v);
-                //  }
                 //Если запущен секундомер
                 if (isStarted && v.getVisibility() == View.VISIBLE && v.isEnabled()) {
                     //Сделать кнопку невидимой - только при динамичных кнопках
@@ -414,20 +387,17 @@ public class TabbedStopwatch extends AppCompatActivity {
                         }
                         if (temp == 1) {
                             buttonStart.callOnClick();
-                            buttonSettings.setEnabled(true);
                             buttonStart.setEnabled(true);
                             dataExist = true;
                             ViewPager _viewPager = getActivity().findViewById(R.id.container);
                             _viewPager.setCurrentItem(1, true);
-                            //buttonManage.callOnClick();
                         }
                         v.getBackground().setColorFilter(Color.rgb(0xFF, 0xFF, 0xFF), PorterDuff.Mode.MULTIPLY);
                         v.setEnabled(false);
                         return;
                     }
-                    if (SData.getStaticButtons() == false) {
-                        v.setVisibility(View.INVISIBLE);
-                    }
+                    arrTiming[idNum] = updateTime;
+                    v.setVisibility(View.INVISIBLE);
                     runData[idNum].setHidden();
                     runData[idNum].setTime(idNum, mins, secs, milliseconds);
 
@@ -467,7 +437,6 @@ public class TabbedStopwatch extends AppCompatActivity {
             buttonsCreated = true;
             for(int i = 0; i < numY; i++){
                 arrRows[i] = new TableRow(getActivity());
-                //arrRows[i].setY(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics()));
                 tableLayout.addView(arrRows[i]);
                 for(int j = 0; j < numX; j++){
                     if((i + 1 == numY) && (SData.runnerNum < i*(numX) + j+1)) break;
@@ -517,17 +486,14 @@ public class TabbedStopwatch extends AppCompatActivity {
     //------------------------------------------------Settings fragment-------------------------------------------------------\\
 
     public static class SettingsActivity extends Fragment {
-
         public View rootView;
-        protected Button buttonAccept;
-        protected Button buttonDecline;
-        protected TextView textStatic;
+        protected ImageButton buttonAccept;
+        protected ImageButton buttonDecline;
         protected TextView texterr;
         protected EditText editTimeUntil;
-        protected EditText editRunners;
+        protected TextView editRunners;
         protected EditText editLaps;
         protected ImageButton buttonDeleteText;
-        protected CheckBox checkStatic;
         protected RadioButton radio1;
         protected RadioGroup radioGroup1;
         protected EditText editRunnersNames;
@@ -537,19 +503,20 @@ public class TabbedStopwatch extends AppCompatActivity {
         protected int tempArr[];
 
         @Override
-
+        public void onResume() {
+            super.onResume();
+            showTable();
+        }
 
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             rootView = inflater.inflate(R.layout.layoutsettings, container, false);
 
             //Сохранение элементов окна
-            buttonAccept = (Button)rootView.findViewById(R.id.button_Accept);
-            buttonDecline = (Button)rootView.findViewById(R.id.button_Decline);
-            textStatic = (TextView) rootView.findViewById(R.id.text_Static);
+            buttonAccept = (ImageButton)rootView.findViewById(R.id.button_Accept);
+            buttonDecline = (ImageButton)rootView.findViewById(R.id.button_Decline);
             texterr = (TextView) rootView.findViewById(R.id.text_Err);
-            checkStatic = (CheckBox) rootView.findViewById(R.id.check_Static);
-            editRunners = (EditText) rootView.findViewById(R.id.edit_runners);
+            editRunners = (TextView) rootView.findViewById(R.id.edit_runners);
             editLaps = (EditText) rootView.findViewById(R.id.edit_laps);
             editRunnersNames = (EditText) rootView.findViewById(R.id.edit_RunnersNames);
             editTimeUntil = (EditText) rootView.findViewById(R.id.edit_TimeUntil);
@@ -557,55 +524,13 @@ public class TabbedStopwatch extends AppCompatActivity {
             radio1 = (RadioButton) rootView.findViewById(R.id.radio_1);
             radioGroup1 = (RadioGroup) rootView.findViewById(R.id.radioGroup1);
             //Получение значений из главного меню
-            OverallNumber = 30;
+            OverallNumber = SData.getRunners();
             editRunners.setText(String.valueOf(OverallNumber));
-            checkStatic.setChecked(true);
-            editLaps.setText(String.valueOf(10));
-            radioGroup1.check(true ? R.id.radio_1 : R.id.radio_2);
-            editTimeUntil.setText(String.valueOf(10));
-            arrIDNumberSettings = new int[101];//getIntent().getIntArrayExtra("Settings6");
-            //Установка ограничений на ввод числа бегущих
-            editRunners.addTextChangedListener(new TextWatcher() {
-                private String before;
-                private boolean mFormating;
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    before = editRunners.getText().toString();
-                }
+            radioGroup1.check(SData.getAccuracyFlag() ? R.id.radio_1 : R.id.radio_2);
+            arrIDNumberSettings = arrIDNumber;
+            editLaps.setText(String.valueOf(SData.getLaps()));
+            editTimeUntil.setText(String.valueOf(SData.getTimeUntilShown()));
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    int position = editRunners.getSelectionEnd();
-
-                    if(editRunners.getText().toString().length() == 0) {
-                        editRunners.setText("0");
-                        editRunners.setSelection(1);
-                    }
-                    else if(!mFormating) {
-                        String temp = editRunners.getText().toString();
-                        String beforeTemp = before;
-
-                        if((temp.charAt(0) == '0') && (temp.length() == 2) && (before.equals("0"))){
-                            before = "" + temp.charAt(1);
-                            beforeTemp = before;
-                        }
-                        else if (((temp.length() == 1) || (((temp.charAt(0) <= '9') && (temp.charAt(0) > 0)) && (temp.length() == 2))) && !((temp.charAt(0) == '0') && (temp.length() >= 2))) {
-                            before = temp;
-                        }
-                        mFormating = true;
-                        if(before == beforeTemp) {
-                            editRunners.setText(before);
-                            editRunners.setSelection(position > before.length()-1 ? before.length()-1 : position-1);
-                        }
-                    }
-                    mFormating = false;
-                }
-            });
             //Установка ограничений на ввод числа кругов
             editLaps.addTextChangedListener(new TextWatcher() {
                 private String before;
@@ -650,7 +575,6 @@ public class TabbedStopwatch extends AppCompatActivity {
             });
             //Установка ограничений на ввод минимального времени круга
 
-
             editTimeUntil.addTextChangedListener(new TextWatcher() {
                 private String before;
                 private boolean mFormating;
@@ -693,7 +617,6 @@ public class TabbedStopwatch extends AppCompatActivity {
                 }
             });
             //Установка ограничений на ввод целых десятичных чисел
-            editRunners.setKeyListener(DigitsKeyListener.getInstance(false, false));
             editLaps.setKeyListener(DigitsKeyListener.getInstance(false, false));
             editTimeUntil.setKeyListener(DigitsKeyListener.getInstance(false, false));
 
@@ -706,25 +629,27 @@ public class TabbedStopwatch extends AppCompatActivity {
             View.OnFocusChangeListener FocusUpdated = new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    getNames();
+                    if (getNames()) {
+                        int Runners = Integer.parseInt(editRunners.getText().toString());
+                        if (Runners != 0) SData.setRunners(Runners);
+                        arrIDNumber = arrIDNumberSettings;
+                    }
                 }
             };
             editRunnersNames.setOnFocusChangeListener(FocusUpdated);
-            View.OnFocusChangeListener FocusUpdated2 = new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    setRunners();
-                }
-            };
-            editRunners.setOnFocusChangeListener(FocusUpdated2);
             //***********-Установка слотов на кнопки***************
             //Кнопка отмены
             View.OnClickListener Signal_Decline = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent returnIntent = new Intent();
-                    getActivity().setResult(getActivity().RESULT_CANCELED, returnIntent);
-                    getActivity().finish();
+                    String rewriteText = "";
+                    for(int i = 0; i < OverallNumber; i++) {
+                        rewriteText += String.valueOf(arrIDNumberSettings[i]);
+                        if(i + 1 != OverallNumber) rewriteText += ",";
+                    }
+                    editRunnersNames.setText(rewriteText);
+                    OverallNumber = SData.getRunners();
+                    editRunners.setText(String.valueOf(OverallNumber));
                 }
             };
             //Кнопка принять
@@ -733,13 +658,17 @@ public class TabbedStopwatch extends AppCompatActivity {
                 public void onClick(View v) {
                     SData.setLaps(Integer.parseInt(editLaps.getText().toString()));
                     SData.setTimeUntilSHown(Integer.parseInt(editTimeUntil.getText().toString()));
-                    //returnIntent.putExtra("staticFlag", checkStatic.isChecked());
                     if (getNames()) {
                         int Runners = Integer.parseInt(editRunners.getText().toString());
-                        if (Runners != 0) SData.setRunners(Runners);
+                        if (Runners != 0) {
+                            for (int i = Runners; i < SData.getRunners(); i++) {
+                                arrTiming[i] = 0;
+                            }
+                            SData.setRunners(Runners);
+                        }
                         arrIDNumber = arrIDNumberSettings;
-                        SData.setAccuracyFlag((radioGroup1.getCheckedRadioButtonId() == R.id.radio_1) ? true : false);
                     }
+                    SData.setAccuracyFlag((radioGroup1.getCheckedRadioButtonId() == R.id.radio_1) ? true : false);
                 }
             };
 
@@ -885,67 +814,24 @@ public class TabbedStopwatch extends AppCompatActivity {
     public static class database extends Fragment {
         public View rootView;
         protected TableLayout tableManage;
-        protected Button buttonBackMang;
-        protected Button buttonBackCanc;
-        protected int OverallNumber;
-        protected int arrIDNumber[];
-        protected long arrTiming[];
-        protected TableRow arrRow[];
-        protected TextView arrText[];
-        protected TextView arrTime[];
-        protected int tempArr[];
-        protected int Overall;
-        protected int shownBefore;
-        protected boolean accuracyFlag;
+
         @Override
 
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             rootView = inflater.inflate(R.layout.activity_database, container, false);
-
             //Отмена фокусировки на EditText'ы
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
             //Предустановка переменных
-            shownBefore = 0;
-            arrRow = new TableRow[101];
-            arrText = new TextView[101];
-            arrTime = new TextView[101];
+            arrRowData = new TableRow[101];
+            arrTextData = new TextView[101];
+            arrTimeData = new TextView[101];
 
             //Сохранение элементов экрана
             tableManage = (TableLayout) rootView.findViewById(R.id.tableManage);
-            buttonBackMang = (Button) rootView.findViewById(R.id.buttonBackManage);
-            buttonBackCanc = (Button) rootView.findViewById(R.id.buttonCancel);
 
             //Получение значений из главного меню
-            OverallNumber = getActivity().getIntent().getIntExtra("ManageNumber", 30);
-            arrTiming = new long[101];getActivity().getIntent().getLongArrayExtra("ManageTime");
-            arrIDNumber = new int[101];//getActivity().getIntent().getIntArrayExtra("ManageArray");
-            accuracyFlag = getActivity().getIntent().getBooleanExtra("ManageAccuracy", true);
-
-            //****************Установка слотов на кнопки***********************
-
-            View.OnClickListener Signal_Cancel1 = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent returnIntent = new Intent();
-                    getActivity().setResult(getActivity().RESULT_CANCELED, returnIntent);
-                    getActivity().finish();
-                }
-            };
-
-            //Кнопка принять
-            View.OnClickListener Signal_Back = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent returnIntent = new Intent();
-                    getActivity().setResult(getActivity().RESULT_OK, returnIntent);
-                    getActivity().finish();
-                }
-            };
-            buttonBackMang.setOnClickListener(Signal_Back);
-            buttonBackCanc.setOnClickListener(Signal_Cancel1);
-
             //*******************************************************
 
             //Заполнение таблицы информацией
@@ -954,54 +840,45 @@ public class TabbedStopwatch extends AppCompatActivity {
         }
 
         //Заполнение таблицы информацией
-        protected void showTable(){
-
-            tableManage.removeAllViews();
-
-            //
-            for(int i = 0; i < OverallNumber; i++) {
-                arrRow[i] = new TableRow(getActivity());
-                arrRow[i].setX((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()));
-                tableManage.addView(arrRow[i]);
-                arrText[i] = new TextView(getActivity());
-                arrText[i].setText(String.valueOf(arrIDNumber[i]));
-                arrText[i].setPadding(5,5,5,0);
-                arrRow[i].addView(arrText[i]);
-                long RunnerTime = arrTiming[i];
-                long secs = ((int)RunnerTime/1000);
-                long mins = secs/60;
-                secs %= 60;
-                long milliseconds = (int)(RunnerTime%1000);
-                //Space Sp = new Space(database.this);
-                //arrRow[i].addView(Sp);
-                arrTime[i] = new TextView(getActivity());
-                arrTime[i].setPadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics()),5,5,0);
-                if(accuracyFlag)
-                    arrTime[i].setText((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs);
-                else {
-                    arrTime[i].setText((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs +":"+
-                            ((milliseconds/10) < 10 ? "0" : "") + (milliseconds/10) );
-                }
-                /* Old version = 00:00.000 format
-                 * arrTime[i].setText((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs +":"+
-                 *        (milliseconds < 100 ? (milliseconds < 10 ? "00" : "0") : "") + milliseconds);
-                 */
-                arrRow[i].addView(arrTime[i]);
-                //Space tempSpace = new Space(database.this);
-                //tempSpace.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
-                //arrRow[i].addView(tempSpace);
-
-
-                TableRow.MarginLayoutParams marginParams1 = new TableRow.MarginLayoutParams(arrRow[i].getLayoutParams());
-                marginParams1.setMargins(5, 0, 0, 0);
-                TableRow.LayoutParams layoutParams1 = new TableRow.LayoutParams(marginParams1);
-                arrRow[i].setLayoutParams(layoutParams1);
-                //arrText[i].setKeyListener(DigitsKeyListener.getInstance(false, false));
-
-            }
-        }
     }
     //-----------------------------------------------------------------------------------------------------\\
+
+    static protected void showTable(){
+
+        Tab2.tableManage.removeAllViews();
+
+        //
+        for(int i = 0; i < SData.getRunners(); i++) {
+            arrRowData[i] = new TableRow(Tab2.getActivity());
+            arrRowData[i].setX((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, Tab2.getResources().getDisplayMetrics()));
+            Tab2.tableManage.addView(arrRowData[i]);
+            arrTextData[i] = new TextView(Tab2.getActivity());
+            arrTextData[i].setText(String.valueOf(arrIDNumber[i]));
+            arrTextData[i].setPadding(5,5,5,0);
+            arrRowData[i].addView(arrTextData[i]);
+            long RunnerTime = arrTiming[i];
+            long secs = ((int)RunnerTime/1000);
+            long mins = secs/60;
+            secs %= 60;
+            long milliseconds = (int)(RunnerTime%1000);
+            arrTimeData[i] = new TextView(Tab2.getActivity());
+            arrTimeData[i].setPadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50,
+                                            Tab2.getResources().getDisplayMetrics()),5,5,0);
+            if(SData.getAccuracyFlag())
+                arrTimeData[i].setText((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs);
+            else {
+                arrTimeData[i].setText((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs +"."+
+                        ((milliseconds/10) < 10 ? "0" : "") + (milliseconds/10) );
+            }
+            arrRowData[i].addView(arrTimeData[i]);
+
+            TableRow.MarginLayoutParams marginParams1 = new TableRow.MarginLayoutParams(arrRowData[i].getLayoutParams());
+            marginParams1.setMargins(5, 0, 0, 0);
+            TableRow.LayoutParams layoutParams1 = new TableRow.LayoutParams(marginParams1);
+            arrRowData[i].setLayoutParams(layoutParams1);
+
+        }
+    }
 
     //Сохранение настроек
     protected void FilePrint(SettingsData SData) {
@@ -1072,10 +949,6 @@ public class TabbedStopwatch extends AppCompatActivity {
         }
         return SData;
     }
-
-    protected SettingsActivity Tab3;
-    protected database Tab2;
-    protected MainActivity Tab1;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
