@@ -1,6 +1,7 @@
 package com.example.applicationtimer;
 
 import android.app.Activity;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -20,6 +21,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Layout;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.util.AttributeSet;
@@ -32,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -50,6 +53,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import static java.lang.Math.sqrt;
 
@@ -60,6 +64,8 @@ public class TabbedStopwatch extends AppCompatActivity {
     static String currentTime;
     static protected TableRow arrRowData[];
     static protected long arrTiming[];
+    static protected ContextWrapper CW ;
+    static protected boolean BuiltOnce = false;
     static protected TextView arrTextData[];
     static protected TextView arrTimeData[];
     static protected SettingsActivity Tab3;
@@ -71,11 +77,11 @@ public class TabbedStopwatch extends AppCompatActivity {
     static protected boolean dataExist;
     static protected boolean isStarted = false;
     static protected SettingsData SData;
-    static protected int arrIDNumber[];
+    static protected String arrIDNumber[];
     //Класс участника
     protected static class RunnerData{
         protected int LapsTaken = 0;
-        protected int IDNumber = 0;
+        protected String IDNumber = "0";
         protected int arrMinutes[] = new int[100];
         protected int arrSeconds[] = new int[100];
         protected int arrMilisnd[] = new int[100];
@@ -85,7 +91,7 @@ public class TabbedStopwatch extends AppCompatActivity {
         protected long startTime1 = 0;
         //setters
         void setHidden() {isHidden = true; startTime1 = updateTime; LapsTaken++;}
-        void setIDNumber(int ID){ IDNumber = ID; }
+        void setIDNumber(String ID){ IDNumber = ID; }
         void setTime(int index, int min, int sec, int mil){
             arrMinutes[index] = min;
             arrSeconds[index] = sec;
@@ -97,7 +103,7 @@ public class TabbedStopwatch extends AppCompatActivity {
         //getters
         boolean getHidden() {return isHidden;}
         int getLapsTaken(){ return LapsTaken; }
-        int getIDNumber(){ return IDNumber; }
+        String getIDNumber(){ return IDNumber; }
         int[] getarrMinutes(){ return arrMinutes; }
         int[] getarrSeconds(){ return arrSeconds; }
         int[] getArrMilisnd(){ return arrMilisnd; }
@@ -181,7 +187,6 @@ public class TabbedStopwatch extends AppCompatActivity {
         protected TableLayout tableLayout;
         protected Button arrButtons[][];
         protected TableRow arrRows[];
-        protected boolean BuiltOnce = false;
 
         RunnerData runData[] = new RunnerData[101];
 
@@ -244,28 +249,14 @@ public class TabbedStopwatch extends AppCompatActivity {
                 textTimer.setText(currentTime);
                 SData.setAccuracyFlag(Tab3.radioGroup1.getCheckedRadioButtonId() == R.id.radio_1 ? true : false);
                 showTable();
-                for(int i = 0; i < SData.getRunners(); i++) {
-                    if (runData[i].isHidden) {
-                        arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].setVisibility(View.INVISIBLE);
-                    } else {
-                        if (SData.getLaps() - runData[i].getLapsTaken() == 3) {
-                            arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].getBackground().setColorFilter(Color.rgb(0xFB, 0xA0, 0x15), PorterDuff.Mode.MULTIPLY);
-
-                        } else if (SData.getLaps() - runData[i].getLapsTaken() == 2) {
-                            arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].getBackground().setColorFilter(Color.rgb(0xFB, 0x10, 0x15), PorterDuff.Mode.MULTIPLY);
-                        } else if (SData.getLaps() - runData[i].getLapsTaken() == 1) {
-                            arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].getBackground().setColorFilter(Color.rgb(0xFF, 0xFF, 0xFF), PorterDuff.Mode.MULTIPLY);
-                            arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].setEnabled(false);
-                        }
-                    }
-                }
             }
-            else BuiltOnce = true;
             setChronology();
             //Обновление кнопок
             deleteButtons();
             createButtons();
+            FilePrint(SData);
         }
+
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
             super.onCreate(savedInstanceState);
@@ -283,9 +274,20 @@ public class TabbedStopwatch extends AppCompatActivity {
                 timeSwapBuffer=0L;
                 dataExist = false;
                 isStarted = false;
-                arrIDNumber = new int[101];
+                int toName = 1;
+                boolean hasName = false;
                 for (int i = 0; i < 99; i++) {
-                    arrIDNumber[i] = i + 1;
+                    if(arrIDNumber[i] == null) {
+                        do {
+                            hasName = false;
+                            for (int j = 0; j < SData.getRunners() && hasName == false; j++) {
+                                if (arrIDNumber[j].equals(String.valueOf(toName))) hasName = true;
+                            }
+                            if(hasName) toName++;
+                        } while(hasName);
+                        arrIDNumber[i] = String.valueOf(toName);
+                        toName++;
+                    }
                 }
                 for (int i = 0; i < 101; i++)
                     runData[i] = new RunnerData();
@@ -374,6 +376,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                 if (isStarted && v.getVisibility() == View.VISIBLE && v.isEnabled()) {
                     //Сделать кнопку невидимой - только при динамичных кнопках
                     int idNum = v.getId();
+                    arrTiming[idNum] = updateTime;
                     if (SData.getLaps() - runData[idNum].getLapsTaken() == 3) {
                         v.getBackground().setColorFilter(Color.rgb(0xFB, 0xA0, 0x15), PorterDuff.Mode.MULTIPLY);
 
@@ -394,9 +397,9 @@ public class TabbedStopwatch extends AppCompatActivity {
                         }
                         v.getBackground().setColorFilter(Color.rgb(0xFF, 0xFF, 0xFF), PorterDuff.Mode.MULTIPLY);
                         v.setEnabled(false);
+                        runData[idNum].LapsTaken++;
                         return;
                     }
-                    arrTiming[idNum] = updateTime;
                     v.setVisibility(View.INVISIBLE);
                     runData[idNum].setHidden();
                     runData[idNum].setTime(idNum, mins, secs, milliseconds);
@@ -424,7 +427,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             int widthDevice = display.getWidth();  // deprecated
             int heightDevice = display.getHeight();
             int maxWidth = 345;
-            int maxHeight = 370;
+            int maxHeight = 435;
             int everyWidth = maxWidth / numX;
             int everyHeight = (maxHeight / numY) > 370 ? 370 : (maxHeight / numY);
             int height = everyHeight;
@@ -444,6 +447,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                     arrButtons[i][j].setPadding(5,5,5,5);
                     arrButtons[i][j].setId(i*(numX) + j);
                     Typeface font_style = Typeface.create("sans-serif", Typeface.NORMAL);
+                    arrButtons[i][j].setAllCaps(false);
                     arrButtons[i][j].setTypeface(font_style);
                     arrButtons[i][j].setOnClickListener(Signal_NumeralButton);
                     arrButtons[i][j].setText("" + (runData[i*(numX) + j].getIDNumber()));
@@ -472,6 +476,21 @@ public class TabbedStopwatch extends AppCompatActivity {
                 }
                 buttonEachLap.setOnClickListener(Signal_EachLap);
             }
+            for(int i = 0; i < SData.getRunners(); i++) {
+                if (runData[i].isHidden) {
+                    arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].setVisibility(View.INVISIBLE);
+                } else {
+                    if (SData.getLaps() - runData[i].getLapsTaken() == 2) {
+                        arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].getBackground().setColorFilter(Color.rgb(0xFB, 0xA0, 0x15), PorterDuff.Mode.MULTIPLY);
+
+                    } else if (SData.getLaps() - runData[i].getLapsTaken() == 1) {
+                        arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].getBackground().setColorFilter(Color.rgb(0xFB, 0x10, 0x15), PorterDuff.Mode.MULTIPLY);
+                    } else if (SData.getLaps() - runData[i].getLapsTaken() == 0) {
+                        arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].getBackground().setColorFilter(Color.rgb(0xFF, 0xFF, 0xFF), PorterDuff.Mode.MULTIPLY);
+                        arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].setEnabled(false);
+                    }
+                }
+            }
         }
 
         //Удаление кнопок
@@ -499,13 +518,14 @@ public class TabbedStopwatch extends AppCompatActivity {
         protected EditText editRunnersNames;
 
         protected int OverallNumber;
-        protected int arrIDNumberSettings[];
-        protected int tempArr[];
+        protected String arrIDNumberSettings[];
+        protected String tempArr[];
 
         @Override
         public void onResume() {
             super.onResume();
             showTable();
+            BuiltOnce = true;
         }
 
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -622,7 +642,7 @@ public class TabbedStopwatch extends AppCompatActivity {
 
             String rewriteText = "";
             for(int i = 0; i < OverallNumber; i++) {
-                rewriteText += String.valueOf(arrIDNumberSettings[i]);
+                rewriteText += arrIDNumberSettings[i];
                 if(i + 1 != OverallNumber) rewriteText += ",";
             }
             editRunnersNames.setText(rewriteText);
@@ -636,19 +656,19 @@ public class TabbedStopwatch extends AppCompatActivity {
                     }
                 }
             };
-            editRunnersNames.setOnFocusChangeListener(FocusUpdated);
+            //editRunnersNames.setOnFocusChangeListener(FocusUpdated);
             //***********-Установка слотов на кнопки***************
             //Кнопка отмены
             View.OnClickListener Signal_Decline = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String rewriteText = "";
+                    OverallNumber = SData.getRunners();
                     for(int i = 0; i < OverallNumber; i++) {
-                        rewriteText += String.valueOf(arrIDNumberSettings[i]);
+                        rewriteText += arrIDNumber[i];
                         if(i + 1 != OverallNumber) rewriteText += ",";
                     }
                     editRunnersNames.setText(rewriteText);
-                    OverallNumber = SData.getRunners();
                     editRunners.setText(String.valueOf(OverallNumber));
                 }
             };
@@ -665,10 +685,11 @@ public class TabbedStopwatch extends AppCompatActivity {
                                 arrTiming[i] = 0;
                             }
                             SData.setRunners(Runners);
+                            arrIDNumber = arrIDNumberSettings;
                         }
-                        arrIDNumber = arrIDNumberSettings;
                     }
                     SData.setAccuracyFlag((radioGroup1.getCheckedRadioButtonId() == R.id.radio_1) ? true : false);
+                    FilePrint(SData);
                 }
             };
 
@@ -692,19 +713,19 @@ public class TabbedStopwatch extends AppCompatActivity {
 
             }
             else if(OverallNumber < toSet) {
-                int TempArray[] = new int[toSet];
+                String TempArray[] = new String[toSet];
                 for (int i = 0; i < OverallNumber; i++) {
                     TempArray[i] = arrIDNumberSettings[i];
                 }
                 for (int i = OverallNumber; i < toSet; i++) {
-                    TempArray[i] = i + 1;
+                    TempArray[i] = String.valueOf(i + 1);
                 }
                 OverallNumber = toSet;
                 arrIDNumberSettings = TempArray;
                 Arrays.sort(arrIDNumberSettings);
             }
             else{
-                int TempArray[] = new int[toSet];
+                String TempArray[] = new String[toSet];
                 for (int i = 0; i < toSet; i++) {
                     TempArray[i] = arrIDNumberSettings[i];
                 }
@@ -713,11 +734,13 @@ public class TabbedStopwatch extends AppCompatActivity {
                 Arrays.sort(arrIDNumberSettings);
             }
             for(int i = 0; i < OverallNumber; i++) {
-                rewriteText += String.valueOf(arrIDNumberSettings[i]);
+                rewriteText += arrIDNumberSettings[i];
                 if(i + 1 != OverallNumber) rewriteText += ",";
             }
             editRunnersNames.setText(rewriteText);
         }
+
+
 
         boolean getNames() {
             int result = 0;
@@ -726,54 +749,107 @@ public class TabbedStopwatch extends AppCompatActivity {
             OverallNumber = 1;
             String acceptable = "0123456789,";
             if(str.length() == 0) result = 1; //Ошибка: пусто
+            boolean fineTemp = false;
             for(int i = 0; i < str.length(); i++) {
-                boolean fineTemp = false;
-                if(str.charAt(i) == ',') OverallNumber++;
-                for(int j = 0; j < 11; j++) {
-                    if(str.charAt(i) == acceptable.charAt(j)) fineTemp = true;
+                if(str.charAt(i) != ' ' && str.charAt(i) != ',') fineTemp = true;
+                if(((str.length() == i+1) || (str.charAt(i) == ',')) && fineTemp == false) OverallNumber--;
+                if(str.charAt(i) == ',' && str.length() > i+1) {
+                    if(str.charAt(i+1) != ',') OverallNumber++;
+                    fineTemp = false;
                 }
-                if(fineTemp == false) result = 2; //Ошибка: неверный символ
             }
-            tempArr = new int[OverallNumber];
-            int got = 0, count1 = 0, len = 0;
+            //OverallNumber += str.endsWith(",") ? 0 : 1;
+            tempArr = new String[OverallNumber];
+            String got = "";
+            int count1 = 0, len = 0;
+            fineTemp = false;
             for(int i = 0; i < str.length(); i++) {
                 //if(str.charAt(i) == ',' && len == 0) result = 3;// Ошибка: ожидалось число, получен иной символ
                 if(str.charAt(i) == ',') {
-                    tempArr[count1] = got;
-                    count1++;
-                    got = 0;
+                    if(got != null && got != "" && fineTemp) {
+                        tempArr[count1] = got;
+                        count1++;
+                    }
+                    fineTemp = false;
+                    got = "";
                     len = 0;
                 }
                 else {
                     len++;
-                    got = got*10 + str.charAt(i) - 48;
+                    if(str.charAt(i) != ' ') fineTemp = true;
+                    got += str.charAt(i);
                 }
                 if(len > 9) result = 4;// Ошибка: слишком длинный номер участника (>=10^10)
             }
+            if(got != null && got != "" && fineTemp)
             tempArr[count1] = got;
+            else count1--;
+            count1 = OverallNumber;
             //result = (str.charAt(str.length() - 1) == ',' ? 3 : result);
             arrIDNumberSettings = tempArr;
 
             //if(OverallNumber < Runners) for(int i = OverallNumber; i < Runners; i++) arrIDNumber[i] = i+1;
             if(result == 0) {
-                Arrays.sort(arrIDNumberSettings);
-                for(int i = 1; i < OverallNumber; i++) {
-                    if(arrIDNumberSettings[i] == arrIDNumberSettings[i - 1]) {
-                        arrIDNumberSettings[i - 1] = 0;
+                class ComparString implements Comparator<String> {
+                    public int compare(String first, String second) {
+                        boolean resultBool;
+                        boolean firstNum = true, secondNum = true;
+                        for(int i = 0; i < first.length(); i++) {
+                            if(first.charAt(i) != '0' && first.charAt(i) != '1' &&
+                               first.charAt(i) != '2' && first.charAt(i) != '3' &&
+                               first.charAt(i) != '4' && first.charAt(i) != '5' &&
+                               first.charAt(i) != '6' && first.charAt(i) != '7' &&
+                               first.charAt(i) != '8' && first.charAt(i) != '9'
+                            ) firstNum = false;
+                        }
+                        for(int i = 0; i < second.length(); i++) {
+                            if(second.charAt(i) != '0' && second.charAt(i) != '1' &&
+                                    second.charAt(i) != '2' && second.charAt(i) != '3' &&
+                                    second.charAt(i) != '4' && second.charAt(i) != '5' &&
+                                    second.charAt(i) != '6' && second.charAt(i) != '7' &&
+                                    second.charAt(i) != '8' && second.charAt(i) != '9'
+                            ) secondNum = false;
+                        }
+                        if(firstNum) {
+                            if(secondNum) {
+                                int firstInt = Integer.parseInt(first);
+                                int secondInt = Integer.parseInt(second);
+                                if(firstInt > secondInt) resultBool = true;
+                                else resultBool = false;
+                            }
+                            else {
+                                resultBool = false;
+                            }
+                        }
+                        else {
+                            if(secondNum) {
+                                resultBool = true;
+                            }
+                            else {
+                                resultBool = first.compareTo(second) > 0;
+                            }
+                        }
+                        return resultBool ? 1 : -1;
                     }
                 }
-                Arrays.sort(arrIDNumberSettings);
+                Arrays.sort(arrIDNumberSettings, new ComparString());
+                for(int i = 1; i < OverallNumber; i++) {
+                    if(arrIDNumberSettings[i].equals(arrIDNumberSettings[i - 1])) {
+                        arrIDNumberSettings[i - 1] = "0";
+                    }
+                }
+                Arrays.sort(arrIDNumberSettings, new ComparString());
                 int tempNumber = OverallNumber;
                 String rewriteText = "";
                 result = 0;
                 for(int i = 0; i < tempNumber; i++) {
-                    if(arrIDNumberSettings[i] == 0) {
+                    if(arrIDNumberSettings[i].equals("0")) {
                         OverallNumber--;
                         continue;
                     }
                     if(result != 0) rewriteText += ",";
                     result++;
-                    rewriteText += String.valueOf(arrIDNumberSettings[i]);
+                    rewriteText += arrIDNumberSettings[i];
                 }
                 if(result == 0) {
                     texterr.setText("Введите номера участников");
@@ -781,9 +857,9 @@ public class TabbedStopwatch extends AppCompatActivity {
                 }
                 result = 0;
                 if(tempNumber - OverallNumber != 0) {
-                    tempArr = new int[OverallNumber];
+                    tempArr = new String[OverallNumber];
                     for(int i = 0; i < tempNumber; i++) {
-                        if(arrIDNumberSettings[i] != 0) {
+                        if(!arrIDNumberSettings[i].equals("0")) {
                             tempArr[result] = arrIDNumberSettings[i];
                             result++;
                         }
@@ -853,8 +929,11 @@ public class TabbedStopwatch extends AppCompatActivity {
             arrRowData[i].setX((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, Tab2.getResources().getDisplayMetrics()));
             Tab2.tableManage.addView(arrRowData[i]);
             arrTextData[i] = new TextView(Tab2.getActivity());
-            arrTextData[i].setText(String.valueOf(arrIDNumber[i]));
+            arrTextData[i].setText(arrIDNumber[i]);
             arrTextData[i].setPadding(5,5,5,0);
+            arrTextData[i].setTextSize(26);
+            arrTextData[i].setLayoutParams(new TableRow.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 160, Tab2.getResources().getDisplayMetrics()),
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
             arrRowData[i].addView(arrTextData[i]);
             long RunnerTime = arrTiming[i];
             long secs = ((int)RunnerTime/1000);
@@ -862,7 +941,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             secs %= 60;
             long milliseconds = (int)(RunnerTime%1000);
             arrTimeData[i] = new TextView(Tab2.getActivity());
-            arrTimeData[i].setPadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50,
+            arrTimeData[i].setPadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5,
                                             Tab2.getResources().getDisplayMetrics()),5,5,0);
             if(SData.getAccuracyFlag())
                 arrTimeData[i].setText((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs);
@@ -870,6 +949,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                 arrTimeData[i].setText((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs +"."+
                         ((milliseconds/10) < 10 ? "0" : "") + (milliseconds/10) );
             }
+            arrTimeData[i].setTextSize(26);
             arrRowData[i].addView(arrTimeData[i]);
 
             TableRow.MarginLayoutParams marginParams1 = new TableRow.MarginLayoutParams(arrRowData[i].getLayoutParams());
@@ -881,11 +961,12 @@ public class TabbedStopwatch extends AppCompatActivity {
     }
 
     //Сохранение настроек
-    protected void FilePrint(SettingsData SData) {
+    protected static void FilePrint(SettingsData SData) {
         try {
             // отрываем поток для записи
+
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
-                    openFileOutput("config.cfg", MODE_PRIVATE)));
+                    CW.openFileOutput("config.cfg", MODE_PRIVATE)));
             // пишем данные
             bw.write("[runnersNumber]\n");                                  // Метка 1
             bw.write(String.valueOf(SData.getRunners()) + "\n");            // Количество кнопок
@@ -897,6 +978,10 @@ public class TabbedStopwatch extends AppCompatActivity {
             bw.write(SData.getAccuracyFlag() + "\n");                       // Точность измерений
             bw.write("[hidetimeFLag]\n");                                   // Метка 5
             bw.write(SData.getTimeUntilShown() + "\n");                     // Количество секунд для исчезания кнопок
+            for(int i = 0; i < SData.getRunners(); i++) {
+                bw.write("[Runner ID number" + String.valueOf(i) + "\n");   // Метки для номеров
+                bw.write(String.valueOf(arrIDNumber[i]) + "\n");            // Идентификационный номер участника i
+            }
             // закрываем поток
             bw.close();
         } catch (FileNotFoundException e) {
@@ -938,6 +1023,9 @@ public class TabbedStopwatch extends AppCompatActivity {
                         if(Integer.parseInt(str) > 0 && Integer.parseInt(str) < 100) SData.setTimeUntilSHown(Integer.parseInt(str));
                         break;
                 }
+                if(stage > 11 && stage % 2 == 0) {
+                    arrIDNumber[(stage / 2) - 6] = str;
+                }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -968,9 +1056,13 @@ public class TabbedStopwatch extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_tabbed_stopwatch);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        CW = new ContextWrapper(getBaseContext());
+
+        arrIDNumber = new String[101];
         SData = FileRead();
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.

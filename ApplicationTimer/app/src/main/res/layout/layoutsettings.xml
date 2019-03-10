@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
@@ -48,6 +47,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
+        android:theme = "@android:style/Theme.Black.NoTitleBar"
         android:id="@+id/edit_TimeUntil"
         android:layout_width="48dp"
         android:layout_height="37dp"
@@ -92,6 +92,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text_TimeUntil" />
 
     <EditText
+        android:theme = "@android:style/Theme.Black.NoTitleBar"
         android:id="@+id/edit_laps"
         android:layout_width="46dp"
         android:layout_height="37dp"
@@ -121,7 +122,6 @@
             android:text="@string/_withoutMilis_text"
             android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="@+id/text_Accur"
-            app:layout_constraintEnd_toEndOf="@+id/check_Static"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/radio_2"
             app:layout_constraintTop_toTopOf="@+id/text_Accur" />
@@ -139,6 +139,7 @@
     </RadioGroup>
 
     <EditText
+        android:theme = "@android:style/Theme.Black.NoTitleBar"
         android:id="@+id/edit_RunnersNames"
         android:layout_width="211dp"
         android:layout_height="wrap_content"
@@ -175,47 +176,57 @@
 
     <ImageButton
         android:id="@+id/button_DeleteText"
-        android:layout_width="31dp"
-        android:layout_height="28dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="41dp"
+        android:layout_height="43dp"
+        android:background="@drawable/buttoncancelstyle"
+        android:scaleX="0.8"
+        android:scaleY="0.8"
         app:layout_constraintBottom_toBottomOf="@+id/edit_RunnersNames"
-        app:layout_constraintEnd_toStartOf="@+id/edit_runners"
+        app:layout_constraintEnd_toStartOf="@+id/button_Accept"
+        app:layout_constraintStart_toStartOf="@+id/button_Decline"
         app:layout_constraintTop_toTopOf="@+id/edit_RunnersNames"
-        app:layout_constraintVertical_bias="0.363"
-        app:srcCompat="@android:drawable/ic_delete" />
+        app:layout_constraintVertical_bias="0.0"/>
 
     <ImageButton
         android:id="@+id/button_Decline"
-        android:layout_width="37dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_width="41dp"
+        android:layout_height="43dp"
+        android:background="@drawable/buttoncancelstyle"
+        android:scaleX="0.8"
+        android:scaleY="0.8"
         app:layout_constraintBottom_toBottomOf="@+id/button_Accept"
-        app:layout_constraintStart_toEndOf="@+id/runnerText"
-        app:layout_constraintTop_toTopOf="@+id/button_Accept"
-        app:srcCompat="@android:drawable/btn_dialog" />
+        app:layout_constraintEnd_toStartOf="@+id/button_Accept"
+        app:layout_constraintTop_toTopOf="@+id/button_Accept"/>
 
     <ImageButton
         android:id="@+id/button_Accept"
-        android:layout_width="29dp"
-        android:layout_height="29dp"
+        android:layout_width="43dp"
+        android:layout_height="43dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/buttonacceptstyle"
+        android:scaleX="0.8"
+        android:scaleY="0.8"
         app:layout_constraintBottom_toBottomOf="@+id/runnerText"
-        app:layout_constraintStart_toEndOf="@+id/button_Decline"
+        app:layout_constraintBottom_toTopOf="@+id/button_DeleteText"
+        app:layout_constraintEnd_toEndOf="@+id/edit_runners"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/runnerText"
         app:layout_constraintTop_toTopOf="@+id/runnerText"
-        app:srcCompat="@android:drawable/presence_online" />
+
+        />
 
     <TextView
         android:id="@+id/edit_runners"
-        android:layout_width="35dp"
+        android:layout_width="20dp"
         android:layout_height="32dp"
         android:text="30"
         android:textColor="@android:color/black"
+        android:theme="@android:style/Theme.Black.NoTitleBar"
         app:layout_constraintBottom_toBottomOf="@+id/text_Runners"
         app:layout_constraintEnd_toEndOf="@+id/edit_TimeUntil"
+        app:layout_constraintHorizontal_bias="0.714"
         app:layout_constraintStart_toStartOf="@+id/edit_TimeUntil"
         app:layout_constraintTop_toTopOf="@+id/text_Runners"
         app:layout_constraintVertical_bias="0.0" />

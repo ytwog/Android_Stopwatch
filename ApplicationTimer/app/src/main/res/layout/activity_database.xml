@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinatorLayout"
+
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".database">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/textResult"
@@ -20,6 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
+        android:theme = "@android:style/Theme.Black.NoTitleBar"
         android:id="@+id/scrollView2"
         android:layout_width="325dp"
         android:layout_height="0dp"
@@ -51,7 +51,6 @@
                 android:layout_marginBottom="16dp"
                 android:scrollbars="vertical"
                 android:verticalScrollbarPosition="right"
-                app:layout_constraintBottom_toTopOf="@+id/buttonBackManage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textResult" />
@@ -64,17 +63,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="94dp" />
+        app:layout_constraintGuide_begin="112dp" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginLeft="36dp"
         android:text="@string/_participant_str"
         android:textColor="@android:color/black"
-        android:textSize="14sp"
+        android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -82,22 +81,22 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginStart="70dp"
+        android:layout_marginLeft="70dp"
         android:text="@string/_time_str"
         android:textColor="@android:color/black"
-        android:textSize="14sp"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_end="47dp" />
+        app:layout_constraintGuide_end="26dp" />
 
     <android.support.constraint.Barrier
         android:id="@+id/barrier"
