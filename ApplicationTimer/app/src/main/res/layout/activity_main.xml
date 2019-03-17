@@ -2,13 +2,15 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity1Layout"
     android:layout_width="match_parent"
+    android:background="@color/design_default_colorE"
     android:layout_height="match_parent">
 
     <TableRow
         android:id="@+id/tableRow"
-        android:layout_width="287dp"
-        android:layout_height="wrap_content"
+        android:layout_width="332dp"
+        android:layout_height="52dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -34,11 +36,17 @@
 
         <Button
             android:id="@+id/button_Reset"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="140dp"
+            android:layout_height="48dp"
             android:text="@string/Reset_str"
             tools:layout_editor_absoluteX="115dp"
             tools:layout_editor_absoluteY="5dp" />
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/icons8_deleteclick" />
 
     </TableRow>
 
@@ -64,7 +72,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="56dp" />
+        app:layout_constraintGuide_begin="65dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline2"

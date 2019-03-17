@@ -30,4 +30,8 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="_slashLap_str">Отображать количество пройденных кругов на главной странице</string>
+    <string name="_styleText_str">Стиль</string>
+    <string name="_style1_str">Стандартный</string>
+    <string name="_style2_str">Темный</string>
+    <string name="style3_str">Яркий</string>
 </resources>

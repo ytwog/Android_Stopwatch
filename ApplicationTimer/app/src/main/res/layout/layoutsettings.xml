@@ -2,33 +2,10 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout"
+    android:id="@+id/activity3layout"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/text_TimeUntil"
-        android:layout_width="177dp"
-        android:layout_height="39dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="@string/_TimeUntil"
-        android:textColor="@android:color/black"
-        app:layout_constraintEnd_toStartOf="@+id/edit_TimeUntil"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/text_LapsNum"
-        app:layout_constraintTop_toBottomOf="@+id/text_Runners" />
-
-    <TextView
-        android:id="@+id/text_Runners"
-        android:layout_width="wrap_content"
-        android:layout_height="27dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/_participantNumSettings"
-        android:textColor="@android:color/black"
-        app:layout_constraintStart_toStartOf="@+id/text_TimeUntil"
-        app:layout_constraintTop_toBottomOf="@+id/edit_RunnersNames" />
 
     <TextView
         android:id="@+id/textTab3Name"
@@ -46,213 +23,326 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:theme = "@android:style/Theme.Black.NoTitleBar"
-        android:id="@+id/edit_TimeUntil"
-        android:layout_width="48dp"
-        android:layout_height="37dp"
+    <ScrollView
+        android:layout_width="360dp"
+        android:layout_height="476dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:ems="10"
-        android:inputType="numberDecimal"
-        android:text="10"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="@color/colorPrimaryDark"
-        app:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toBottomOf="@+id/text_TimeUntil"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_creator="50"
-        app:layout_constraintTop_toTopOf="@+id/text_TimeUntil"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/text_Accur"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/_accuracy_text"
-        android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_LapsNum" />
+        app:layout_constraintTop_toBottomOf="@+id/textTab3Name">
 
-    <TextView
-        android:id="@+id/text_slashLap"
-        android:layout_width="211dp"
-        android:layout_height="67dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginTop="44dp"
-        android:text="@string/_slashLap_str"
-        android:textColor="@android:color/black"
-        app:layout_constraintEnd_toEndOf="@+id/text_Accur"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_Accur" />
+        <android.support.constraint.ConstraintLayout
+            android:background="@color/design_default_colorE"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="100"
+            android:orientation="vertical"
+            tools:layout_editor_absoluteX="17dp"
+            tools:layout_editor_absoluteY="70dp">
 
-    <TextView
-        android:id="@+id/text_LapsNum"
-        android:layout_width="166dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="@string/_lapsNum_str"
-        android:textColor="@android:color/black"
-        app:layout_constraintEnd_toEndOf="@+id/text_Accur"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/text_Accur"
-        app:layout_constraintTop_toBottomOf="@+id/text_TimeUntil" />
+            <RadioGroup
+                android:id="@+id/radioGroup2"
+                android:layout_width="107dp"
+                android:layout_height="wrap_content"
+                android:checkedButton="@+id/radioStyle_3"
+                app:layout_constraintBottom_toBottomOf="@+id/text_style"
+                app:layout_constraintEnd_toEndOf="@+id/checkLapsSlash"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/checkLapsSlash"
+                app:layout_constraintTop_toTopOf="@+id/text_style"
+                app:layout_constraintVertical_bias="0.0">
 
-    <EditText
-        android:theme = "@android:style/Theme.Black.NoTitleBar"
-        android:id="@+id/edit_laps"
-        android:layout_width="46dp"
-        android:layout_height="37dp"
-        android:ems="10"
-        android:inputType="numberDecimal"
-        android:text="10"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="@color/colorPrimaryDark"
-        app:layout_constraintBottom_toBottomOf="@+id/text_LapsNum"
-        app:layout_constraintEnd_toEndOf="@+id/radioGroup1"
-        app:layout_constraintStart_toStartOf="@+id/edit_TimeUntil"
-        app:layout_constraintTop_toTopOf="@+id/text_LapsNum" />
+                <RadioButton
+                    android:id="@+id/radioStyle_3"
+                    android:layout_width="100dp"
+                    android:layout_height="23dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_weight="1"
+                    android:text="@string/_style1_str"
+                    android:textSize="10sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/radio_1" />
 
-    <RadioGroup
-        android:id="@+id/radioGroup1"
-        android:layout_width="88dp"
-        android:layout_height="wrap_content"
-        android:checkedButton="@+id/radio_1"
-        app:layout_constraintEnd_toEndOf="@+id/edit_TimeUntil"
-        app:layout_constraintTop_toTopOf="@+id/text_Accur">
+                <RadioButton
+                    android:id="@+id/radioStyle_1"
+                    android:layout_width="100dp"
+                    android:layout_height="20dp"
+                    android:text="@string/_style2_str"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/text_Accur"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/radio_2"
+                    app:layout_constraintTop_toTopOf="@+id/text_Accur" />
 
-        <RadioButton
-            android:id="@+id/radio_1"
-            android:layout_width="82dp"
-            android:layout_height="20dp"
-            android:checked="true"
-            android:text="@string/_withoutMilis_text"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@+id/text_Accur"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/radio_2"
-            app:layout_constraintTop_toTopOf="@+id/text_Accur" />
+                <RadioButton
+                    android:id="@+id/radioStyle_2"
+                    android:layout_width="100dp"
+                    android:layout_height="23dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:text="@string/style3_str"
+                    android:textSize="10sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/radio_1" />
+            </RadioGroup>
 
-        <RadioButton
-            android:id="@+id/radio_2"
-            android:layout_width="83dp"
-            android:layout_height="23dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="@string/_tenthMilis_text"
-            android:textSize="10sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/radio_1" />
-    </RadioGroup>
+            <RadioGroup
+                android:id="@+id/radioGroup1"
+                android:layout_width="88dp"
+                android:layout_height="wrap_content"
+                android:checkedButton="@+id/radio_1"
+                app:layout_constraintEnd_toEndOf="@+id/edit_TimeUntil"
+                app:layout_constraintTop_toTopOf="@+id/text_Accur">
 
-    <EditText
-        android:id="@+id/edit_RunnersNames"
-        android:layout_width="211dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:ems="10"
-        android:inputType="textUri|textPersonName"
-        android:theme="@android:style/Theme.Black.NoTitleBar"
-        app:layout_constraintEnd_toStartOf="@+id/button_DeleteText"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/text_Runners"
-        app:layout_constraintTop_toBottomOf="@+id/runnerText" />
+                <RadioButton
+                    android:id="@+id/radio_1"
+                    android:layout_width="82dp"
+                    android:layout_height="20dp"
+                    android:text="@string/_withoutMilis_text"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/text_Accur"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/radio_2"
+                    app:layout_constraintTop_toTopOf="@+id/text_Accur" />
 
-    <TextView
-        android:id="@+id/runnerText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginTop="12dp"
-        android:text="@string/_runners_str"
-        android:textColor="@android:color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_Err" />
+                <RadioButton
+                    android:id="@+id/radio_2"
+                    android:layout_width="83dp"
+                    android:layout_height="23dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:text="@string/_tenthMilis_text"
+                    android:textSize="10sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/radio_1" />
+            </RadioGroup>
 
-    <TextView
-        android:id="@+id/text_Err"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:textColor="@android:color/holo_red_dark"
-        app:layout_constraintStart_toStartOf="@+id/runnerText"
-        app:layout_constraintTop_toBottomOf="@+id/textTab3Name" />
+            <EditText
+                android:id="@+id/edit_laps"
+                android:layout_width="46dp"
+                android:layout_height="37dp"
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:text="10"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="@color/colorPrimaryDark"
+                android:theme="@android:style/Theme.Black.NoTitleBar"
+                app:layout_constraintBottom_toBottomOf="@+id/text_LapsNum"
+                app:layout_constraintEnd_toEndOf="@+id/radioGroup1"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/edit_TimeUntil"
+                app:layout_constraintTop_toTopOf="@+id/text_LapsNum" />
 
-    <ImageButton
-        android:id="@+id/button_DeleteText"
-        android:layout_width="41dp"
-        android:layout_height="43dp"
-        android:background="@drawable/buttoncancelstyle"
-        android:scaleX="0.8"
-        android:scaleY="0.8"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_RunnersNames"
-        app:layout_constraintEnd_toStartOf="@+id/button_Accept"
-        app:layout_constraintStart_toStartOf="@+id/button_Decline"
-        app:layout_constraintTop_toTopOf="@+id/edit_RunnersNames"
-        app:layout_constraintVertical_bias="0.0"/>
+            <ImageButton
+                android:id="@+id/button_Accept"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/buttonacceptstyle"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                app:layout_constraintBottom_toBottomOf="@+id/runnerText"
+                app:layout_constraintBottom_toTopOf="@+id/button_DeleteText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
 
-    <ImageButton
-        android:id="@+id/button_Decline"
-        android:layout_width="41dp"
-        android:layout_height="43dp"
-        android:background="@drawable/buttoncancelstyle"
-        android:scaleX="0.8"
-        android:scaleY="0.8"
-        app:layout_constraintBottom_toBottomOf="@+id/button_Accept"
-        app:layout_constraintEnd_toStartOf="@+id/button_Accept"
-        app:layout_constraintTop_toTopOf="@+id/button_Accept"/>
+                app:layout_constraintStart_toEndOf="@+id/runnerText"
+                app:layout_constraintTop_toTopOf="@+id/runnerText" />
 
-    <ImageButton
-        android:id="@+id/button_Accept"
-        android:layout_width="43dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/buttonacceptstyle"
-        android:scaleX="0.8"
-        android:scaleY="0.8"
-        app:layout_constraintBottom_toBottomOf="@+id/runnerText"
-        app:layout_constraintBottom_toTopOf="@+id/button_DeleteText"
-        app:layout_constraintEnd_toEndOf="@+id/edit_runners"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/runnerText"
-        app:layout_constraintTop_toTopOf="@+id/runnerText"
+            <TextView
+                android:id="@+id/text_Accur"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginStart="28dp"
+                android:layout_marginLeft="28dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/_accuracy_text"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_LapsNum" />
 
-        />
+            <ImageButton
+                android:id="@+id/button_Decline"
+                android:layout_width="41dp"
+                android:layout_height="43dp"
+                android:background="@drawable/buttoncancelstyle"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                app:layout_constraintBottom_toBottomOf="@+id/button_Accept"
+                app:layout_constraintEnd_toStartOf="@+id/button_Accept"
+                app:layout_constraintTop_toTopOf="@+id/button_Accept" />
 
-    <TextView
-        android:id="@+id/edit_runners"
-        android:layout_width="20dp"
-        android:layout_height="32dp"
-        android:text="30"
-        android:textColor="@android:color/black"
-        android:theme="@android:style/Theme.Black.NoTitleBar"
-        app:layout_constraintBottom_toBottomOf="@+id/text_Runners"
-        app:layout_constraintEnd_toEndOf="@+id/edit_TimeUntil"
-        app:layout_constraintHorizontal_bias="0.714"
-        app:layout_constraintStart_toStartOf="@+id/edit_TimeUntil"
-        app:layout_constraintTop_toTopOf="@+id/text_Runners"
-        app:layout_constraintVertical_bias="0.0" />
+            <TextView
+                android:id="@+id/text_TimeUntil"
+                android:layout_width="177dp"
+                android:layout_height="39dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:text="@string/_TimeUntil"
+                android:textColor="@android:color/black"
+                app:layout_constraintEnd_toStartOf="@+id/edit_TimeUntil"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/text_LapsNum"
+                app:layout_constraintTop_toBottomOf="@+id/text_Runners" />
 
-    <CheckBox
-        android:id="@+id/checkLapsSlash"
-        android:layout_width="36dp"
-        android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="@+id/text_slashLap"
-        app:layout_constraintEnd_toEndOf="@+id/radioGroup1"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/radioGroup1"
-        app:layout_constraintTop_toTopOf="@+id/text_slashLap" />
+            <TextView
+                android:id="@+id/text_Err"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:textColor="@android:color/holo_red_dark"
+                app:layout_constraintEnd_toEndOf="@+id/button_Accept"
+                app:layout_constraintStart_toStartOf="@+id/runnerText"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/text_LapsNum"
+                android:layout_width="166dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:text="@string/_lapsNum_str"
+                android:textColor="@android:color/black"
+                app:layout_constraintEnd_toEndOf="@+id/text_Accur"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/text_Accur"
+                app:layout_constraintTop_toBottomOf="@+id/text_TimeUntil" />
+
+            <EditText
+                android:id="@+id/edit_RunnersNames"
+                android:layout_width="181dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:ems="10"
+                android:inputType="textUri|textPersonName"
+                android:theme="@android:style/Theme.Black.NoTitleBar"
+                app:layout_constraintEnd_toStartOf="@+id/button_DeleteText"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/text_Runners"
+                app:layout_constraintTop_toBottomOf="@+id/runnerText" />
+
+            <TextView
+                android:id="@+id/runnerText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:layout_marginLeft="28dp"
+                android:text="@string/_runners_str"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_Err" />
+
+            <TextView
+                android:id="@+id/text_Runners"
+                android:layout_width="wrap_content"
+                android:layout_height="27dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/_participantNumSettings"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="@+id/text_TimeUntil"
+                app:layout_constraintTop_toBottomOf="@+id/edit_RunnersNames" />
+
+            <ImageButton
+                android:id="@+id/button_DeleteText"
+                android:layout_width="41dp"
+                android:layout_height="43dp"
+                android:background="@drawable/buttoncancelstyle"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                app:layout_constraintBottom_toBottomOf="@+id/edit_RunnersNames"
+                app:layout_constraintEnd_toStartOf="@+id/button_Accept"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/button_Decline"
+                app:layout_constraintTop_toTopOf="@+id/edit_RunnersNames"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/text_slashLap"
+                android:layout_width="211dp"
+                android:layout_height="67dp"
+                android:layout_marginStart="28dp"
+                android:layout_marginLeft="28dp"
+                android:layout_marginTop="44dp"
+                android:text="@string/_slashLap_str"
+                android:textColor="@android:color/black"
+                app:layout_constraintEnd_toEndOf="@+id/text_Accur"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_Accur" />
+
+            <EditText
+                android:id="@+id/edit_TimeUntil"
+                android:layout_width="48dp"
+                android:layout_height="37dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginRight="25dp"
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:text="10"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="@color/colorPrimaryDark"
+                android:theme="@android:style/Theme.Black.NoTitleBar"
+                app:layout_constraintBottom_creator="1"
+                app:layout_constraintBottom_toBottomOf="@+id/text_TimeUntil"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_creator="50"
+                app:layout_constraintTop_toTopOf="@+id/text_TimeUntil"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <CheckBox
+                android:id="@+id/checkLapsSlash"
+                android:layout_width="36dp"
+                android:layout_height="40dp"
+                app:layout_constraintBottom_toBottomOf="@+id/text_slashLap"
+                app:layout_constraintEnd_toEndOf="@+id/radioGroup1"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/radioGroup1"
+                app:layout_constraintTop_toTopOf="@+id/text_slashLap" />
+
+            <TextView
+                android:id="@+id/edit_runners"
+                android:layout_width="20dp"
+                android:layout_height="32dp"
+                android:text="30"
+                android:textColor="@android:color/black"
+                android:theme="@android:style/Theme.Black.NoTitleBar"
+                app:layout_constraintBottom_toBottomOf="@+id/text_Runners"
+                app:layout_constraintEnd_toEndOf="@+id/edit_TimeUntil"
+                app:layout_constraintHorizontal_bias="0.714"
+                app:layout_constraintStart_toStartOf="@+id/edit_TimeUntil"
+                app:layout_constraintTop_toTopOf="@+id/text_Runners"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:layout_marginLeft="28dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/_styleText_str"
+                android:textColor="@android:color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/text_slashLap"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_slashLap"
+                app:layout_constraintVertical_bias="0.36" />
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

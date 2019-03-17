@@ -1,48 +1,36 @@
 package com.example.applicationtimer;
 
-import android.app.Activity;
-import android.content.ContextWrapper;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
-import android.graphics.Color;
+ import android.content.ContextWrapper;
+ import android.content.pm.ActivityInfo;
+ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.os.Handler;
+ import android.graphics.drawable.GradientDrawable;
+ import android.os.Handler;
 import android.os.SystemClock;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+ import android.support.v7.app.AppCompatActivity;
 
-import android.support.v4.app.Fragment;
+ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.Layout;
-import android.text.Spannable;
-import android.text.SpannableString;
+ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.text.style.AbsoluteSizeSpan;
-import android.text.style.RelativeSizeSpan;
-import android.util.AttributeSet;
-import android.util.Log;
+ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+ import android.view.View;
 import android.view.ViewGroup;
 
-import android.view.Window;
-import android.view.WindowManager;
+ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -61,15 +49,21 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Locale;
 
-import static java.lang.Math.sqrt;
+ import static java.lang.Math.sqrt;
 
 
 
 public class TabbedStopwatch extends AppCompatActivity {
     //Данные фрагментов
     static String currentTime;
+
+    static public class Pair<F, S> {
+        private F first;
+        private S second;
+    }
+    static protected Pair<Integer, Long> arrRestore[];
+    static protected int nowRestoring;
     static protected float minSize = 80;
     static protected TableRow arrRowData[];
     static protected long arrTiming[];
@@ -136,12 +130,15 @@ public class TabbedStopwatch extends AppCompatActivity {
         }
     }
 
+
+
     //Класс настроек
     protected static class SettingsData {
         protected int runnerNum = 30;
         protected int laps = 10;
         protected int numX = 3;
         protected int numY = 4;
+        protected int styleID = 0;
         protected boolean staticButtons = true;
         protected boolean accuracyFlag  = true;
         protected int timeUntilSHown = 10;
@@ -199,6 +196,7 @@ public class TabbedStopwatch extends AppCompatActivity {
         protected TableLayout tableLayout;
         protected Button arrButtons[][];
         protected TableRow arrRows[];
+        protected ImageButton BackButton;
 
         RunnerData runData[] = new RunnerData[101];
 
@@ -240,6 +238,23 @@ public class TabbedStopwatch extends AppCompatActivity {
 
         public void onResume() {
             super.onResume();
+
+            GradientDrawable gD;
+            if (SData.styleID == 1) {
+                gD = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{
+                        getResources().getColor(R.color.yellowish_Brown), getResources().getColor(R.color.Brown)});
+                Tab1.rootView.findViewById(R.id.activity1Layout).setBackgroundDrawable(gD);
+            }
+            else if (SData.styleID == 2) {
+                gD = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{
+                        getResources().getColor(R.color.Whitey_pink), getResources().getColor(R.color.Pink)});
+                Tab1.rootView.findViewById(R.id.activity1Layout).setBackgroundDrawable(gD);
+            }
+            else {
+                Tab1.rootView.findViewById(R.id.activity1Layout).setBackgroundColor(getResources().getColor(R.color.design_default_colorE));
+            }
+
+
             if(BuiltOnce) {
                 SData.setTimeUntilSHown(Integer.parseInt(Tab3.editTimeUntil.getText().toString()));
                 SData.setLaps(Integer.parseInt(Tab3.editLaps.getText().toString()));
@@ -258,6 +273,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                         currentTime += "."+((milliseconds/10) < 10 ? "0" : "") + (milliseconds/10);
                     }
                 }
+
                 textTimer.setText(currentTime);
                 SData.setAccuracyFlag(Tab3.radioGroup1.getCheckedRadioButtonId() == R.id.radio_1 ? true : false);
                 showTable();
@@ -280,9 +296,15 @@ public class TabbedStopwatch extends AppCompatActivity {
             buttonReset = (Button) rootView.findViewById(R.id.button_Reset);
             textTimer = (TextView)rootView.findViewById(R.id.text_Timer);
             tableLayout = (TableLayout) rootView.findViewById(R.id.tableLayout);
+            BackButton = (ImageButton) rootView.findViewById(R.id.backButton);
 
             //Предустановка переменных
             if(!BuiltOnce) {
+                arrRestore = new Pair[5];
+                for(int i = 0; i < 5; i++){
+                    arrRestore[i] = new Pair();
+                }
+                nowRestoring = 0;
                 arrTiming = new long[101];
                 textTimer.setText(SData.getAccuracyFlag() ? "00:00" : "00:00.00");
                 timeSwapBuffer=0L;
@@ -348,6 +370,23 @@ public class TabbedStopwatch extends AppCompatActivity {
                     isStarted = !isStarted;
                 }
             };
+            //Кнопка отмены
+            View.OnClickListener Signal_Back = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(nowRestoring > 0 && isStarted) {
+                        nowRestoring--;
+                        arrTiming[arrRestore[nowRestoring].first] = arrRestore[nowRestoring].second;
+                        runData[arrRestore[nowRestoring].first].LapsTaken--;
+                        runData[arrRestore[nowRestoring].first].isHidden = false;
+                        arrButtons[arrRestore[nowRestoring].first / (SData.getFieldX())][arrRestore[nowRestoring].first
+                                % (SData.getFieldX())].setVisibility(View.VISIBLE);
+                        if(runData[arrRestore[nowRestoring].first].LapsTaken < 0) runData[arrRestore[nowRestoring].first].LapsTaken = 0;
+                        deleteButtons();
+                        createButtons();
+                    }
+                }
+            };
             //Кнопка Сброса
             View.OnClickListener Signal_Reset = new View.OnClickListener() {
                 @Override
@@ -355,6 +394,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                     for(int i = 0; i < 100; i++) {
                         arrTiming[i] = 0;
                     }
+                    nowRestoring = 0;
                     dataExist = false;
                     buttonStart.setEnabled(true);
                     isStarted = false;
@@ -372,6 +412,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                 }
             };
 
+            BackButton.setOnClickListener(Signal_Back);
             buttonStart.setOnClickListener(Signal_Start);
             buttonReset.setOnClickListener(Signal_Reset);
             //**********************************************
@@ -393,6 +434,19 @@ public class TabbedStopwatch extends AppCompatActivity {
                 if (isStarted && v.getVisibility() == View.VISIBLE && v.isEnabled()) {
                     //Сделать кнопку невидимой - только при динамичных кнопках
                     int idNum = v.getId();
+                    //Сохранение нажатой кнопки
+                    Integer IDAdd = idNum;
+                    Long longAdd = arrTiming[idNum];
+                    if(nowRestoring == 5) {
+                        for(int i = 1; i < 5; i++) {
+                            arrRestore[i-1].first = arrRestore[i].first;
+                            arrRestore[i-1].second = arrRestore[i].second;
+                        }
+                        nowRestoring--;
+                    }
+                    arrRestore[nowRestoring].first = IDAdd;
+                    arrRestore[nowRestoring].second = longAdd;
+                    nowRestoring++;
                     arrTiming[idNum] = updateTime;
                     if (SData.getLaps() - runData[idNum].getLapsTaken() == 3) {
                         v.getBackground().setColorFilter(Color.rgb(0xFB, 0xA0, 0x15), PorterDuff.Mode.MULTIPLY);
@@ -619,8 +673,13 @@ public class TabbedStopwatch extends AppCompatActivity {
         protected TextView editRunners;
         protected EditText editLaps;
         protected ImageButton buttonDeleteText;
-        protected RadioButton radio1;
+        //Radio 1
         protected RadioGroup radioGroup1;
+        protected RadioButton radio1;
+        //Radio 2
+        protected RadioGroup radioGroup2;
+        protected RadioButton radio2;
+
         protected EditText editRunnersNames;
         protected CheckBox checkBoxSlashLaps;
 
@@ -637,7 +696,20 @@ public class TabbedStopwatch extends AppCompatActivity {
             buttonAccept.setEnabled(startTime==0);
             buttonDecline.setEnabled(startTime==0);
             buttonDeleteText.setEnabled(startTime==0);
-            editLaps.setEnabled(!isStarted);
+            editLaps.setEnabled(startTime==0);
+
+            GradientDrawable gD;
+            if(SData.styleID == 1) gD = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[] {
+                    getResources().getColor(R.color.yellowish_Brown), getResources().getColor(R.color.Brown)});
+            else if(SData.styleID == 2) gD = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[] {
+                    getResources().getColor(R.color.Whitey_pink), getResources().getColor(R.color.Pink)});
+            else {
+                Tab2.rootView.findViewById(R.id.activity2layout).setBackgroundColor(getResources().getColor(R.color.design_default_colorE));
+                Tab3.rootView.findViewById(R.id.activity3layout).setBackgroundColor(getResources().getColor(R.color.design_default_colorE));
+                return;
+            }
+            Tab2.rootView.findViewById(R.id.activity2layout).setBackgroundDrawable(gD);
+            Tab3.rootView.findViewById(R.id.activity3layout).setBackgroundDrawable(gD);
         }
 
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -655,17 +727,45 @@ public class TabbedStopwatch extends AppCompatActivity {
             buttonDeleteText = (ImageButton) rootView.findViewById(R.id.button_DeleteText);
             radio1 = (RadioButton) rootView.findViewById(R.id.radio_1);
             radioGroup1 = (RadioGroup) rootView.findViewById(R.id.radioGroup1);
+            radio2 = (RadioButton) rootView.findViewById(R.id.radioStyle_1);
+            radioGroup2 = (RadioGroup) rootView.findViewById(R.id.radioGroup2);
             checkBoxSlashLaps = (CheckBox) rootView.findViewById(R.id.checkLapsSlash);
             //Получение значений из главного меню
             OverallNumber = SData.getRunners();
             checkBoxSlashLaps.setChecked(SData.getslashLaps());
             editRunners.setText(String.valueOf(OverallNumber));
             radioGroup1.check(SData.getAccuracyFlag() ? R.id.radio_1 : R.id.radio_2);
+            radioGroup2.check(SData.styleID == 0 ? R.id.radioStyle_3 : (SData.styleID == 1 ? R.id.radioStyle_1 : R.id.radioStyle_2));
             arrIDNumberSettings = arrIDNumber;
             editLaps.setText(String.valueOf(SData.getLaps()));
             editTimeUntil.setText(String.valueOf(SData.getTimeUntilShown()));
 
             //Установка ограничений на ввод числа кругов
+            radioGroup2.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                    SData.styleID = (radioGroup2.getCheckedRadioButtonId() == R.id.radioStyle_3 ? 0 :
+                            (radioGroup2.getCheckedRadioButtonId() == R.id.radioStyle_1 ? 1 : 2));
+
+                    GradientDrawable gD;
+                    if(SData.styleID == 1) gD = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[] {
+                            getResources().getColor(R.color.yellowish_Brown), getResources().getColor(R.color.Brown)});
+                    else if(SData.styleID == 2) gD = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[] {
+                            getResources().getColor(R.color.Whitey_pink), getResources().getColor(R.color.Pink)});
+                    else {
+                        Tab1.rootView.findViewById(R.id.activity1Layout).setBackgroundColor(getResources().getColor(R.color.design_default_colorE));
+                        Tab2.rootView.findViewById(R.id.activity2layout).setBackgroundColor(getResources().getColor(R.color.design_default_colorE));
+                        Tab3.rootView.findViewById(R.id.activity3layout).setBackgroundColor(getResources().getColor(R.color.design_default_colorE));
+                        return;
+                    }
+                    Tab1.rootView.findViewById(R.id.activity1Layout).setBackgroundDrawable(gD);
+                    Tab2.rootView.findViewById(R.id.activity2layout).setBackgroundDrawable(gD);
+                    Tab3.rootView.findViewById(R.id.activity3layout).setBackgroundDrawable(gD);
+                }
+            });
+
+
             editLaps.addTextChangedListener(new TextWatcher() {
                 private String before;
                 private boolean mFormating;
@@ -1097,6 +1197,8 @@ public class TabbedStopwatch extends AppCompatActivity {
             bw.write(SData.getTimeUntilShown() + "\n");                     // Количество секунд для исчезания кнопок
             bw.write("[slashLapsFlag]\n");                                  // Метка 6
             bw.write((SData.getslashLaps() ? "true" : "false") + "\n");     // Отображение кругов через слэш
+            bw.write("[styleInteger]\n");                                   // Метка 7
+            bw.write(SData.styleID + "\n");                                 // Стиль приложения
             for(int i = 0; i < SData.getRunners(); i++) {
                 bw.write("[Runner ID number" + String.valueOf(i) + "\n");   // Метки для номеров
                 bw.write(String.valueOf(arrIDNumber[i]) + "\n");            // Идентификационный номер участника i
@@ -1145,9 +1247,13 @@ public class TabbedStopwatch extends AppCompatActivity {
                         if(str.equals("false")) SData.setSlashLaps(false);
                         else               SData.setSlashLaps(true);
                         break;
+                    case 14:
+                        SData.styleID = Integer.parseInt(str);
+                        if(SData.styleID != 0 && SData.styleID != 1 && SData.styleID != 2) SData.styleID = 0;
+                        break;
                 }
-                if(stage > 13 && stage % 2 == 0) {
-                    arrIDNumber[(stage / 2) - 7] = str;
+                if(stage > 15 && stage % 2 == 0) {
+                    arrIDNumber[(stage / 2) - 8] = str;
                 }
             }
         } catch (FileNotFoundException e) {
@@ -1184,7 +1290,6 @@ public class TabbedStopwatch extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         CW = new ContextWrapper(getBaseContext());
-
         arrIDNumber = new String[101];
         SData = FileRead();
         // Create the adapter that will return a fragment for each of the three
