@@ -134,7 +134,7 @@ public class TabbedStopwatch extends AppCompatActivity {
 
     //Класс настроек
     protected static class SettingsData {
-        protected int runnerNum = 30;
+        protected int runnerNum = 10;
         protected int laps = 10;
         protected int numX = 3;
         protected int numY = 4;
@@ -1185,6 +1185,8 @@ public class TabbedStopwatch extends AppCompatActivity {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
                     CW.openFileOutput("config.cfg", MODE_PRIVATE)));
             // пишем данные
+            bw.write("[versionNumber]\n");                                  // Метка 1
+            bw.write("Save_ver1\n");
             bw.write("[runnersNumber]\n");                                  // Метка 1
             bw.write(String.valueOf(SData.getRunners()) + "\n");            // Количество кнопок
             bw.write("[staticFlag]\n");                                     // Метка 2
@@ -1227,33 +1229,36 @@ public class TabbedStopwatch extends AppCompatActivity {
                 stage++;
                 switch (stage) {
                     case 2:
-                        if(Integer.parseInt(str) > 0 && Integer.parseInt(str) < 101) SData.setRunners(Integer.parseInt(str));
+                        if(!str.equals("Save_ver1")) return SData;
                         break;
                     case 4:
+                        if(Integer.parseInt(str) > 0 && Integer.parseInt(str) < 101) SData.setRunners(Integer.parseInt(str));
+                        break;
+                    case 6:
                         if(str.equals("false")) SData.setStaticButtons(false);
                         else               SData.setStaticButtons(true);
                         break;
-                    case 6:
+                    case 8:
                         if(Integer.parseInt(str) > 0 && Integer.parseInt(str) < 100) SData.setLaps(Integer.parseInt(str));
                         break;
-                    case 8:
+                    case 10:
                         if(str.equals("false")) SData.setAccuracyFlag(false);
                         else               SData.setAccuracyFlag(true);
                         break;
-                    case 10:
+                    case 12:
                         if(Integer.parseInt(str) > 0 && Integer.parseInt(str) < 100) SData.setTimeUntilSHown(Integer.parseInt(str));
                         break;
-                    case 12:
+                    case 14:
                         if(str.equals("false")) SData.setSlashLaps(false);
                         else               SData.setSlashLaps(true);
                         break;
-                    case 14:
+                    case 16:
                         SData.styleID = Integer.parseInt(str);
                         if(SData.styleID != 0 && SData.styleID != 1 && SData.styleID != 2) SData.styleID = 0;
                         break;
                 }
-                if(stage > 15 && stage % 2 == 0) {
-                    arrIDNumber[(stage / 2) - 8] = str;
+                if(stage > 17 && stage % 2 == 0) {
+                    arrIDNumber[(stage / 2) - 9] = str;
                 }
             }
         } catch (FileNotFoundException e) {
