@@ -34,4 +34,8 @@
     <string name="_style1_str">Стандартный</string>
     <string name="_style2_str">Темный</string>
     <string name="style3_str">Яркий</string>
+    <string name="_VolumeButton_text">Запуск таймера по нажатию кнопки увеличения громкости</string>
+    <string name="notifytitle">Групповой таймер запущен</string>
+    <string name="notifytext">Количество участников: </string>
+    <string name="_notifEnable">Уведомление при запуске таймера</string>
 </resources>

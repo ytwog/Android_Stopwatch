@@ -25,19 +25,23 @@
 
     <ScrollView
         android:layout_width="360dp"
-        android:layout_height="476dp"
+        android:layout_height="460dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.581"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textTab3Name">
+        app:layout_constraintTop_toBottomOf="@+id/textTab3Name"
+        app:layout_constraintVertical_bias="0.105">
 
         <android.support.constraint.ConstraintLayout
-            android:background="@color/design_default_colorE"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="100"
+            android:background="@color/design_default_colorE"
             android:orientation="vertical"
             tools:layout_editor_absoluteX="17dp"
             tools:layout_editor_absoluteY="70dp">
@@ -140,21 +144,14 @@
                 android:id="@+id/button_Accept"
                 android:layout_width="43dp"
                 android:layout_height="43dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
                 android:background="@drawable/buttonacceptstyle"
                 android:scaleX="0.8"
                 android:scaleY="0.8"
-                app:layout_constraintBottom_toBottomOf="@+id/runnerText"
-                app:layout_constraintBottom_toTopOf="@+id/button_DeleteText"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintBottom_toBottomOf="@+id/button_DeleteText"
 
-                app:layout_constraintStart_toEndOf="@+id/runnerText"
-                app:layout_constraintTop_toTopOf="@+id/runnerText" />
+                app:layout_constraintStart_toEndOf="@+id/button_DeleteText"
+                app:layout_constraintTop_toTopOf="@+id/button_DeleteText"
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/text_Accur"
@@ -167,17 +164,6 @@
                 android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_LapsNum" />
-
-            <ImageButton
-                android:id="@+id/button_Decline"
-                android:layout_width="41dp"
-                android:layout_height="43dp"
-                android:background="@drawable/buttoncancelstyle"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                app:layout_constraintBottom_toBottomOf="@+id/button_Accept"
-                app:layout_constraintEnd_toStartOf="@+id/button_Accept"
-                app:layout_constraintTop_toTopOf="@+id/button_Accept" />
 
             <TextView
                 android:id="@+id/text_TimeUntil"
@@ -221,16 +207,12 @@
 
             <EditText
                 android:id="@+id/edit_RunnersNames"
-                android:layout_width="181dp"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:ems="10"
                 android:inputType="textUri|textPersonName"
                 android:theme="@android:style/Theme.Black.NoTitleBar"
-                app:layout_constraintEnd_toStartOf="@+id/button_DeleteText"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/text_Runners"
                 app:layout_constraintTop_toBottomOf="@+id/runnerText" />
 
@@ -257,15 +239,15 @@
 
             <ImageButton
                 android:id="@+id/button_DeleteText"
-                android:layout_width="41dp"
+                android:layout_width="43dp"
                 android:layout_height="43dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:background="@drawable/buttoncancelstyle"
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 app:layout_constraintBottom_toBottomOf="@+id/edit_RunnersNames"
-                app:layout_constraintEnd_toStartOf="@+id/button_Accept"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/button_Decline"
+                app:layout_constraintStart_toEndOf="@+id/edit_RunnersNames"
                 app:layout_constraintTop_toTopOf="@+id/edit_RunnersNames"
                 app:layout_constraintVertical_bias="0.0" />
 
@@ -312,9 +294,21 @@
                 app:layout_constraintStart_toStartOf="@+id/radioGroup1"
                 app:layout_constraintTop_toTopOf="@+id/text_slashLap" />
 
+            <CheckBox
+                android:id="@+id/check_volumeStart"
+                android:layout_width="36dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/text_volumeStart"
+                app:layout_constraintEnd_toEndOf="@+id/radioGroup2"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/radioGroup2"
+                app:layout_constraintTop_toTopOf="@+id/text_volumeStart"
+                app:layout_constraintVertical_bias="1.0" />
+
             <TextView
                 android:id="@+id/edit_runners"
-                android:layout_width="20dp"
+                android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:text="30"
                 android:textColor="@android:color/black"
@@ -332,7 +326,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="28dp"
                 android:layout_marginLeft="28dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="38dp"
                 android:layout_marginBottom="16dp"
                 android:text="@string/_styleText_str"
                 android:textColor="@android:color/black"
@@ -341,8 +335,63 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_slashLap"
-                app:layout_constraintVertical_bias="0.36" />
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/text_volumeStart"
+                android:layout_width="148dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:layout_marginLeft="28dp"
+                android:layout_marginTop="52dp"
+                android:text="@string/_VolumeButton_text"
+                android:textColor="@android:color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/text_style"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_style"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/textViewNotif"
+                android:layout_width="142dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:layout_marginLeft="28dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/_notifEnable"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_volumeStart" />
+
+            <CheckBox
+                android:id="@+id/notifBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewNotif"
+                app:layout_constraintEnd_toEndOf="@+id/check_volumeStart"
+                app:layout_constraintStart_toStartOf="@+id/check_volumeStart"
+                app:layout_constraintTop_toTopOf="@+id/textViewNotif" />
+
+            <ImageButton
+                android:id="@+id/buttonAdd"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
+                android:background="@android:color/transparent"
+                app:layout_constraintBottom_toBottomOf="@+id/button_DeleteText"
+                app:layout_constraintStart_toEndOf="@+id/button_Accept"
+                app:layout_constraintTop_toTopOf="@+id/button_DeleteText"
+                app:layout_constraintVertical_bias="1.0"
+                app:srcCompat="@android:drawable/ic_input_add" />
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="60dp" />
 
 </android.support.constraint.ConstraintLayout>
