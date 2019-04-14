@@ -11,7 +11,8 @@ package com.example.applicationtimer;
  import android.content.res.Resources;
  import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
+ import android.graphics.Point;
+ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
  import android.graphics.drawable.GradientDrawable;
  import android.os.Handler;
@@ -66,7 +67,7 @@ import java.util.Comparator;
 public class TabbedStopwatch extends AppCompatActivity {
     //Данные фрагментов
     static String currentTime;
-
+    static Display display;
     static public class Pair<F, S> {
         private F first;
         private S second;
@@ -235,6 +236,16 @@ public class TabbedStopwatch extends AppCompatActivity {
                         //Проверка для появления кнопки
                         if(arrButtons[i / (SData.getFieldX())][i% (SData.getFieldX())].getVisibility() == View.INVISIBLE)
                             if(runData[i].passSecond() == false){
+                                if (SData.getLaps() - runData[i].getLapsTaken() == 2) {
+                                    arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].getBackground().setColorFilter(Color.rgb(0xFB, 0xA0, 0x15), PorterDuff.Mode.MULTIPLY);
+
+                                } else if (SData.getLaps() - runData[i].getLapsTaken() == 1) {
+                                    arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].getBackground().setColorFilter(Color.rgb(0xFB, 0x10, 0x15), PorterDuff.Mode.MULTIPLY);
+                                } else if (SData.getLaps() - runData[i].getLapsTaken() == 0) {
+                                    arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].getBackground().setColorFilter(Color.rgb(0xFF, 0xFF, 0xFF), PorterDuff.Mode.MULTIPLY);
+                                }
+
+
                                 arrButtons[i / (SData.getFieldX())][i% (SData.getFieldX())].setVisibility(View.VISIBLE);
                             }
                     }
@@ -551,7 +562,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                             buttonStart.setEnabled(true);
                             dataExist = true;
                             ViewPager _viewPager = getActivity().findViewById(R.id.container);
-                            runData[idNum].LapsTaken++;
+                            //runData[idNum].LapsTaken++;
                             _viewPager.setCurrentItem(1, true);
                         }
                         v.getBackground().setColorFilter(Color.rgb(0xFF, 0xFF, 0xFF), PorterDuff.Mode.MULTIPLY);
@@ -559,8 +570,6 @@ public class TabbedStopwatch extends AppCompatActivity {
                         runData[idNum].LapsTaken++;
                         if(SData.getslashLaps())
                         {
-                            int maxWidth = 345;
-                            int everyWidth = maxWidth / SData.getFieldX();
                             String s = "" + (runData[(idNum / (SData.getFieldX()))*(SData.getFieldX()) +
                                     idNum % (SData.getFieldX())].getIDNumber()) + "/" +
                                     String.valueOf(runData[idNum / (SData.getFieldX())*(SData.getFieldX()) + idNum % (SData.getFieldX())].getLapsTaken());
@@ -579,8 +588,6 @@ public class TabbedStopwatch extends AppCompatActivity {
                     runData[idNum].setHidden();
                     if(SData.getslashLaps())
                     {
-                        int maxWidth = 345;
-                        int everyWidth = maxWidth / SData.getFieldX();
                         String s = "" + (runData[(idNum / (SData.getFieldX()))*(SData.getFieldX()) +
                                 idNum % (SData.getFieldX())].getIDNumber()) + "/" +
                                 String.valueOf(runData[idNum / (SData.getFieldX())*(SData.getFieldX()) + idNum % (SData.getFieldX())].getLapsTaken());
@@ -624,17 +631,25 @@ public class TabbedStopwatch extends AppCompatActivity {
         //Создание кнопок
         protected void createButtons(){
             minSize = 80;
+
+
+            //int width = sizeM.x;
+            //int height = sizeM.y;
+
             int numX = SData.getFieldX();
             int numY = SData.getFieldY();
             boolean eachToOther = (numY*numX == SData.getRunners());
             numY += (eachToOther && SData.getRunners() > 1) ? 1 : 0;
-
-            int maxWidth = 345;
-            int maxHeight = 435;
-            int everyWidth = maxWidth / numX;
-            int everyHeight = (maxHeight / numY) > 370 ? 370 : (maxHeight / numY);
-            int height = everyHeight;
-            int width = everyWidth;
+            Point sizeM = new Point();
+            display.getSize(sizeM);
+            int maxWidth = sizeM.x
+                    - (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
+            //int maxWidth = 345;
+            int maxHeight = sizeM.y
+                        - (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    165, getResources().getDisplayMetrics());
+            int width= maxWidth / numX;
+            int height  = (maxHeight / numY) > 370 ? 370 : (maxHeight / numY);
 
 
             if(buttonsCreated) return;
@@ -655,6 +670,11 @@ public class TabbedStopwatch extends AppCompatActivity {
                     arrButtons[i][j].setOnClickListener(Signal_NumeralButton);
                     String s = "" + (runData[i*(numX) + j].getIDNumber()) + "/" + String.valueOf(runData[i*(numX) + j].getLapsTaken());
 
+                    arrButtons[i][j].setLayoutParams(new TableRow.LayoutParams(
+                            width,
+                            height));
+                            //(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height, getResources().getDisplayMetrics())));
+
                     Paint testPaint = new Paint();
                     testPaint.set(arrButtons[i][j].getPaint());
                     int targetWidth = width - arrButtons[i][j].getPaddingLeft() - arrButtons[i][j].getPaddingRight();
@@ -666,8 +686,8 @@ public class TabbedStopwatch extends AppCompatActivity {
                     while((hi - lo) > threshold) {
                         float size = (hi+lo)/2;
                         testPaint.setTextSize(size);
-
-                        if(testPaint.measureText(s) >= targetWidth)
+                        float temp = testPaint.measureText(s);
+                        if((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, testPaint.measureText(s), getResources().getDisplayMetrics()) >= targetWidth)
                             hi = size; // too big
                         else
                             lo = size; // too small
@@ -675,20 +695,19 @@ public class TabbedStopwatch extends AppCompatActivity {
                     if(minSize > lo) minSize = lo;
                     arrRows[i].addView(arrButtons[i][j]);
 
-                    arrButtons[i][j].setLayoutParams(new TableRow.LayoutParams(
-                            (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width, getResources().getDisplayMetrics()),
-                            (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height, getResources().getDisplayMetrics())));
+
                 }
             }
             if(SData.getRunners() > 1) {
                 if(eachToOther) {
                     buttonEachLap = new Button(getActivity());
                     buttonEachLap.setText(R.string._eachLap);
-                    buttonEachLap.setTextSize(5 + 80 * everyWidth / maxWidth);
+                    buttonEachLap.setTextSize(5 + 80 * width / maxWidth);
                     buttonEachLap.setPadding(5, 5, 5, 5);
                     buttonEachLap.setLayoutParams(new TableRow.LayoutParams(
-                            (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width, getResources().getDisplayMetrics()),
-                            (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height, getResources().getDisplayMetrics()),
+                            width,
+                            height,
+                            //(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height, getResources().getDisplayMetrics()),
                             (float) 105));
                     arrRows[numY] = new TableRow(getActivity());
                     arrRows[numY].addView(buttonEachLap);
@@ -709,7 +728,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                     arrRows[numY - 1].addView(buttonEachLap);
 
                     buttonEachLap.setLayoutParams(new TableRow.LayoutParams(
-                            (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width, getResources().getDisplayMetrics()),
+                            width,
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             (float) 105));
                     int targetWidth = width - buttonEachLap.getPaddingLeft() - buttonEachLap.getPaddingRight();
@@ -722,14 +741,15 @@ public class TabbedStopwatch extends AppCompatActivity {
                         float size = (hi+lo)/2;
                         testPaint.setTextSize(size);
 
-                        if(testPaint.measureText("КРУГКРУГ") >= targetWidth)
+                        if((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, testPaint.measureText("КРУГКРУГ"),
+                                getResources().getDisplayMetrics()) >= targetWidth)
                             hi = size; // too big
                         else
                             lo = size; // too small
                     }
                     if(minSizeLap > lo) minSizeLap = lo;
 
-                    SpannableString sStr = new SpannableString(getString(R.string._eachLap));
+                    SpannableString sStr = new SpannableString(s);
                     sStr.setSpan(new AbsoluteSizeSpan((int)minSizeLap, true), 0, getString(R.string._eachLap).length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
                     buttonEachLap.setText(sStr);
                     buttonEachLap.setTextSize(minSizeLap);
@@ -1015,9 +1035,31 @@ public class TabbedStopwatch extends AppCompatActivity {
             };
             //editRunnersNames.setOnFocusChangeListener(FocusUpdated);
             //***********-Установка слотов на кнопки***************
+            View.OnClickListener Signal_Accept = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SData.setLaps(Integer.parseInt(editLaps.getText().toString()));
+                    SData.setTimeUntilSHown(Integer.parseInt(editTimeUntil.getText().toString()));
+                    if (getNames()) {
+                        int Runners = Integer.parseInt(editRunners.getText().toString());
+                        if (Runners != 0) {
+                            for (int i = Runners; i < SData.getRunners(); i++) {
+                                arrTiming[i] = 0;
+                            }
+                            SData.setRunners(Runners);
+                            arrIDNumber = arrIDNumberSettings;
+                        }
+                    }
+                    SData.setAccuracyFlag((radioGroup1.getCheckedRadioButtonId() == R.id.radio_1) ? true : false);
+                    FilePrint(SData);
+                }
+            };
+
             View.OnClickListener Signal_Add = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    buttonAccept.callOnClick();
+                    texterr.setText("");
                     String[] arrIDTemp = new String[101];
                     int toName = 1;
                     if(editRunnersNames.getText().length() == 0)
@@ -1054,7 +1096,10 @@ public class TabbedStopwatch extends AppCompatActivity {
                     }
                     editRunnersNames.setText(rewriteText);
                     getNames();
-                    editRunnersNames.setSelection(editRunnersNames.length()-1);
+                    editRunnersNames.setSelection(editRunnersNames.length());
+
+                    buttonAccept.callOnClick();
+                    texterr.setText("");
                 }
             };
             //Кнопка отмены
@@ -1072,25 +1117,6 @@ public class TabbedStopwatch extends AppCompatActivity {
                 }
             };
             //Кнопка принять
-            View.OnClickListener Signal_Accept = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SData.setLaps(Integer.parseInt(editLaps.getText().toString()));
-                    SData.setTimeUntilSHown(Integer.parseInt(editTimeUntil.getText().toString()));
-                    if (getNames()) {
-                        int Runners = Integer.parseInt(editRunners.getText().toString());
-                        if (Runners != 0) {
-                            for (int i = Runners; i < SData.getRunners(); i++) {
-                                arrTiming[i] = 0;
-                            }
-                            SData.setRunners(Runners);
-                            arrIDNumber = arrIDNumberSettings;
-                        }
-                    }
-                    SData.setAccuracyFlag((radioGroup1.getCheckedRadioButtonId() == R.id.radio_1) ? true : false);
-                    FilePrint(SData);
-                }
-            };
 
             View.OnClickListener Signal_ClearInput = new View.OnClickListener() {
                 @Override
@@ -1500,7 +1526,7 @@ public class TabbedStopwatch extends AppCompatActivity {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_tabbed_stopwatch);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
+        display = getWindowManager().getDefaultDisplay();
         CW = new ContextWrapper(getBaseContext());
         arrIDNumber = new String[101];
         SData = FileRead();
