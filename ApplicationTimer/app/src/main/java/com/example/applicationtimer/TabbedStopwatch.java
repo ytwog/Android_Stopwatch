@@ -1096,9 +1096,9 @@ public class TabbedStopwatch extends AppCompatActivity {
                     }
                     editRunnersNames.setText(rewriteText);
                     getNames();
-                    editRunnersNames.setSelection(editRunnersNames.length());
-
+                    editRunnersNames.append("");
                     buttonAccept.callOnClick();
+                    editRunnersNames.setSelection(editRunnersNames.length());
                     texterr.setText("");
                 }
             };
