@@ -2,6 +2,10 @@ package com.example.applicationtimer;
 
  import android.app.NotificationManager;
  import android.app.PendingIntent;
+ import android.bluetooth.BluetoothAdapter;
+ import android.bluetooth.BluetoothDevice;
+ import android.bluetooth.BluetoothServerSocket;
+ import android.bluetooth.BluetoothSocket;
  import android.content.BroadcastReceiver;
  import android.content.Context;
  import android.content.ContextWrapper;
@@ -17,9 +21,9 @@ import android.graphics.Typeface;
  import android.graphics.drawable.GradientDrawable;
  import android.os.Handler;
 import android.os.SystemClock;
+ import android.speech.RecognizerIntent;
  import android.support.v4.app.NotificationCompat;
  import android.support.v7.app.AppCompatActivity;
-
  import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -37,28 +41,37 @@ import android.view.Display;
  import android.view.KeyEvent;
  import android.view.LayoutInflater;
 import android.view.Menu;
+ import android.view.MotionEvent;
  import android.view.View;
 import android.view.ViewGroup;
 
  import android.view.WindowManager;
-import android.widget.Button;
+ import android.widget.AdapterView;
+ import android.widget.ArrayAdapter;
+ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RadioButton;
+ import android.widget.ListView;
+ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
+ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
+ import java.io.InputStream;
+ import java.io.InputStreamReader;
+ import java.io.OutputStream;
+ import java.io.OutputStreamWriter;
+ import java.util.ArrayList;
+ import java.util.Arrays;
 import java.util.Comparator;
+ import java.util.Set;
+ import java.util.UUID;
 
  import static java.lang.Math.min;
  import static java.lang.Math.sqrt;
@@ -73,23 +86,18 @@ public class TabbedStopwatch extends AppCompatActivity {
         private S second;
     }
     static protected Pair<Integer, Long> arrRestore[];
-    static protected int nowRestoring;
     static protected float minSize = 80;
     static protected TableRow arrRowData[];
-    static protected long arrTiming[];
     static protected ContextWrapper CW ;
     static protected boolean BuiltOnce = false;
-    static protected TextView arrTextData[];
-    static protected TextView arrTimeData[];
-    static protected TextView arrLapsData[];
+    static protected TextView arrTextData[], arrTimeData[], arrLapsData[];
     static protected SettingsActivity Tab3;
     static protected database Tab2;
     static protected MainActivity Tab1;
     static protected boolean buttonsCreated = false;
-    static long startTime=0L, timeInMilliseconds=0L, timeSwapBuffer, updateTime=0L;
-    static int secs, mins, milliseconds;
-    static protected boolean dataExist;
-    static protected boolean isStarted = false;
+    static long startTime=0L, timeInMilliseconds=0L, timeSwapBuffer, updateTime=0L, arrTiming[];
+    static int secs, mins, milliseconds, nowRestoring;
+    static protected boolean dataExist, isCheck = false, isStarted = false, ok_Speech;
     static protected SettingsData SData;
     static protected String arrIDNumber[];
     static protected NotificationManager notificationManager;
@@ -284,7 +292,6 @@ public class TabbedStopwatch extends AppCompatActivity {
             if(BuiltOnce) {
                 SData.setTimeUntilSHown(Integer.parseInt(Tab3.editTimeUntil.getText().toString()));
                 SData.setLaps(Integer.parseInt(Tab3.editLaps.getText().toString()));
-                SData.setSlashLaps(Tab3.checkBoxSlashLaps.isChecked());
                 if(Tab3.radioGroup1.getCheckedRadioButtonId() != (SData.getAccuracyFlag() ? R.id.radio_1 : R.id.radio_2)) {
                     if(Tab3.radioGroup1.getCheckedRadioButtonId() == R.id.radio_1) {
                         currentTime = currentTime.substring(0, 5);
@@ -310,11 +317,12 @@ public class TabbedStopwatch extends AppCompatActivity {
             //Обновление кнопок
             deleteButtons();
             createButtons();
+            if(isStarted) buttonEachLap.setText(getResources().getString(R.string._eachLap));
+            else buttonEachLap.setText(getResources().getString(R.string._str_Check));
             FilePrint(SData);
         }
 
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
             super.onCreate(savedInstanceState);
             rootView = inflater.inflate(R.layout.activity_main, container, false);
             //Сохранение элементов окна
@@ -335,6 +343,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                 textTimer.setText(SData.getAccuracyFlag() ? "00:00" : "00:00.00");
                 timeSwapBuffer=0L;
                 dataExist = false;
+                isCheck = false;
                 isStarted = false;
                 int toName = 1;
                 boolean hasName = false;
@@ -374,10 +383,11 @@ public class TabbedStopwatch extends AppCompatActivity {
             View.OnClickListener Signal_Start = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    buttonEachLap.setText(getResources().getString(R.string._eachLap));
                     if(isStarted) {
                         //Когда секундомер останавливаем
                         buttonStart.setText(R.string._start_str);
-                        // Закрыть уведомление
+                        //Закрыть уведомление
                         notificationManager.cancel(102);
                         //----------------
                         buttonStart.getBackground().setColorFilter(Color.rgb(0x3F, 0x51, 0xB5), PorterDuff.Mode.MULTIPLY);
@@ -505,8 +515,17 @@ public class TabbedStopwatch extends AppCompatActivity {
                     for(int i = 0; i < SData.getRunners(); i++) {
                         runData[i].reset();
                     }
+
+                    for(int i = 0; i < SData.getFieldX(); i++) {
+                        for(int j = 0; j < SData.getFieldY(); j++) {
+                            if((i + 1 == SData.getFieldY()) && (SData.runnerNum < i*(SData.getFieldX()) + j+1)) break;
+                            //arrButtons[i][j].setEnabled(false);
+                        }
+                    }
                     deleteButtons();
                     createButtons();
+                    if(isStarted) buttonEachLap.setText(getResources().getString(R.string._eachLap));
+                    else buttonEachLap.setText(getResources().getString(R.string._str_Check));
                 }
             };
 
@@ -520,8 +539,22 @@ public class TabbedStopwatch extends AppCompatActivity {
         View.OnClickListener Signal_EachLap = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for(int i = 0; i < SData.getRunners(); i++) {
-                    arrButtons[i / (SData.getFieldX())][i% (SData.getFieldX())].callOnClick();
+                if(isStarted) {
+                    for(int i = 0; i < SData.getRunners(); i++) {
+                        arrButtons[i / (SData.getFieldX())][i% (SData.getFieldX())].callOnClick();
+                    }
+                }
+                else {
+                    isCheck = !isCheck;
+                    if(isCheck) buttonReset.callOnClick();
+                    if(isCheck) buttonEachLap.setText(getResources().getString(R.string._str_CheckEnd));
+                    else buttonEachLap.setText(getResources().getString(R.string._str_Check));
+                    for(int i = 0; i < SData.getFieldY(); i++) {
+                        for(int j = 0; j < SData.getFieldX(); j++) {
+                            if((i + 1 == SData.getFieldY()) && (SData.runnerNum < i*(SData.getFieldX()) + j+1)) break;
+                            arrButtons[i][j].setVisibility(View.VISIBLE);
+                        }
+                    }
                 }
             }
         };
@@ -529,6 +562,12 @@ public class TabbedStopwatch extends AppCompatActivity {
         final View.OnClickListener Signal_NumeralButton = new View.OnClickListener() {
             public void onClick(View v) {
                 //Если запущен секундомер
+                if (isCheck)
+                {
+                    int i = v.getId();
+                    arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].setVisibility(View.INVISIBLE);
+                    return;
+                }
                 if (isStarted && v.getVisibility() == View.VISIBLE && v.isEnabled()) {
                     //Сделать кнопку невидимой - только при динамичных кнопках
                     int idNum = v.getId();
@@ -558,6 +597,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                             temp -= arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].isEnabled() ? 0 : 1;
                         }
                         if (temp == 1) {
+                            buttonEachLap.setText(getResources().getString(R.string._str_CheckEnd));
                             buttonStart.callOnClick();
                             buttonStart.setEnabled(true);
                             dataExist = true;
@@ -582,6 +622,7 @@ public class TabbedStopwatch extends AppCompatActivity {
 
                             arrButtons[idNum / (SData.getFieldX())][idNum % (SData.getFieldX())].setText(sStr);
                         }
+                        if(temp == 1) showTable();
                         return;
                     }
                     v.setVisibility(View.INVISIBLE);
@@ -741,7 +782,8 @@ public class TabbedStopwatch extends AppCompatActivity {
                         float size = (hi+lo)/2;
                         testPaint.setTextSize(size);
 
-                        if((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, testPaint.measureText("КРУГКРУГ"),
+                        if((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, testPaint.measureText(
+                                getResources().getString(R.string._str_CheckEnd) + getResources().getString(R.string._str_CheckEnd)),
                                 getResources().getDisplayMetrics()) >= targetWidth)
                             hi = size; // too big
                         else
@@ -807,24 +849,35 @@ public class TabbedStopwatch extends AppCompatActivity {
     //------------------------------------------------Settings fragment-------------------------------------------------------\\
 
     public static class SettingsActivity extends Fragment {
+        public static UUID uuid;
+        public static final int VOICE_RECOGNITION_REQUEST_CODE = 4300;
         public View rootView;
+        protected ListView listView;
+        protected ImageButton butAdd2;
         protected ImageButton buttonAdd;
         protected ImageButton buttonAccept;
-
+        protected ImageButton SpeechBut;
+        protected TextView textSpoken;
         protected TextView texterr;
+        protected TextView BTAddress1;
+        protected TextView BTname1;
         protected EditText editTimeUntil;
         protected TextView editRunners;
         protected EditText editLaps;
         protected ImageButton buttonDeleteText;
+        protected ImageButton Button_BluetoothConnect;
+        protected TextView BluetoothStatus_text;
         //Radio 1
         protected RadioGroup radioGroup1;
         protected RadioButton radio1;
         //Radio 2
         protected RadioGroup radioGroup2;
         protected RadioButton radio2;
+        //Radio 3
+        protected RadioGroup radioGroup3;
+        protected RadioButton radio3;
 
         protected EditText editRunnersNames;
-        protected CheckBox checkBoxSlashLaps;
         protected CheckBox checkVolumeStart;
         protected CheckBox checkNotifications;
 
@@ -836,12 +889,15 @@ public class TabbedStopwatch extends AppCompatActivity {
         public void onResume() {
             super.onResume();
             showTable();
+            isCheck = false;
             BuiltOnce = true;
             editRunnersNames.setEnabled(startTime==0);
             buttonAccept.setEnabled(startTime==0);
             buttonAdd.setEnabled(startTime==0);
             buttonDeleteText.setEnabled(startTime==0);
+            SpeechBut.setEnabled(startTime==0);
             editLaps.setEnabled(startTime==0);
+            buttonAdd.setEnabled(startTime==0);
             checkNotifications.setChecked(SData.notification);
 
             GradientDrawable gD;
@@ -858,14 +914,65 @@ public class TabbedStopwatch extends AppCompatActivity {
             Tab3.rootView.findViewById(R.id.activity3layout).setBackgroundDrawable(gD);
         }
 
+        public void startSpeak() {
+            Intent intent =  new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH); // Intent для вызова формы обработки речи (ОР)
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM); // сюда он слушает и запоминает
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getResources().getString(R.string._SpeechAsk_str));
+            startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE); // вызываем активность ОР
+
+        }
+
+
+        public void onActivityResult(int requestCode, int resultCode, Intent data){
+
+            if (requestCode == 435 && resultCode == RESULT_OK) {
+                Button_BluetoothConnect.callOnClick();
+            }
+            if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK){
+                texterr.setText("");
+                ok_Speech = true;
+                ArrayList commandList = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                String SpeechSaid = commandList.get(0).toString();
+                SpeechSaid = SpeechSaid.replace(" и ", ",");
+                SpeechSaid = SpeechSaid.replace(" ", ",");
+                SpeechSaid = SpeechSaid.replace(",,", ",");
+                String SpeechTemp = SpeechSaid;
+                while(SpeechTemp.indexOf(',') != -1) {
+                    int ComaIndex = SpeechTemp.indexOf(',');
+                    if (SpeechTemp.substring(0, ComaIndex).length() > 9) {
+                        ok_Speech = false;
+                        break;
+                    }
+                    SpeechTemp = SpeechTemp.substring(SpeechTemp.indexOf(','), SpeechTemp.length()-1);
+                }
+                if(SpeechTemp.length() > 9) ok_Speech = false;
+                if(!ok_Speech) texterr.setText(getResources().getString(R.string._err_Length));
+                textSpoken.setText(SpeechSaid);
+            }
+            super.onActivityResult(requestCode, resultCode, data);
+
+        }
+
+        public void onDestroy() {
+
+            super.onDestroy();
+        }
+
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             rootView = inflater.inflate(R.layout.layoutsettings, container, false);
-
             //Сохранение элементов окна
+            listView = (ListView)rootView.findViewById(R.id.listViewDeices);
+            Button_BluetoothConnect = (ImageButton) rootView.findViewById(R.id.blueToothConnect);
+            BluetoothStatus_text = (TextView) rootView.findViewById(R.id.bluetoothStatus);
+            butAdd2 = (ImageButton) rootView.findViewById(R.id.buttonAdd2);
+            SpeechBut = (ImageButton) rootView.findViewById(R.id.Button_speech);
             buttonAdd = (ImageButton) rootView.findViewById(R.id.buttonAdd);
             buttonAccept = (ImageButton)rootView.findViewById(R.id.button_Accept);
+            textSpoken = rootView.findViewById(R.id.SpokenText);
             texterr = (TextView) rootView.findViewById(R.id.text_Err);
+            BTAddress1 = (TextView) rootView.findViewById(R.id.AddressBT_1);
+            BTname1 = (TextView) rootView.findViewById(R.id.NameBT_1);
             editRunners = (TextView) rootView.findViewById(R.id.edit_runners);
             editLaps = (EditText) rootView.findViewById(R.id.edit_laps);
             editRunnersNames = (EditText) rootView.findViewById(R.id.edit_RunnersNames);
@@ -876,12 +983,20 @@ public class TabbedStopwatch extends AppCompatActivity {
             radio2 = (RadioButton) rootView.findViewById(R.id.radioStyle_1);
             radioGroup2 = (RadioGroup) rootView.findViewById(R.id.radioGroup2);
             checkNotifications = (CheckBox) rootView.findViewById(R.id.notifBox);
-            checkBoxSlashLaps = (CheckBox) rootView.findViewById(R.id.checkLapsSlash);
+            radio3 = (RadioButton) rootView.findViewById(R.id.radio_3);
+            radioGroup3 = (RadioGroup) rootView.findViewById(R.id.radioGroup3);
+
             checkVolumeStart = (CheckBox) rootView.findViewById(R.id.check_volumeStart);
             //Получение значений из главного меню
             OverallNumber = SData.getRunners();
             checkVolumeStart.setChecked(SData.OnVolumeStart);
-            checkBoxSlashLaps.setChecked(SData.getslashLaps());
+            radioGroup3.check(SData.getslashLaps() ? R.id.radio_3 : R.id.radio_4);
+            radioGroup3.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    SData.setSlashLaps((radioGroup3.getCheckedRadioButtonId() == R.id.radio_3) ? true : false);
+                }
+            });
             editRunners.setText(String.valueOf(OverallNumber));
             radioGroup1.check(SData.getAccuracyFlag() ? R.id.radio_1 : R.id.radio_2);
             radioGroup2.check(SData.styleID == 0 ? R.id.radioStyle_3 : (SData.styleID == 1 ? R.id.radioStyle_1 : R.id.radioStyle_2));
@@ -889,6 +1004,8 @@ public class TabbedStopwatch extends AppCompatActivity {
             editLaps.setText(String.valueOf(SData.getLaps()));
             editTimeUntil.setText(String.valueOf(SData.getTimeUntilShown()));
 
+            uuid = UUID.fromString("00000000-0000-1000-8000-00805F9B34FB");
+            ok_Speech = false;
             checkNotifications.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -1023,18 +1140,187 @@ public class TabbedStopwatch extends AppCompatActivity {
                 if(i + 1 != OverallNumber) rewriteText += ",";
             }
             editRunnersNames.setText(rewriteText);
-            View.OnFocusChangeListener FocusUpdated = new View.OnFocusChangeListener() {
+
+            //***********-Установка слотов на кнопки***************
+            View.OnClickListener Signal_add2 = new View.OnClickListener() {
                 @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (getNames()) {
-                        int Runners = Integer.parseInt(editRunners.getText().toString());
-                        if (Runners != 0) SData.setRunners(Runners);
-                        arrIDNumber = arrIDNumberSettings;
+                public void onClick(View v) {
+                    if(ok_Speech) {
+                        editRunnersNames.append("," + textSpoken.getText());
+                        buttonAccept.callOnClick();
                     }
                 }
             };
-            //editRunnersNames.setOnFocusChangeListener(FocusUpdated);
-            //***********-Установка слотов на кнопки***************
+
+
+            View.OnClickListener Signal_ConnectBluetooth = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final BluetoothAdapter bluetooth= BluetoothAdapter.getDefaultAdapter();
+
+                    if(bluetooth!=null)
+                    {   // С Bluetooth все в порядке.
+                        if (!bluetooth.isEnabled()) {
+                            // Bluetooth выключен. Предложим пользователю включить его.
+                            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                            startActivityForResult(enableBtIntent, 435);
+                        }
+                        String status;
+                        if(bluetooth.isEnabled()){
+                            BluetoothStatus_text.setText("");
+                            String mydeviceaddress= bluetooth.getAddress();
+                            String mydevicename= bluetooth.getName();
+                            BTAddress1.setText(mydeviceaddress);
+                            BTname1.setText(mydevicename);
+
+
+                            //Объявляем адаптер
+                            final ArrayAdapter<String> mArrayAdapter = new ArrayAdapter<>(
+                                    rootView.getContext(),android.R.layout.simple_list_item_1);
+                            //Ищем спаренные устройства
+                            Set<BluetoothDevice> pairedDevices= bluetooth.getBondedDevices();
+                            // Если список спаренных устройств не пуст
+                            if(pairedDevices.size()>0){
+                            // идём в цикле по этому списку
+                                for(BluetoothDevice device: pairedDevices){
+                                // Добавляем имена и адреса в mArrayAdapter,
+                                // чтобы показать через ListView
+                                    mArrayAdapter.add(device.getName()+"\n"+ device.getAddress());
+                                }
+                                // подключаем список к адаптеру
+                            }
+                            listView.setOnTouchListener(new View.OnTouchListener() {
+                                // Setting on Touch Listener for handling the touch inside ScrollView
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    // Disallow the touch request for parent scroll on touch of child view
+                                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                                    return false;
+                                }
+                            });
+
+
+                            // Создаем BroadcastReceiver для ACTION_FOUND
+                            BroadcastReceiver mReceiver = new BroadcastReceiver(){
+                                public void onReceive(Context context, Intent intent){
+                                    String action= intent.getAction();
+                                    // Когда найдено новое устройство
+                                    if(BluetoothDevice.ACTION_FOUND.equals(action)){
+                                        // Получаем объект BluetoothDevice из интента
+                                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                                        //Добавляем имя и адрес в array adapter, чтобы показывать в ListView
+                                        mArrayAdapter.add(device.getName()+"\n"+ device.getAddress());
+
+                                        listView.setAdapter(mArrayAdapter);
+                                    }
+                                }
+                            };
+                            // Регистрируем BroadcastReceiver
+                            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                            //rootView.getContext().registerReceiver(mReceiver, filter);
+                            //bluetooth.startDiscovery();
+                            listView.setAdapter(mArrayAdapter);
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    BluetoothStatus_text.setText(mArrayAdapter.getItem(position));
+                                }
+                            });
+
+                            //---------------------------------------TODO-------------------------------
+                            class AcceptThread extends Thread{
+                                private final BluetoothServerSocket mmServerSocket;
+                                OutputStream mmOutStream;
+                                InputStream mmInStream;
+                                public void manageConnectedSocket(BluetoothSocket socket) {
+
+                                }
+                                public AcceptThread(){
+                                        // используем вспомогательную переменную, которую в дальнейшем
+                                        // свяжем с mmServerSocket,
+                                        BluetoothServerSocket tmp=null;
+                                        try{
+                                            // MY_UUID это UUID нашего приложения, это же значение
+                                            // используется в клиентском приложении
+                                            tmp= bluetooth.listenUsingRfcommWithServiceRecord("BluetoothTimer", uuid);
+                                    } catch(IOException e){e.printStackTrace();}
+                                    mmServerSocket = tmp;
+                                }
+
+                                public void run(){
+                                    BluetoothSocket socket;
+                                    // ждем пока не произойдет ошибка или не
+                                    // будет возвращен сокет
+                                    while(true){
+                                        try{
+                                            socket= mmServerSocket.accept();
+                                        } catch(IOException e){
+                                            break;
+                                        }
+                                        // если соединение было подтверждено
+                                        if(socket!=null){
+                                            // управляем соединением (в отдельном потоке)
+                                            try {
+                                                mmServerSocket.close();
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                            manageConnectedSocket(socket);
+                                            InputStream tmpIn=null;
+                                            OutputStream tmpOut=null;
+                                            try{
+                                                tmpIn= socket.getInputStream();
+                                                tmpOut= socket.getOutputStream();
+                                            } catch(IOException e){}
+
+                                            mmInStream = tmpIn;
+                                            mmOutStream = tmpOut;
+                                            byte bytes_t = Byte.valueOf("ПРОВЕРКА").byteValue();
+                                            try{
+                                                mmOutStream.write(bytes_t);
+                                            } catch(IOException e){
+                                                e.printStackTrace();
+                                            }
+
+                                            try {
+                                                mmServerSocket.close();
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                                public void cancel(){
+                                    try{
+                                        mmServerSocket.close();
+                                    } catch(IOException e){e.printStackTrace();}
+                                }
+                            }
+                            //---------------------------------------TODO-------------------------------
+                            AcceptThread threadBluetooth = new AcceptThread();
+                            //Handler customHandler_t = new Handler();
+                            //customHandler_t.postDelayed(threadBluetooth, 0);
+
+                        }
+                        else
+                        {
+                            status=getResources().getString(R.string._err_BToff);
+                            BluetoothStatus_text.setText(status);
+                        }
+
+                    }
+                }
+            };
+
+            View.OnClickListener Signal_Speech = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ok_Speech = false;
+                    startSpeak();
+                }
+            };
+
             View.OnClickListener Signal_Accept = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -1127,6 +1413,9 @@ public class TabbedStopwatch extends AppCompatActivity {
             buttonDeleteText.setOnClickListener(Signal_ClearInput);
             buttonAccept.setOnClickListener(Signal_Accept);
             buttonAdd.setOnClickListener(Signal_Add);
+            butAdd2.setOnClickListener(Signal_add2);
+            SpeechBut.setOnClickListener(Signal_Speech);
+            Button_BluetoothConnect.setOnClickListener(Signal_ConnectBluetooth);
             //************************************************
             return rootView;
         }
@@ -1281,7 +1570,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                     rewriteText += arrIDNumberSettings[i];
                 }
                 if(result == 0) {
-                    texterr.setText("Введите номера участников");
+                    texterr.setText(getResources().getString(R.string._err_Empty));
                     return false;
                 }
                 result = 0;
@@ -1302,11 +1591,11 @@ public class TabbedStopwatch extends AppCompatActivity {
             }
             else {
 
-                if(result == 1) texterr.setText("Введите номера участников");
-                else if(result == 2) texterr.setText("Принимаются без пробелов только номера, разделенные запятыми");
-                else if(result == 3) texterr.setText("Вместо числа был обнаружен иной символ");
-                else if(result == 4) texterr.setText("Слишком длинный номер участника");
-                else                 texterr.setText("Обнаружена ошибка ввода");
+                if(result == 1) texterr.setText(getResources().getString(R.string._err_Empty));
+                //else if(result == 2) texterr.setText("Принимаются без пробелов только номера, разделенные запятыми");
+                //else if(result == 3) texterr.setText("Вместо числа был обнаружен иной символ");
+                if(result == 4) texterr.setText(getResources().getString(R.string._err_Length));
+                else                 texterr.setText(getResources().getString(R.string._err_Default));
 
                 return false;
             }
@@ -1317,10 +1606,16 @@ public class TabbedStopwatch extends AppCompatActivity {
     //-------------------------------------database fragment----------------------------------------\\
 
     public static class database extends Fragment {
+        protected TextView text_Column1, text_Column2, text_Column3;
+        public int int_Column1, int_Column2, int_Column3;
         public View rootView;
         protected TableLayout tableManage;
 
         @Override
+
+        public void onResume() {
+            super.onResume();
+        }
 
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -1334,12 +1629,121 @@ public class TabbedStopwatch extends AppCompatActivity {
             arrTimeData = new TextView[101];
             arrLapsData = new TextView[101];
 
+            int_Column1 = 1;
+            int_Column2 = 0;
+            int_Column3 = 0;
             //Сохранение элементов экрана
             tableManage = (TableLayout) rootView.findViewById(R.id.tableManage);
 
-            //Получение значений из главного меню
-            //*******************************************************
+            text_Column1 = (TextView)rootView.findViewById(R.id.textColumn1);
+            text_Column2 = (TextView)rootView.findViewById(R.id.textColumn2);
+            text_Column3 = (TextView)rootView.findViewById(R.id.textColumn3);
 
+            View.OnClickListener Signal_Column1 = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(int_Column2 != 0) {
+                        String tempStr = text_Column2.getText().toString();
+                        text_Column2.setText(tempStr.substring(0, tempStr.length() - 3));
+                        int_Column2 = 0;
+                    }
+                    if(int_Column3 != 0) {
+                        String tempStr = text_Column3.getText().toString();
+                        text_Column3.setText(tempStr.substring(0, tempStr.length() - 3));
+                        int_Column3 = 0;
+                    }
+
+                    String newText = text_Column1.getText().toString();
+                    if(int_Column1 != 0) {
+                        if (int_Column1 == 1) {
+                            newText = newText.substring(0, newText.length() - 3) + "(↓)";
+                            int_Column1++;
+                        }
+                        else {
+                            newText = newText.substring(0, newText.length() - 3) + "(↑)";
+                            int_Column1 = 1;
+                        }
+                    }
+                    else {
+                        int_Column1++;
+                        newText = newText + "(↑)";
+                    }
+                    text_Column1.setText(newText);
+                    showTable();
+                }
+            };
+
+            View.OnClickListener Signal_Column2 = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(int_Column1 != 0) {
+                        String tempStr = text_Column1.getText().toString();
+                        text_Column1.setText(tempStr.substring(0, tempStr.length() - 3));
+                        int_Column1 = 0;
+                    }
+                    if(int_Column3 != 0) {
+                        String tempStr = text_Column3.getText().toString();
+                        text_Column3.setText(tempStr.substring(0, tempStr.length() - 3));
+                        int_Column3 = 0;
+                    }
+
+                    String newText = text_Column2.getText().toString();
+                    if(int_Column2 != 0) {
+                        if (int_Column2 == 1) {
+                            newText = newText.substring(0, newText.length() - 3) + "(↓)";
+                            int_Column2++;
+                        }
+                        else {
+                            newText = newText.substring(0, newText.length() - 3) + "(↑)";
+                            int_Column2 = 1;
+                        }
+                    }
+                    else {
+                        int_Column2++;
+                        newText = newText + "(↑)";
+                    }
+                    text_Column2.setText(newText);
+                    showTable();
+                }
+            };
+
+            View.OnClickListener Signal_Column3 = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(int_Column1 != 0) {
+                        String tempStr = text_Column1.getText().toString();
+                        text_Column1.setText(tempStr.substring(0, tempStr.length() - 3));
+                        int_Column1 = 0;
+                    }
+                    if(int_Column2 != 0) {
+                        String tempStr = text_Column2.getText().toString();
+                        text_Column2.setText(tempStr.substring(0, tempStr.length() - 3));
+                        int_Column2 = 0;
+                    }
+
+                    String newText = text_Column3.getText().toString();
+                    if(int_Column3 != 0) {
+                        if (int_Column3 == 1) {
+                            newText = newText.substring(0, newText.length() - 3) + "(↓)";
+                            int_Column3++;
+                        }
+                        else {
+                            newText = newText.substring(0, newText.length() - 3) + "(↑)";
+                            int_Column3 = 1;
+                        }
+                    }
+                    else {
+                        int_Column3++;
+                        newText = newText + "(↑)";
+                    }
+                    text_Column3.setText(newText);
+                    showTable();
+                }
+            };
+
+            text_Column1.setOnClickListener(Signal_Column1);
+            text_Column2.setOnClickListener(Signal_Column2);
+            text_Column3.setOnClickListener(Signal_Column3);
             //Заполнение таблицы информацией
             showTable();
             return rootView;
@@ -1350,23 +1754,92 @@ public class TabbedStopwatch extends AppCompatActivity {
     //-----------------------------------------------------------------------------------------------------\\
 
     static protected void showTable(){
-
+        class sortTemp
+        {
+            sortTemp() {
+                col1 = new String();
+            }
+            String col1;
+            long col2;
+            int col3;
+        }
+        sortTemp []S = new sortTemp[SData.getRunners()];
+        for(int i = 0; i < SData.getRunners(); i++) {
+            S[i] = new sortTemp();
+            S[i].col1 = arrIDNumber[i];
+            S[i].col2 = arrTiming[i];
+            S[i].col3 = Tab1.runData[i].LapsTaken;
+        }
+        class ComparSort implements Comparator<sortTemp> {
+            public int compare(sortTemp first, sortTemp second) {
+                if((Tab2.int_Column1 != 0) || (first.col2 == second.col2 && first.col3 == second.col3)){
+                    boolean resultBool;
+                    boolean firstNum = true, secondNum = true;
+                    for(int i = 0; i < first.col1.length(); i++) {
+                        if(first.col1.charAt(i) != '0' && first.col1.charAt(i) != '1' &&
+                                first.col1.charAt(i) != '2' && first.col1.charAt(i) != '3' &&
+                                first.col1.charAt(i) != '4' && first.col1.charAt(i) != '5' &&
+                                first.col1.charAt(i) != '6' && first.col1.charAt(i) != '7' &&
+                                first.col1.charAt(i) != '8' && first.col1.charAt(i) != '9'
+                        ) firstNum = false;
+                    }
+                    for(int i = 0; i < second.col1.length(); i++) {
+                        if(second.col1.charAt(i) != '0' && second.col1.charAt(i) != '1' &&
+                                second.col1.charAt(i) != '2' && second.col1.charAt(i) != '3' &&
+                                second.col1.charAt(i) != '4' && second.col1.charAt(i) != '5' &&
+                                second.col1.charAt(i) != '6' && second.col1.charAt(i) != '7' &&
+                                second.col1.charAt(i) != '8' && second.col1.charAt(i) != '9'
+                        ) secondNum = false;
+                    }
+                    if(firstNum) {
+                        if(secondNum) {
+                            int firstInt = Integer.parseInt(first.col1);
+                            int secondInt = Integer.parseInt(second.col1);
+                            if(firstInt > secondInt) resultBool = true;
+                            else resultBool = false;
+                        }
+                        else {
+                            resultBool = false;
+                        }
+                    }
+                    else {
+                        if(secondNum) {
+                            resultBool = true;
+                        }
+                        else {
+                            resultBool = first.col1.compareTo(second.col1) > 0;
+                        }
+                    }
+                    if(Tab2.int_Column1 == 2) resultBool = !resultBool;
+                    return resultBool ? 1 : -1;
+                }
+                else if((first.col2 != second.col2) && ((Tab2.int_Column2 != 0) || (Tab2.int_Column3 !=0 && first.col3 == second.col3))) {
+                    boolean resultBool =  first.col2 < second.col2;
+                    if(Tab2.int_Column2 == 2) resultBool = !resultBool;
+                    return resultBool ? 1 : -1;
+                }
+                else {
+                    boolean resultBool =  first.col3 < second.col3;
+                    if(Tab2.int_Column3 == 2) resultBool = !resultBool;
+                    return resultBool ? 1 : -1;
+                }
+            }
+        }
+        Arrays.sort(S, new ComparSort());
         Tab2.tableManage.removeAllViews();
-
-        //
         for(int i = 0; i < SData.getRunners(); i++) {
             arrRowData[i] = new TableRow(Tab2.getActivity());
             arrRowData[i].setX((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, Tab2.getResources().getDisplayMetrics()));
             Tab2.tableManage.addView(arrRowData[i]);
             arrTextData[i] = new TextView(Tab2.getActivity());
-            arrTextData[i].setText(arrIDNumber[i]);
+            arrTextData[i].setText(S[i].col1);//TODO test
             arrTextData[i].setPadding(0,5,5,0);
             arrTextData[i].setTextSize(22);
             arrTextData[i].setLayoutParams(new TableRow.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 140, Tab2.getResources().getDisplayMetrics()),
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             arrRowData[i].addView(arrTextData[i]);
             //Время
-            long RunnerTime = arrTiming[i];
+            long RunnerTime = S[i].col2;//TODO test
             long secs = ((int)RunnerTime/1000);
             long mins = secs/60;
             secs %= 60;
@@ -1388,10 +1861,9 @@ public class TabbedStopwatch extends AppCompatActivity {
             arrLapsData[i] = new TextView(Tab2.getActivity());
             arrLapsData[i].setPadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5,
                     Tab2.getResources().getDisplayMetrics()),5,5,0);
-            arrLapsData[i].setText(Tab1.runData[i].LapsTaken + "/" + SData.laps);
+            arrLapsData[i].setText(S[i].col3 + "/" + SData.laps);
             arrLapsData[i].setTextSize(22);
             arrRowData[i].addView(arrLapsData[i]);
-
 
             TableRow.MarginLayoutParams marginParams1 = new TableRow.MarginLayoutParams(arrRowData[i].getLayoutParams());
             marginParams1.setMargins(0, 0, 0, 0);
@@ -1556,6 +2028,8 @@ public class TabbedStopwatch extends AppCompatActivity {
                         Tab3.rootView.findViewById(R.id.buttonAdd).setEnabled(startTime==0);
                         Tab3.rootView.findViewById(R.id.button_DeleteText).setEnabled(startTime==0);
                         Tab3.rootView.findViewById(R.id.edit_laps).setEnabled(startTime==0);
+                        Tab3.rootView.findViewById(R.id.Button_speech).setEnabled(startTime==0);
+                        Tab3.rootView.findViewById(R.id.buttonAdd2).setEnabled(startTime==0);
                     }
                     return true;
                 }

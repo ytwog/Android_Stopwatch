@@ -23,13 +23,17 @@
     <string name="_withoutMilis_text">00:00</string>
     <string name="_tenthMilis_text">00:00.00</string>
     <string name="_runners_str">Номера участников</string>
-    <string name="_participant_str">Участник</string>
+    <string name="_err_Empty">Введите номера участников</string>
+    <string name="_err_Default">Обнаружена ошибка ввода</string>
+    <string name="_err_Length">Слишком длинный ID</string>
+    <string name="_err_BToff">Bluetooth выключен</string>
+    <string name="_participant_str">Участник(↑)</string>
     <string name="_time_str">Время</string>
     <string name="_Confirm_str">Применить</string>
     <string name="title_activity_tabbed_stopwatch">TabbedStopwatch</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
-    <string name="_slashLap_str">Отображать количество пройденных кругов на главной странице</string>
+    <string name="_slashLap_str">Формат кругов</string>
     <string name="_styleText_str">Стиль</string>
     <string name="_style1_str">Стандартный</string>
     <string name="_style2_str">Темный</string>
@@ -38,4 +42,13 @@
     <string name="notifytitle">Групповой таймер запущен</string>
     <string name="notifytext">Количество участников: </string>
     <string name="_notifEnable">Уведомление при запуске таймера</string>
+    <string name="_SpeechAsk_str">Назовите идентификаторы участников, которые нужно добавить</string>
+    <string name="_bluetoothText">Статус передачи:</string>
+    <string name="_str_MyPhone">Информация об устройстве:</string>
+    <string name="_str_address1">Адрес:</string>
+    <string name="_str_Name1">Имя:</string>
+    <string name="_str_Check">проверка</string>
+    <string name="_str_CheckEnd">готово</string>
+    <string name="_slash_1F">10/30</string>
+    <string name="_slash_1S">10</string>
 </resources>
