@@ -99,4 +99,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tableRow" />
 
+    <ImageButton
+        android:id="@+id/deleteMain"
+        android:layout_width="60dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+
+        android:clickable="false"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/text_Timer"
+        app:layout_constraintStart_toStartOf="@+id/tableRow"
+        app:layout_constraintTop_toBottomOf="@+id/tableRow"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
+
 </android.support.constraint.ConstraintLayout>

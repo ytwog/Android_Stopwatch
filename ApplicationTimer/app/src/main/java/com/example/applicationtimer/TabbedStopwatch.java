@@ -13,15 +13,18 @@ package com.example.applicationtimer;
  import android.content.IntentFilter;
  import android.content.pm.ActivityInfo;
  import android.content.res.Resources;
+ import android.graphics.Canvas;
  import android.graphics.Color;
 import android.graphics.Paint;
  import android.graphics.Point;
  import android.graphics.PorterDuff;
-import android.graphics.Typeface;
+ import android.graphics.RectF;
+ import android.graphics.Typeface;
  import android.graphics.drawable.GradientDrawable;
  import android.os.Handler;
 import android.os.SystemClock;
  import android.speech.RecognizerIntent;
+ import android.support.constraint.ConstraintLayout;
  import android.support.v4.app.NotificationCompat;
  import android.support.v7.app.AppCompatActivity;
  import android.support.v4.app.Fragment;
@@ -30,6 +33,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.text.Editable;
+ import android.text.Layout;
  import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextWatcher;
@@ -42,6 +46,8 @@ import android.view.Display;
  import android.view.LayoutInflater;
 import android.view.Menu;
  import android.view.MotionEvent;
+ import android.view.SurfaceHolder;
+ import android.view.SurfaceView;
  import android.view.View;
 import android.view.ViewGroup;
 
@@ -50,12 +56,14 @@ import android.view.ViewGroup;
  import android.widget.ArrayAdapter;
  import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
+ import android.widget.CompoundButton;
+ import android.widget.EditText;
 import android.widget.ImageButton;
  import android.widget.ListView;
  import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TableLayout;
+ import android.widget.Switch;
+ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -89,15 +97,14 @@ public class TabbedStopwatch extends AppCompatActivity {
     static protected float minSize = 80;
     static protected TableRow arrRowData[];
     static protected ContextWrapper CW ;
-    static protected boolean BuiltOnce = false;
     static protected TextView arrTextData[], arrTimeData[], arrLapsData[];
     static protected SettingsActivity Tab3;
     static protected database Tab2;
     static protected MainActivity Tab1;
-    static protected boolean buttonsCreated = false;
     static long startTime=0L, timeInMilliseconds=0L, timeSwapBuffer, updateTime=0L, arrTiming[];
     static int secs, mins, milliseconds, nowRestoring;
-    static protected boolean dataExist, isCheck = false, isStarted = false, ok_Speech;
+    static protected boolean dataExist, isCheck = false, isStarted = false, ok_Speech, isTouch = false, BuiltOnce = false, buttonsCreated = false;
+    static protected boolean TouchedNumbers[], toUpdate;
     static protected SettingsData SData;
     static protected String arrIDNumber[];
     static protected NotificationManager notificationManager;
@@ -219,6 +226,7 @@ public class TabbedStopwatch extends AppCompatActivity {
         protected Button arrButtons[][];
         protected TableRow arrRows[];
         protected ImageButton BackButton;
+        protected ImageButton MainDelete;
 
         RunnerData runData[] = new RunnerData[101];
 
@@ -287,8 +295,10 @@ public class TabbedStopwatch extends AppCompatActivity {
             else {
                 Tab1.rootView.findViewById(R.id.activity1Layout).setBackgroundColor(getResources().getColor(R.color.design_default_colorE));
             }
-
-
+            MainDelete.setVisibility(View.INVISIBLE);
+            isCheck = false;
+            isTouch = false;
+            TouchedNumbers = new boolean[101];
             if(BuiltOnce) {
                 SData.setTimeUntilSHown(Integer.parseInt(Tab3.editTimeUntil.getText().toString()));
                 SData.setLaps(Integer.parseInt(Tab3.editLaps.getText().toString()));
@@ -317,7 +327,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             //Обновление кнопок
             deleteButtons();
             createButtons();
-            if(isStarted) buttonEachLap.setText(getResources().getString(R.string._eachLap));
+            if(dataExist || isStarted) buttonEachLap.setText(getResources().getString(R.string._eachLap));
             else buttonEachLap.setText(getResources().getString(R.string._str_Check));
             FilePrint(SData);
         }
@@ -331,6 +341,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             textTimer = (TextView)rootView.findViewById(R.id.text_Timer);
             tableLayout = (TableLayout) rootView.findViewById(R.id.tableLayout);
             BackButton = (ImageButton) rootView.findViewById(R.id.backButton);
+            MainDelete = (ImageButton) rootView.findViewById(R.id.deleteMain);
 
             //Предустановка переменных
             if(!BuiltOnce) {
@@ -338,12 +349,12 @@ public class TabbedStopwatch extends AppCompatActivity {
                 for(int i = 0; i < 5; i++){
                     arrRestore[i] = new Pair();
                 }
+                toUpdate = false;
                 nowRestoring = 0;
                 arrTiming = new long[101];
                 textTimer.setText(SData.getAccuracyFlag() ? "00:00" : "00:00.00");
                 timeSwapBuffer=0L;
                 dataExist = false;
-                isCheck = false;
                 isStarted = false;
                 int toName = 1;
                 boolean hasName = false;
@@ -379,11 +390,97 @@ public class TabbedStopwatch extends AppCompatActivity {
             //Создание кнопок
             createButtons();
             //*************************Слоты для кнопок*****************
+            View.OnClickListener Signal_Delete = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainDelete.setVisibility(View.INVISIBLE);
+                    textTimer.setAlpha(1);
+                    int newNum = 0, cur = 0;
+                    for(int i = 0; i < SData.getRunners(); i++) {
+                        if(TouchedNumbers[i] == false) newNum++;
+                    }
+                    if(newNum == 0) {
+                        newNum = 1;
+                        TouchedNumbers[0] = false;
+                    }
+
+                    String temp[] = new String[newNum];
+                    for(int i = 0; i < SData.getRunners(); i++) {
+                        if(TouchedNumbers[i] == false) {
+                            temp[cur] = arrIDNumber[i];
+                            cur++;
+                        }
+                    }
+                    arrIDNumber = temp;
+                    SData.setRunners(newNum);
+                    class ComparString implements Comparator<String> {
+                        public int compare(String first, String second) {
+                            boolean resultBool;
+                            boolean firstNum = true, secondNum = true;
+                            for(int i = 0; i < first.length(); i++) {
+                                if(first.charAt(i) != '0' && first.charAt(i) != '1' &&
+                                        first.charAt(i) != '2' && first.charAt(i) != '3' &&
+                                        first.charAt(i) != '4' && first.charAt(i) != '5' &&
+                                        first.charAt(i) != '6' && first.charAt(i) != '7' &&
+                                        first.charAt(i) != '8' && first.charAt(i) != '9'
+                                ) firstNum = false;
+                            }
+                            for(int i = 0; i < second.length(); i++) {
+                                if(second.charAt(i) != '0' && second.charAt(i) != '1' &&
+                                        second.charAt(i) != '2' && second.charAt(i) != '3' &&
+                                        second.charAt(i) != '4' && second.charAt(i) != '5' &&
+                                        second.charAt(i) != '6' && second.charAt(i) != '7' &&
+                                        second.charAt(i) != '8' && second.charAt(i) != '9'
+                                ) secondNum = false;
+                            }
+                            if(firstNum) {
+                                if(secondNum) {
+                                    int firstInt = Integer.parseInt(first);
+                                    int secondInt = Integer.parseInt(second);
+                                    if(firstInt > secondInt) resultBool = true;
+                                    else resultBool = false;
+                                }
+                                else {
+                                    resultBool = false;
+                                }
+                            }
+                            else {
+                                if(secondNum) {
+                                    resultBool = true;
+                                }
+                                else {
+                                    resultBool = first.compareTo(second) > 0;
+                                }
+                            }
+                            return resultBool ? 1 : -1;
+                        }
+                    }
+                    Arrays.sort(arrIDNumber, new ComparString());
+
+                    isTouch = false;
+                    if(newNum == 1) {
+                        isCheck = false;
+                    }
+                    setChronology();
+                    deleteButtons();
+                    createButtons();
+                    showTable();
+
+                    if(isCheck) {
+                        buttonEachLap.setText(getResources().getString(R.string._str_CheckEnd));
+                    }
+                    else {
+                        buttonEachLap.setText(getResources().getString(R.string._str_Check));
+                    }
+                    toUpdate = true;
+                    TouchedNumbers = new boolean[101];
+                }
+            };
             //Кнопка Старт
             View.OnClickListener Signal_Start = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    buttonEachLap.setText(getResources().getString(R.string._eachLap));
+                    isCheck = false;
                     if(isStarted) {
                         //Когда секундомер останавливаем
                         buttonStart.setText(R.string._start_str);
@@ -397,10 +494,9 @@ public class TabbedStopwatch extends AppCompatActivity {
                     }
                     else {
                         //Когда стартует секундомер
-                        if (dataExist) {
+                        if (dataExist || updateTime == 0) {
                             buttonReset.callOnClick();
                         }
-
                         if(SData.notification) {
                             // Создание уведомления
 
@@ -408,30 +504,10 @@ public class TabbedStopwatch extends AppCompatActivity {
                             PendingIntent contentIntent = PendingIntent.getActivity(rootView.getContext(),
                                     0, notificationIntent,
                                     PendingIntent.FLAG_CANCEL_CURRENT);
-                            /*
-                            String BROADCAST_ACTION2 = "com.example.uniqueTag2";
-                            BroadcastReceiver br2 = new BroadcastReceiver() {
-                                // действия при получении сообщений
-                                public void onReceive(Context context, Intent intent) {
-                                    startActivity(intent);
-                                    //onResume();
-                                }
-                            };
-                            IntentFilter intFilt2 = new IntentFilter(BROADCAST_ACTION2);
-                            rootView.getContext().registerReceiver(br2, intFilt2);
-                            Intent Bintent2 = new Intent(BROADCAST_ACTION2);
-                            //Intent notificationIntent = new Intent(rootView.getContext(), MainActivity.class);
 
-                            PendingIntent contentIntent = PendingIntent.getActivity(rootView.getContext(),
-                                    0, Bintent2, PendingIntent.FLAG_UPDATE_CURRENT);
-                            */
                             Resources res = getResources();
-
-                            // до версии Android 8.0 API 26
                             NotificationCompat.Builder builder = new NotificationCompat.Builder(rootView.getContext());
-
                             String BROADCAST_ACTION = "com.example.uniqueTag1";
-
                             BroadcastReceiver br = new BroadcastReceiver() {
                                 // действия при получении сообщений
                                 public void onReceive(Context context, Intent intent) {
@@ -475,6 +551,8 @@ public class TabbedStopwatch extends AppCompatActivity {
                         customHandler.postDelayed(updateTimeThread, 0);
                         buttonStart.setText(R.string._stop_str);
                     }
+
+                    buttonEachLap.setText(getResources().getString(R.string._eachLap));
                     isStarted = !isStarted;
                 }
             };
@@ -502,10 +580,12 @@ public class TabbedStopwatch extends AppCompatActivity {
                     for(int i = 0; i < 100; i++) {
                         arrTiming[i] = 0;
                     }
+                    textTimer.setAlpha(1);
+                    MainDelete.setVisibility(View.INVISIBLE);
+                    MainDelete.setClickable(false);
                     nowRestoring = 0;
-                    dataExist = false;
                     buttonStart.setEnabled(true);
-                    isStarted = false;
+                    dataExist = isStarted = isTouch = false;
                     buttonStart.getBackground().setColorFilter(Color.rgb(0x3F, 0x51, 0xB5), PorterDuff.Mode.MULTIPLY);
                     buttonStart.setText(R.string._start_str);
                     timeSwapBuffer += timeInMilliseconds;
@@ -524,7 +604,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                     }
                     deleteButtons();
                     createButtons();
-                    if(isStarted) buttonEachLap.setText(getResources().getString(R.string._eachLap));
+                    if(dataExist || isStarted) buttonEachLap.setText(getResources().getString(R.string._eachLap));
                     else buttonEachLap.setText(getResources().getString(R.string._str_Check));
                 }
             };
@@ -532,6 +612,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             BackButton.setOnClickListener(Signal_Back);
             buttonStart.setOnClickListener(Signal_Start);
             buttonReset.setOnClickListener(Signal_Reset);
+            MainDelete.setOnClickListener(Signal_Delete);
             //**********************************************
             return rootView;
         }
@@ -539,22 +620,48 @@ public class TabbedStopwatch extends AppCompatActivity {
         View.OnClickListener Signal_EachLap = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isStarted) {
+                if(dataExist || isStarted || updateTime>0) {
                     for(int i = 0; i < SData.getRunners(); i++) {
                         arrButtons[i / (SData.getFieldX())][i% (SData.getFieldX())].callOnClick();
                     }
                 }
                 else {
                     isCheck = !isCheck;
+                    isTouch = false;
+                    MainDelete.setVisibility(View.INVISIBLE);
+                    MainDelete.setClickable(false);
+                    textTimer.setAlpha(1);
                     if(isCheck) buttonReset.callOnClick();
                     if(isCheck) buttonEachLap.setText(getResources().getString(R.string._str_CheckEnd));
                     else buttonEachLap.setText(getResources().getString(R.string._str_Check));
                     for(int i = 0; i < SData.getFieldY(); i++) {
                         for(int j = 0; j < SData.getFieldX(); j++) {
                             if((i + 1 == SData.getFieldY()) && (SData.runnerNum < i*(SData.getFieldX()) + j+1)) break;
+                            if(!isCheck) arrButtons[i][j].getBackground().clearColorFilter();
                             arrButtons[i][j].setVisibility(View.VISIBLE);
                         }
                     }
+                }
+            }
+        };
+
+        final View.OnLongClickListener Signal_LongNumeral = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (isCheck)
+                {
+                    MainDelete.setClickable(true);
+                    MainDelete.setVisibility(View.VISIBLE);
+                    isTouch = true;
+                    textTimer.setAlpha(0);
+                    int i = v.getId();
+                    TouchedNumbers[i] = true;
+                    v.getBackground().setColorFilter(Color.rgb(0x45, 0x40, 0xFB), PorterDuff.Mode.MULTIPLY);
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
         };
@@ -564,9 +671,30 @@ public class TabbedStopwatch extends AppCompatActivity {
                 //Если запущен секундомер
                 if (isCheck)
                 {
-                    int i = v.getId();
-                    arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].setVisibility(View.INVISIBLE);
-                    return;
+                    if(isTouch) {
+                        boolean TouchedLeft = false;
+                        int i = v.getId();
+                        TouchedNumbers[i] = !TouchedNumbers[i];
+                        if(TouchedNumbers[i]) v.getBackground().setColorFilter(Color.rgb(0x45, 0x40, 0xFB), PorterDuff.Mode.MULTIPLY);
+                        else v.getBackground().clearColorFilter();
+                        for(int j = 0; j < 100; j++) {
+                            if(TouchedNumbers[j]) {
+                                TouchedLeft = true;
+                                break;
+                            }
+                        }
+                        if(!TouchedLeft) {
+                            isTouch = false;
+                            MainDelete.setClickable(false);
+                            MainDelete.setVisibility(View.INVISIBLE);
+                            textTimer.setAlpha(1);
+                        }
+                    }
+                    else {
+                        int i = v.getId();
+                        arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].setVisibility(View.INVISIBLE);
+                        return;
+                    }
                 }
                 if (isStarted && v.getVisibility() == View.VISIBLE && v.isEnabled()) {
                     //Сделать кнопку невидимой - только при динамичных кнопках
@@ -709,6 +837,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                     arrButtons[i][j].setAllCaps(false);
                     arrButtons[i][j].setTypeface(font_style);
                     arrButtons[i][j].setOnClickListener(Signal_NumeralButton);
+                    arrButtons[i][j].setOnLongClickListener(Signal_LongNumeral);
                     String s = "" + (runData[i*(numX) + j].getIDNumber()) + "/" + String.valueOf(runData[i*(numX) + j].getLapsTaken());
 
                     arrButtons[i][j].setLayoutParams(new TableRow.LayoutParams(
@@ -740,7 +869,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                 }
             }
             if(SData.getRunners() > 1) {
-                if(eachToOther) {
+                if(false) {
                     buttonEachLap = new Button(getActivity());
                     buttonEachLap.setText(R.string._eachLap);
                     buttonEachLap.setTextSize(5 + 80 * width / maxWidth);
@@ -767,7 +896,13 @@ public class TabbedStopwatch extends AppCompatActivity {
                     float hi = 80;
                     float lo = 2;
                     arrRows[numY - 1].addView(buttonEachLap);
-
+                    if(eachToOther)
+                    buttonEachLap.setLayoutParams(new TableRow.LayoutParams(
+                                width,
+                                height,
+                                //(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height, getResources().getDisplayMetrics()),
+                                (float) 105));
+                    else
                     buttonEachLap.setLayoutParams(new TableRow.LayoutParams(
                             width,
                             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -783,13 +918,14 @@ public class TabbedStopwatch extends AppCompatActivity {
                         testPaint.setTextSize(size);
 
                         if((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, testPaint.measureText(
-                                getResources().getString(R.string._str_CheckEnd) + getResources().getString(R.string._str_CheckEnd)),
+                                getResources().getString(R.string._str_Check) + getResources().getString(R.string._str_Check)),
                                 getResources().getDisplayMetrics()) >= targetWidth)
                             hi = size; // too big
                         else
                             lo = size; // too small
                     }
                     if(minSizeLap > lo) minSizeLap = lo;
+                    if(minSizeLap > minSize) minSizeLap = minSize;
 
                     SpannableString sStr = new SpannableString(s);
                     sStr.setSpan(new AbsoluteSizeSpan((int)minSizeLap, true), 0, getString(R.string._eachLap).length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -891,6 +1027,15 @@ public class TabbedStopwatch extends AppCompatActivity {
             showTable();
             isCheck = false;
             BuiltOnce = true;
+            String s = arrIDNumber[0];
+            Button TempB = (Button)rootView.findViewById(R.id.button_woSlash);
+            TempB.setText(s);
+            s += "/" + SData.getLaps();
+            SpannableString sStr = new SpannableString(s);
+            sStr.setSpan(new AbsoluteSizeSpan((int)8, true),
+                    s.length() - arrIDNumber[0].length(), s.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            TempB = (Button)rootView.findViewById(R.id.button_withSlash);
+            TempB.setText(sStr);
             editRunnersNames.setEnabled(startTime==0);
             buttonAccept.setEnabled(startTime==0);
             buttonAdd.setEnabled(startTime==0);
@@ -899,7 +1044,15 @@ public class TabbedStopwatch extends AppCompatActivity {
             editLaps.setEnabled(startTime==0);
             buttonAdd.setEnabled(startTime==0);
             checkNotifications.setChecked(SData.notification);
-
+            if(toUpdate){
+                String rewriteText = "";
+                for(int i = 0; i < OverallNumber; i++) {
+                    rewriteText += arrIDNumberSettings[i];
+                    if(i + 1 != OverallNumber) rewriteText += ",";
+                }
+                editRunnersNames.setText(rewriteText);
+                toUpdate = false;
+            }
             GradientDrawable gD;
             if(SData.styleID == 1) gD = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[] {
                     getResources().getColor(R.color.yellowish_Brown), getResources().getColor(R.color.Brown)});
@@ -1605,16 +1758,119 @@ public class TabbedStopwatch extends AppCompatActivity {
     //----------------------------------------------------------------------------------------------\\
     //-------------------------------------database fragment----------------------------------------\\
 
+    static int toDP(int value) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, Tab2.getResources().getDisplayMetrics());
+    }
+
+    static public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
+        private DrawThread drawThread;
+        int p1 = 10, p2 = 10, p3 = 316, p4 = 150;
+        RectF rectf = new RectF(toDP(p1),toDP(p2),toDP(p3),toDP(p4));
+        int _A = (p3 - p1)/2, _B = (p4-p2)/2;
+        int zeroX = _A + p1, zeroY = _B + p2;
+        int x1 = p1;
+        boolean upper = false;
+        public DrawView(Context context) {
+            super(context);
+            getHolder().addCallback(this);
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width,
+                                   int height) {
+
+        }
+
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            drawThread = new DrawThread(getHolder());
+            drawThread.setRunning(true);
+            drawThread.start();
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
+            boolean retry = true;
+            drawThread.setRunning(false);
+            while (retry) {
+                try {
+                    drawThread.join();
+                    retry = false;
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+
+        class DrawThread extends Thread {
+
+            private boolean running = false;
+            private SurfaceHolder surfaceHolder;
+
+            public DrawThread(SurfaceHolder surfaceHolder) {
+                this.surfaceHolder = surfaceHolder;
+            }
+
+            public void setRunning(boolean running) {
+                this.running = running;
+            }
+
+            @Override
+            public void run() {
+                Canvas canvas;
+                while (running) {
+                    canvas = null;
+                    try {
+                        canvas = surfaceHolder.lockCanvas(null);
+                        if (canvas == null)
+                            continue;
+                        Paint p;
+                        p = new Paint();
+                        // Фон
+                        canvas.drawColor(getResources().getColor(R.color.grassGreen));
+                        // Круг
+                        p.setColor(getResources().getColor(R.color.brickYellow));
+                        canvas.drawOval(rectf, p);
+                        // Точки
+                        double tempParam = (double)(x1-zeroX)*(x1-zeroX)/_A/_A;
+                        int y1 = (int)(sqrt(Math.abs(_B*_B*(1.0 - tempParam))) * (upper ? 1 : -1));
+                        if(x1 == p1 || x1 == p3) upper = !upper;
+                        if(upper) x1++;
+                        else x1--;
+                        p.setColor(getResources().getColor(R.color.bright_red));
+                        p.setStrokeWidth(10);
+                        canvas.drawPoint(toDP(x1), toDP(zeroY + y1), p);
+                    } finally {
+                        if (canvas != null) {
+                            surfaceHolder.unlockCanvasAndPost(canvas);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     public static class database extends Fragment {
         protected TextView text_Column1, text_Column2, text_Column3;
+        public DrawView CanvasView;
         public int int_Column1, int_Column2, int_Column3;
+        protected Switch switchVis;
         public View rootView;
+        public boolean ShownCanvas;
+        protected ConstraintLayout CanvasL;
         protected TableLayout tableManage;
 
         @Override
 
         public void onResume() {
             super.onResume();
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) text_Column2.getLayoutParams();
+            params.leftMargin = toDP(180);
+
+            ViewGroup.MarginLayoutParams params1 = (ViewGroup.MarginLayoutParams) text_Column3.getLayoutParams();
+            params1.leftMargin = toDP( 270);
+
+
         }
 
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -1628,16 +1884,28 @@ public class TabbedStopwatch extends AppCompatActivity {
             arrTextData = new TextView[101];
             arrTimeData = new TextView[101];
             arrLapsData = new TextView[101];
-
+            ShownCanvas = false;
             int_Column1 = 1;
             int_Column2 = 0;
             int_Column3 = 0;
             //Сохранение элементов экрана
-            tableManage = (TableLayout) rootView.findViewById(R.id.tableManage);
-
+            CanvasL = (ConstraintLayout)rootView .findViewById(R.id.CanvasLayout);
+            tableManage = (TableLayout)rootView.findViewById(R.id.tableManage);
+            switchVis = (Switch)rootView.findViewById(R.id.switchVisual);
             text_Column1 = (TextView)rootView.findViewById(R.id.textColumn1);
             text_Column2 = (TextView)rootView.findViewById(R.id.textColumn2);
             text_Column3 = (TextView)rootView.findViewById(R.id.textColumn3);
+
+            CanvasL.setMaxHeight(0);
+            CanvasView = new DrawView(rootView.getContext());
+            CanvasL.addView(CanvasView);
+            switchVis.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    ShownCanvas = isChecked;
+                    CanvasL.setMaxHeight(toDP(ShownCanvas ? 160 : 0));
+                }
+            });
 
             View.OnClickListener Signal_Column1 = new View.OnClickListener() {
                 @Override
@@ -1754,6 +2022,9 @@ public class TabbedStopwatch extends AppCompatActivity {
     //-----------------------------------------------------------------------------------------------------\\
 
     static protected void showTable(){
+
+
+
         class sortTemp
         {
             sortTemp() {
@@ -1833,7 +2104,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             Tab2.tableManage.addView(arrRowData[i]);
             arrTextData[i] = new TextView(Tab2.getActivity());
             arrTextData[i].setText(S[i].col1);//TODO test
-            arrTextData[i].setPadding(0,5,5,0);
+            arrTextData[i].setPadding(0,0,0,0);
             arrTextData[i].setTextSize(22);
             arrTextData[i].setLayoutParams(new TableRow.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 140, Tab2.getResources().getDisplayMetrics()),
                     ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -1848,7 +2119,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             arrTimeData[i].setLayoutParams(new TableRow.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 105, Tab2.getResources().getDisplayMetrics()),
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             arrTimeData[i].setPadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5,
-                                            Tab2.getResources().getDisplayMetrics()),5,5,0);
+                                            Tab2.getResources().getDisplayMetrics()),0,0,00);
             if(SData.getAccuracyFlag())
                 arrTimeData[i].setText((mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs);
             else {
@@ -1859,8 +2130,8 @@ public class TabbedStopwatch extends AppCompatActivity {
             arrRowData[i].addView(arrTimeData[i]);
             //Круги
             arrLapsData[i] = new TextView(Tab2.getActivity());
-            arrLapsData[i].setPadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5,
-                    Tab2.getResources().getDisplayMetrics()),5,5,0);
+            arrLapsData[i].setPadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0,
+                    Tab2.getResources().getDisplayMetrics()),0,0,0);
             arrLapsData[i].setText(S[i].col3 + "/" + SData.laps);
             arrLapsData[i].setTextSize(22);
             arrRowData[i].addView(arrLapsData[i]);

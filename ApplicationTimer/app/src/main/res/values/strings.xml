@@ -33,7 +33,7 @@
     <string name="title_activity_tabbed_stopwatch">TabbedStopwatch</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
-    <string name="_slashLap_str">Формат кругов</string>
+    <string name="_slashLap_str">Формат кнопки</string>
     <string name="_styleText_str">Стиль</string>
     <string name="_style1_str">Стандартный</string>
     <string name="_style2_str">Темный</string>
@@ -51,4 +51,5 @@
     <string name="_str_CheckEnd">готово</string>
     <string name="_slash_1F">10/30</string>
     <string name="_slash_1S">10</string>
+    <string name="str_VisualSwitch">Визуализация круга</string>
 </resources>

@@ -21,19 +21,19 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="373dp"
-        android:layout_height="688dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/design_default_colorE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textResult"
-        app:layout_constraintVertical_bias="0.76">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <ScrollView
             android:id="@+id/scrollView2"
@@ -52,7 +52,7 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline6"
-            app:layout_constraintTop_toTopOf="@+id/guideline4"
+            app:layout_constraintTop_toBottomOf="@+id/textColumn1"
             app:layout_constraintVertical_bias="0.0">
 
             <LinearLayout
@@ -80,33 +80,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="56dp" />
+            app:layout_constraintGuide_begin="51dp" />
 
         <TextView
             android:id="@+id/textColumn1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginLeft="24dp"
+            android:layout_marginStart="26dp"
+            android:layout_marginLeft="26dp"
+            android:layout_marginTop="8dp"
             android:text="@string/_participant_str"
             android:textColor="@android:color/black"
-            android:textSize="24sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@+id/guideline4"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/CanvasLayout"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/textColumn2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="172dp"
-            android:layout_marginLeft="172dp"
+            android:layout_marginStart="180dp"
+            android:layout_marginLeft="180dp"
             android:text="@string/_time_str"
             android:textColor="@android:color/black"
-            android:textSize="24sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/textColumn1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textColumn1"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toTopOf="@+id/textColumn1" />
 
         <TextView
             android:id="@+id/textColumn3"
@@ -116,11 +118,10 @@
             android:layout_marginLeft="270dp"
             android:text="@string/_eachLap"
             android:textColor="@android:color/black"
-            android:textSize="24sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/textColumn1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textColumn1"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="@+id/textColumn1" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline3"
@@ -154,6 +155,28 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_begin="20dp" />
+
+        <Switch
+            android:id="@+id/switchVisual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/str_VisualSwitch"
+            app:layout_constraintStart_toStartOf="@+id/textColumn1"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/CanvasLayout"
+            android:layout_width="326dp"
+            android:layout_height="160dp"
+            android:layout_marginTop="16dp"
+            android:maxHeight="0dp"
+            android:minHeight="0dp"
+            app:layout_constraintStart_toStartOf="@+id/switchVisual"
+            app:layout_constraintTop_toBottomOf="@+id/switchVisual">
+
+        </android.support.constraint.ConstraintLayout>
+
     </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>
