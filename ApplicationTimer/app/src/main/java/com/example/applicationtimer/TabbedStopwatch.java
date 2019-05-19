@@ -23,6 +23,7 @@ import android.graphics.Paint;
  import android.graphics.drawable.GradientDrawable;
  import android.os.Handler;
 import android.os.SystemClock;
+ import android.provider.SyncStateContract;
  import android.speech.RecognizerIntent;
  import android.support.constraint.ConstraintLayout;
  import android.support.v4.app.NotificationCompat;
@@ -75,12 +76,16 @@ import java.io.IOException;
  import java.io.InputStreamReader;
  import java.io.OutputStream;
  import java.io.OutputStreamWriter;
+ import java.net.NetworkInterface;
  import java.util.ArrayList;
  import java.util.Arrays;
-import java.util.Comparator;
+ import java.util.Collections;
+ import java.util.Comparator;
+ import java.util.List;
  import java.util.Set;
  import java.util.UUID;
 
+ import static java.lang.Math.PI;
  import static java.lang.Math.min;
  import static java.lang.Math.sqrt;
 
@@ -483,6 +488,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                     isCheck = false;
                     if(isStarted) {
                         //Когда секундомер останавливаем
+
                         buttonStart.setText(R.string._start_str);
                         //Закрыть уведомление
                         notificationManager.cancel(102);
@@ -987,12 +993,15 @@ public class TabbedStopwatch extends AppCompatActivity {
     public static class SettingsActivity extends Fragment {
         public static UUID uuid;
         public static final int VOICE_RECOGNITION_REQUEST_CODE = 4300;
+        final BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
+        protected Thread threadOld;
         public View rootView;
         protected ListView listView;
         protected ImageButton butAdd2;
         protected ImageButton buttonAdd;
         protected ImageButton buttonAccept;
         protected ImageButton SpeechBut;
+        protected Button SendButton;
         protected TextView textSpoken;
         protected TextView texterr;
         protected TextView BTAddress1;
@@ -1021,6 +1030,77 @@ public class TabbedStopwatch extends AppCompatActivity {
         protected String arrIDNumberSettings[];
         protected String tempArr[];
 
+        public static class AcceptThread extends Thread{
+            private final BluetoothServerSocket mmServerSocket;
+            OutputStream mmOutStream;
+            InputStream mmInStream;
+            private boolean running;
+            public void manageConnectedSocket(BluetoothSocket socket) {
+
+            }
+
+            public void setRunning(boolean running) {
+                this.running = running;
+            }
+
+            public AcceptThread(BluetoothAdapter bluetooth){
+                BluetoothServerSocket tmp = null;
+                setRunning(false);
+                try{
+                    tmp = bluetooth.listenUsingRfcommWithServiceRecord("BluetoothTimer", uuid);
+                } catch(IOException e){e.printStackTrace();}
+                mmServerSocket = tmp;
+            }
+
+            public void run(){
+                BluetoothSocket socket;
+                while(running){
+                    try{
+                        socket = mmServerSocket.accept();
+                    } catch(IOException e){
+                        break;
+                    }
+                    // если соединение было подтверждено
+                    if(socket!=null){
+                        // управляем соединением
+                        try {
+                            mmServerSocket.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        manageConnectedSocket(socket);
+                        InputStream tmpIn=null;
+                        OutputStream tmpOut=null;
+                        try{
+                            tmpIn= socket.getInputStream();
+                            tmpOut= socket.getOutputStream();
+                        } catch(IOException e){}
+                        mmInStream = tmpIn;
+                        mmOutStream = tmpOut;
+                        byte bytes_t = 9;
+                        try{
+                            mmOutStream.write(bytes_t);
+                        } catch(IOException e){
+                            e.printStackTrace();
+                        }
+
+                        try {
+                            mmServerSocket.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                }
+            }
+            public void cancel(){
+                try{
+                    setRunning(false);
+                    mmServerSocket.close();
+                } catch(IOException e){e.printStackTrace();}
+            }
+        }
+
         @Override
         public void onResume() {
             super.onResume();
@@ -1036,6 +1116,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                     s.length() - arrIDNumber[0].length(), s.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             TempB = (Button)rootView.findViewById(R.id.button_withSlash);
             TempB.setText(sStr);
+            SendButton.setVisibility(View.INVISIBLE);
             editRunnersNames.setEnabled(startTime==0);
             buttonAccept.setEnabled(startTime==0);
             buttonAdd.setEnabled(startTime==0);
@@ -1116,6 +1197,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             rootView = inflater.inflate(R.layout.layoutsettings, container, false);
             //Сохранение элементов окна
             listView = (ListView)rootView.findViewById(R.id.listViewDeices);
+            SendButton = (Button) rootView.findViewById(R.id.button_send);
             Button_BluetoothConnect = (ImageButton) rootView.findViewById(R.id.blueToothConnect);
             BluetoothStatus_text = (TextView) rootView.findViewById(R.id.bluetoothStatus);
             butAdd2 = (ImageButton) rootView.findViewById(R.id.buttonAdd2);
@@ -1157,7 +1239,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             editLaps.setText(String.valueOf(SData.getLaps()));
             editTimeUntil.setText(String.valueOf(SData.getTimeUntilShown()));
 
-            uuid = UUID.fromString("00000000-0000-1000-8000-00805F9B34FB");
+            uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
             ok_Speech = false;
             checkNotifications.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1309,8 +1391,6 @@ public class TabbedStopwatch extends AppCompatActivity {
             View.OnClickListener Signal_ConnectBluetooth = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final BluetoothAdapter bluetooth= BluetoothAdapter.getDefaultAdapter();
-
                     if(bluetooth!=null)
                     {   // С Bluetooth все в порядке.
                         if (!bluetooth.isEnabled()) {
@@ -1321,9 +1401,9 @@ public class TabbedStopwatch extends AppCompatActivity {
                         String status;
                         if(bluetooth.isEnabled()){
                             BluetoothStatus_text.setText("");
-                            String mydeviceaddress= bluetooth.getAddress();
-                            String mydevicename= bluetooth.getName();
-                            BTAddress1.setText(mydeviceaddress);
+                            String mydeviceaddress = bluetooth.getAddress();
+                            String mydevicename = bluetooth.getName();
+                            //BTAddress1.setText(mydeviceaddress);
                             BTname1.setText(mydevicename);
 
 
@@ -1377,83 +1457,9 @@ public class TabbedStopwatch extends AppCompatActivity {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                     BluetoothStatus_text.setText(mArrayAdapter.getItem(position));
+                                    SendButton.setVisibility(View.VISIBLE);
                                 }
                             });
-
-                            //---------------------------------------TODO-------------------------------
-                            class AcceptThread extends Thread{
-                                private final BluetoothServerSocket mmServerSocket;
-                                OutputStream mmOutStream;
-                                InputStream mmInStream;
-                                public void manageConnectedSocket(BluetoothSocket socket) {
-
-                                }
-                                public AcceptThread(){
-                                        // используем вспомогательную переменную, которую в дальнейшем
-                                        // свяжем с mmServerSocket,
-                                        BluetoothServerSocket tmp=null;
-                                        try{
-                                            // MY_UUID это UUID нашего приложения, это же значение
-                                            // используется в клиентском приложении
-                                            tmp= bluetooth.listenUsingRfcommWithServiceRecord("BluetoothTimer", uuid);
-                                    } catch(IOException e){e.printStackTrace();}
-                                    mmServerSocket = tmp;
-                                }
-
-                                public void run(){
-                                    BluetoothSocket socket;
-                                    // ждем пока не произойдет ошибка или не
-                                    // будет возвращен сокет
-                                    while(true){
-                                        try{
-                                            socket= mmServerSocket.accept();
-                                        } catch(IOException e){
-                                            break;
-                                        }
-                                        // если соединение было подтверждено
-                                        if(socket!=null){
-                                            // управляем соединением (в отдельном потоке)
-                                            try {
-                                                mmServerSocket.close();
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-                                            manageConnectedSocket(socket);
-                                            InputStream tmpIn=null;
-                                            OutputStream tmpOut=null;
-                                            try{
-                                                tmpIn= socket.getInputStream();
-                                                tmpOut= socket.getOutputStream();
-                                            } catch(IOException e){}
-
-                                            mmInStream = tmpIn;
-                                            mmOutStream = tmpOut;
-                                            byte bytes_t = Byte.valueOf("ПРОВЕРКА").byteValue();
-                                            try{
-                                                mmOutStream.write(bytes_t);
-                                            } catch(IOException e){
-                                                e.printStackTrace();
-                                            }
-
-                                            try {
-                                                mmServerSocket.close();
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-                                            break;
-                                        }
-                                    }
-                                }
-                                public void cancel(){
-                                    try{
-                                        mmServerSocket.close();
-                                    } catch(IOException e){e.printStackTrace();}
-                                }
-                            }
-                            //---------------------------------------TODO-------------------------------
-                            AcceptThread threadBluetooth = new AcceptThread();
-                            //Handler customHandler_t = new Handler();
-                            //customHandler_t.postDelayed(threadBluetooth, 0);
 
                         }
                         else
@@ -1463,6 +1469,18 @@ public class TabbedStopwatch extends AppCompatActivity {
                         }
 
                     }
+                }
+            };
+
+            View.OnClickListener Signal_Send = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AcceptThread threadBluetooth = new AcceptThread(bluetooth);
+                    Thread thread = new Thread(threadBluetooth);
+                    threadBluetooth.setRunning(true);
+                    thread.start();
+                    if(threadOld!=null) threadOld.interrupt();
+                    threadOld = thread;
                 }
             };
 
@@ -1568,6 +1586,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             buttonAdd.setOnClickListener(Signal_Add);
             butAdd2.setOnClickListener(Signal_add2);
             SpeechBut.setOnClickListener(Signal_Speech);
+            SendButton.setOnClickListener(Signal_Send);
             Button_BluetoothConnect.setOnClickListener(Signal_ConnectBluetooth);
             //************************************************
             return rootView;
@@ -1764,15 +1783,78 @@ public class TabbedStopwatch extends AppCompatActivity {
 
     static public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
         private DrawThread drawThread;
-        int p1 = 10, p2 = 10, p3 = 316, p4 = 150;
+        Pair<Double, Double> arrCoordinates[];
+        int p1 = 10, p2 = 10, p3 = 316, p4 = 150, accur = 652;
         RectF rectf = new RectF(toDP(p1),toDP(p2),toDP(p3),toDP(p4));
         int _A = (p3 - p1)/2, _B = (p4-p2)/2;
         int zeroX = _A + p1, zeroY = _B + p2;
         int x1 = p1;
-        boolean upper = false;
+        boolean upper = true;
         public DrawView(Context context) {
             super(context);
+            findCoordinates(p3-p1, p4-p2, accur);
             getHolder().addCallback(this);
+        }
+
+        private double findY(double ask)
+        {
+            double res;
+            double tempParam = ask*ask/_A/_A;
+            res = (sqrt(Math.abs(_B*_B*(1.0 - tempParam)))) * (upper ? -1 : 1);
+            return res;
+        }
+
+        //
+        //
+        //->(1;2) (2;4) (1;6)
+        //(0;0)           (0;8)
+        // (-1;2)(-2;4)(-1;6)<-
+        public void findCoordinates(int w, int h, int acc)
+        {
+            double value_distance = 2*PI*sqrt(w*w/8+h*h/8);
+            double per_distance = value_distance / acc;
+            double step = per_distance / 50;
+            arrCoordinates = new Pair[acc+1];
+            arrCoordinates[0] = new Pair<>();
+            arrCoordinates[0].first = (double)-_A;// x coordinate
+            arrCoordinates[0].second = 0.0;// y coordinate
+            double y_pot;
+            for(int i = 1; i < acc; i++)
+            {
+                arrCoordinates[i] = new Pair<>();
+                double x_predict = arrCoordinates[i-1].first;
+                double q = per_distance, q_prev;
+                do
+                {
+                    q_prev = q;
+                    if(i >= acc/2) {
+                        upper = false;
+                        x_predict-=step;
+                    }
+                    else x_predict+=step;
+                    y_pot = findY(x_predict);
+                    q = Math.abs((Math.pow(x_predict - arrCoordinates[i-1].first, 2) +
+                            Math.pow(y_pot - arrCoordinates[i-1].second, 2)) - per_distance);
+                }while(q_prev > q);
+                arrCoordinates[i].first = x_predict;
+                arrCoordinates[i].second = y_pot;
+                /*
+                double v_left = arrCoordinates[i-1].first, v_right = w;
+                double q = per_distance;
+                y_pot = findY(0);
+                while(Math.abs(v_right-v_left) > 0.5)
+                {
+                    if(q > 0) v_right = (v_left+v_right)/2;
+                    else v_left = (v_left+v_right)/2;
+                    q = per_distance - sqrt(Math.pow(arrCoordinates[i-1].second - y_pot,2) +
+                            Math.pow(arrCoordinates[i-1].first - v_left,2));
+                    y_pot = findY(v_left);
+                }
+                arrCoordinates[i].first = (int) v_left;
+                arrCoordinates[i].second = (int) y_pot;
+                */
+            }
+
         }
 
         @Override
@@ -1831,14 +1913,20 @@ public class TabbedStopwatch extends AppCompatActivity {
                         p.setColor(getResources().getColor(R.color.brickYellow));
                         canvas.drawOval(rectf, p);
                         // Точки
+                        /*
                         double tempParam = (double)(x1-zeroX)*(x1-zeroX)/_A/_A;
                         int y1 = (int)(sqrt(Math.abs(_B*_B*(1.0 - tempParam))) * (upper ? 1 : -1));
-                        if(x1 == p1 || x1 == p3) upper = !upper;
-                        if(upper) x1++;
-                        else x1--;
+                        if(isStarted) {
+                            if(x1 == p1 || x1 == p3) upper = !upper;
+                            if (upper) x1++;
+                            else x1--;
+                        }*/
+                        x1++;
+                        x1%=accur;
                         p.setColor(getResources().getColor(R.color.bright_red));
                         p.setStrokeWidth(10);
-                        canvas.drawPoint(toDP(x1), toDP(zeroY + y1), p);
+                        canvas.drawPoint(toDP(arrCoordinates[x1].first.intValue() + zeroX),
+                                         toDP(zeroY + arrCoordinates[x1].second.intValue()), p);
                     } finally {
                         if (canvas != null) {
                             surfaceHolder.unlockCanvasAndPost(canvas);
@@ -2264,7 +2352,7 @@ public class TabbedStopwatch extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_tabbed_stopwatch);

@@ -52,4 +52,5 @@
     <string name="_slash_1F">10/30</string>
     <string name="_slash_1S">10</string>
     <string name="str_VisualSwitch">Визуализация круга</string>
+    <string name="_strSend">Отправить</string>
 </resources>

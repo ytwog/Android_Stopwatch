@@ -520,7 +520,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="48dp"
-                android:text="@string/_str_address1"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@+id/textInfo1"
                 app:layout_constraintTop_toBottomOf="@+id/textInfo1" />
@@ -555,7 +554,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textAddressBT1" />
+                app:layout_constraintTop_toBottomOf="@+id/textNameBT1" />
 
             <Button
                 android:id="@+id/button_withSlash"
@@ -573,6 +572,16 @@
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="@+id/button_withSlash"
                 app:layout_constraintTop_toBottomOf="@+id/button_withSlash" />
+
+            <Button
+                android:id="@+id/button_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/_strSend"
+                android:visibility="invisible"
+                app:layout_constraintStart_toStartOf="@+id/listViewDeices"
+                app:layout_constraintTop_toBottomOf="@+id/listViewDeices" />
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
