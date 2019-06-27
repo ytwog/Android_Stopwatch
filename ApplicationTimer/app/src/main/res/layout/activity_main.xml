@@ -7,6 +7,19 @@
     android:background="@color/design_default_colorE"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/LinearUpcoming"
+        android:layout_width="84dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_Timer" />
+
     <TableRow
         android:id="@+id/tableRow"
         android:layout_width="332dp"
@@ -22,8 +35,9 @@
 
         <Button
             android:id="@+id/Button_Start"
-            android:layout_width="140dp"
+            android:layout_width="165dp"
             android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
             android:text="@string/_start_str"
             android:textColor="@android:color/background_light"
             android:textSize="18sp"
@@ -36,17 +50,12 @@
 
         <Button
             android:id="@+id/button_Reset"
-            android:layout_width="140dp"
+            android:layout_width="162dp"
             android:layout_height="48dp"
-            android:text="@string/Reset_str"
+            android:layout_gravity="center_vertical"
+            android:text="@string/_str_Check"
             tools:layout_editor_absoluteX="115dp"
             tools:layout_editor_absoluteY="5dp" />
-
-        <ImageButton
-            android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            app:srcCompat="@drawable/icons8_deleteclick" />
 
     </TableRow>
 
@@ -67,6 +76,25 @@
         app:layout_constraintTop_toBottomOf="@+id/text_Timer"
         app:layout_constraintVertical_bias="1.0" />
 
+    <TextView
+        android:id="@+id/text_Timer"
+        android:layout_width="wrap_content"
+        android:layout_height="59dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="00:00"
+        android:textColor="@android:color/black"
+        android:textSize="50sp"
+        android:typeface="normal"
+        app:fontFamily="sans-serif-light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tableRow" />
+
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
@@ -80,24 +108,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="115dp" />
-
-    <TextView
-        android:id="@+id/text_Timer"
-        android:layout_width="wrap_content"
-        android:layout_height="59dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="42dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="00:00"
-        android:textSize="50sp"
-        android:typeface="normal"
-        app:fontFamily="sans-serif-light"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tableRow" />
 
     <ImageButton
         android:id="@+id/deleteMain"
