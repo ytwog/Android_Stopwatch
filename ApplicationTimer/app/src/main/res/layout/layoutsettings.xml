@@ -667,21 +667,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_Runners" />
 
-            <TextView
-                android:id="@+id/textView9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginEnd="26dp"
-                android:layout_marginRight="26dp"
-                android:text="@string/_strOR"
-                android:textColor="@android:color/black"
-                app:layout_constraintBottom_toBottomOf="@+id/button_withSlash"
-                app:layout_constraintEnd_toStartOf="@+id/button_woSlash"
-                app:layout_constraintStart_toEndOf="@+id/button_withSlash"
-                app:layout_constraintTop_toTopOf="@+id/button_withSlash" />
-
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 
