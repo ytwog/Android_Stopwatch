@@ -34,7 +34,7 @@
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0">
@@ -152,22 +152,6 @@
                 app:layout_constraintTop_toTopOf="@+id/text_Param2Settings" />
 
 
-            <ImageButton
-                android:id="@+id/button_Accept"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
-                android:background="@drawable/buttonacceptstyle"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                android:visibility="invisible"
-                app:layout_constraintEnd_toStartOf="@+id/button_DeleteText"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/edit_RunnersNames"
-                app:layout_constraintTop_toTopOf="@+id/button_DeleteText" />
-
             <TextView
                 android:id="@+id/text_WaitAfterclicked"
                 android:layout_width="215dp"
@@ -247,16 +231,10 @@
                 android:id="@+id/text_Err"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginLeft="24dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:textColor="@android:color/holo_red_dark"
-                app:layout_constraintEnd_toEndOf="@+id/button_Accept"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/runnerText"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="230dp" />
 
             <TextView
                 android:id="@+id/text_LapsNum"
@@ -287,57 +265,6 @@
                 android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="@+id/text_TimeUntil"
                 app:layout_constraintTop_toBottomOf="@+id/text_Param1Settings" />
-
-            <EditText
-                android:id="@+id/edit_RunnersNames"
-                android:layout_width="157dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:ems="10"
-                android:inputType="textUri|textPersonName"
-                android:theme="@android:style/Theme.Black.NoTitleBar"
-                android:visibility="invisible"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/runnerText" />
-
-            <TextView
-                android:id="@+id/runnerText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/_runners_str"
-                android:textColor="@android:color/black"
-                android:visibility="invisible"
-                app:layout_constraintStart_toStartOf="@+id/blueToothConnect"
-                app:layout_constraintTop_toBottomOf="@+id/button_send" />
-
-            <TextView
-                android:id="@+id/text_Runners"
-                android:layout_width="wrap_content"
-                android:layout_height="27dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/_participantNumSettings"
-                android:textColor="@android:color/black"
-                android:visibility="invisible"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/SpokenText" />
-
-            <ImageButton
-                android:id="@+id/button_DeleteText"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:background="@drawable/buttoncancelstyle"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@+id/Button_speech"
-                app:layout_constraintEnd_toStartOf="@+id/buttonAdd"
-                app:layout_constraintStart_toEndOf="@+id/button_Accept"
-                app:layout_constraintTop_toTopOf="@+id/Button_speech" />
 
             <TextView
                 android:id="@+id/text_slashLap"
@@ -387,21 +314,6 @@
                 app:layout_constraintVertical_bias="1.0" />
 
             <TextView
-                android:id="@+id/edit_runners"
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:text="30"
-                android:textColor="@android:color/black"
-                android:theme="@android:style/Theme.Black.NoTitleBar"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@+id/text_Runners"
-                app:layout_constraintEnd_toEndOf="@+id/edit_TimeUntil"
-                app:layout_constraintHorizontal_bias="0.714"
-                app:layout_constraintStart_toStartOf="@+id/edit_TimeUntil"
-                app:layout_constraintTop_toTopOf="@+id/text_Runners"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <TextView
                 android:id="@+id/text_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -433,58 +345,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_style"
                 app:layout_constraintVertical_bias="0.0" />
-
-            <ImageButton
-                android:id="@+id/buttonAdd"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@android:color/transparent"
-                android:visibility="invisible"
-                app:layout_constraintEnd_toStartOf="@+id/Button_speech"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/button_DeleteText"
-                app:layout_constraintTop_toTopOf="@+id/button_DeleteText"
-                app:srcCompat="@android:drawable/ic_input_add" />
-
-            <ImageButton
-                android:id="@+id/buttonAdd2"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:background="@android:color/transparent"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@+id/SpokenText"
-                app:layout_constraintEnd_toEndOf="@+id/edit_TimeUntil"
-                app:layout_constraintTop_toTopOf="@+id/SpokenText"
-                app:srcCompat="@android:drawable/ic_input_add" />
-
-            <ImageButton
-                android:id="@+id/Button_speech"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:background="@android:color/transparent"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@+id/edit_RunnersNames"
-                app:layout_constraintEnd_toEndOf="@+id/buttonAdd2"
-                app:layout_constraintTop_toTopOf="@+id/edit_RunnersNames"
-                app:srcCompat="@android:drawable/ic_btn_speak_now" />
-
-            <EditText
-                android:id="@+id/SpokenText"
-                android:layout_width="284dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginRight="24dp"
-                android:ems="10"
-                android:enabled="false"
-                android:inputType="textPersonName"
-                android:visibility="invisible"
-                app:layout_constraintEnd_toStartOf="@+id/buttonAdd2"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/edit_RunnersNames"
-                app:layout_constraintTop_toBottomOf="@+id/edit_RunnersNames" />
 
             <ImageButton
                 android:id="@+id/blueToothConnect"
@@ -663,9 +523,8 @@
                 android:layout_height="50dp"
                 android:layout_marginStart="57dp"
                 android:layout_marginLeft="57dp"
-                android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_Runners" />
+                tools:layout_editor_absoluteY="1389dp" />
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>

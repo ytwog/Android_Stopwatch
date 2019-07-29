@@ -103,6 +103,7 @@ import java.io.IOException;
 public class TabbedStopwatch extends AppCompatActivity {
     //Данные фрагментов
     static String currentTime;
+    static public DrawView CanvasView;
     static Display display;
     static public class Pair<F, S> {
         public F first;
@@ -152,12 +153,8 @@ public class TabbedStopwatch extends AppCompatActivity {
             lastTime = _time;
         }
         //getters
-        boolean getHidden() {return isHidden;}
         int getLapsTaken(){ return LapsTaken; }
         String getIDNumber(){ return IDNumber; }
-        int[] getarrMinutes(){ return arrMinutes; }
-        int[] getarrSeconds(){ return arrSeconds; }
-        int[] getArrMilisnd(){ return arrMilisnd; }
         //Метод для проверки на появление кнопки
         public void reset(){
             startTime1 = timeHidden = 0;
@@ -174,7 +171,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             afterWaitLeft = updateTime - startTime1;
             timeHidden = updateTime - startTime1 - SData.afterTime;
             if(timeHidden>=(SData.getTimeUntilShown()*1000)) {
-                timeHidden = 0; isHidden = false;
+                afterWaitLeft = timeHidden = 0; isHidden = false;
             }
             return isHidden;
         }
@@ -188,7 +185,6 @@ public class TabbedStopwatch extends AppCompatActivity {
         protected int Dialog_Param2 = 3000;
         protected int Dialog_Param3 = 20;
         protected int mapType = 1; // 1 - ellipse
-        protected boolean notification = true;
         protected int runnerNum = 10;
         protected int laps = 10;
         protected int numX = 3;
@@ -331,15 +327,21 @@ public class TabbedStopwatch extends AppCompatActivity {
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-            drawThread = new DrawThread(getHolder());
-            drawThread.setRunning(true);
-            drawThread.start();
+            if(drawThread == null) {
+                drawThread = new DrawThread(getHolder());
+                drawThread.setRunning(true);
+                drawThread.start();
+            }
+            else {
+                drawThread.setRunning(true);
+            }
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            boolean retry = true;
+
             drawThread.setRunning(false);
+            boolean retry = true;
             while (retry) {
                 try {
                     drawThread.join();
@@ -365,59 +367,64 @@ public class TabbedStopwatch extends AppCompatActivity {
             @Override
             public void run() {
                 Canvas canvas;
-                while (running) {
-                    canvas = null;
-                    try {
-                        canvas = surfaceHolder.lockCanvas(null);
-                        if (canvas == null)
-                            continue;
-                        Paint p;
-                        p = new Paint();
-                        // Фон
-                        canvas.drawColor(getResources().getColor(R.color.brickYellow));
-                        // Круг
-                        p.setColor(getResources().getColor(R.color.grassGreen));
+                do {
+                    if (running) {
+                        canvas = null;
+                        try {
+                            canvas = surfaceHolder.lockCanvas(null);
+                            if (canvas == null)
+                                continue;
+                            Paint p;
+                            p = new Paint();
+                            // Фон
+                            canvas.drawColor(getResources().getColor(R.color.brickYellow));
+                            // Круг
+                            p.setColor(getResources().getColor(R.color.grassGreen));
 
-                        canvas.drawOval(rectf1, p);
-                        canvas.drawRect(rectf2, p);
-                        canvas.drawOval(rectf3, p);
+                            canvas.drawOval(rectf1, p);
+                            canvas.drawRect(rectf2, p);
+                            canvas.drawOval(rectf3, p);
 
-                        // Точки
-                        if(isStarted)
-                        {
-                            for(int i = 0; i < SData.getRunners(); i++) {
-                                if(Tab1.runData[i].LapsTaken - SData.getLaps() < 0) {
-                                    CurrentLapTime[i] = updateTime - arrTiming[i];
-                                    if(Tab1.runData[i].LapsTaken == 0)
-                                        x1 = (int)((double)accur*((double)CurrentLapTime[i]/(double)default_time));
-                                              //default_time = (long)((double)(SData.Dialog_Param1) * 3600 / SData.Dialog_Param3);
-                                    else {
-                                        double averageTime = Tab1.runData[i].lastLapTime;//arrTiming[i] / Tab1.runData[i].LapsTaken;
-                                        x1 = (int) ((double) accur * ((double) CurrentLapTime[i] / averageTime));
+                            // Точки
+                            if(isStarted)
+                            {
+                                for(int i = 0; i < SData.getRunners(); i++) {
+                                    if(Tab1.runData[i].LapsTaken - SData.getLaps() < 0) {
+                                        CurrentLapTime[i] = updateTime - arrTiming[i];
+                                        if(Tab1.runData[i].LapsTaken == 0)
+                                            x1 = (int)((double)accur*((double)CurrentLapTime[i]/(double)default_time));
+                                            //default_time = (long)((double)(SData.Dialog_Param1) * 3600 / SData.Dialog_Param3);
+                                        else {
+                                            double averageTime = Tab1.runData[i].lastLapTime;//arrTiming[i] / Tab1.runData[i].LapsTaken;
+                                            x1 = (int) ((double) accur * ((double) CurrentLapTime[i] / averageTime));
+                                        }
+                                        x1 = Math.min(accur-1, x1);
+                                        p.setColor(getResources().getColor(R.color.bright_red));
+                                        p.setStrokeWidth(10);
+                                        canvas.drawPoint(toDP(arrCoordinates[x1].first.intValue() + zeroX),
+                                                toDP(zeroY + arrCoordinates[x1].second.intValue()), p);
+                                        p.setTextSize(8 + 22*x1/accur);
+                                        canvas.drawText(Tab1.runData[i].IDNumber, toDP(arrCoordinates[x1].first.intValue() + zeroX),
+                                                toDP(zeroY + arrCoordinates[x1].second.intValue()-10),p);
                                     }
-                                    x1 = Math.min(accur-1, x1);
-                                    p.setColor(getResources().getColor(R.color.bright_red));
-                                    p.setStrokeWidth(10);
-                                    canvas.drawPoint(toDP(arrCoordinates[x1].first.intValue() + zeroX),
-                                            toDP(zeroY + arrCoordinates[x1].second.intValue()), p);
-                                    p.setTextSize(8 + 22*x1/accur);
-                                    canvas.drawText(Tab1.runData[i].IDNumber, toDP(arrCoordinates[x1].first.intValue() + zeroX),
-                                            toDP(zeroY + arrCoordinates[x1].second.intValue()-10),p);
                                 }
                             }
-                        }
-                        else
-                        {
-                            canvas.drawPoint(toDP(arrCoordinates[0].first.intValue() + zeroX),
-                                    toDP(zeroY + arrCoordinates[0].second.intValue()), p);
-                        }
+                            else
+                            {
+                                canvas.drawPoint(toDP(arrCoordinates[0].first.intValue() + zeroX),
+                                        toDP(zeroY + arrCoordinates[0].second.intValue()), p);
+                            }
 
-                    } finally {
-                        if (canvas != null) {
-                            surfaceHolder.unlockCanvasAndPost(canvas);
+                        } finally {
+                            if (canvas != null) {
+                                surfaceHolder.unlockCanvasAndPost(canvas);
+                            }
                         }
                     }
-                }
+                    else {
+                        break;
+                    }
+                } while(true);
             }
         }
     }
@@ -428,7 +435,6 @@ public class TabbedStopwatch extends AppCompatActivity {
     //--------------------------------PictureFragment------------------------------------------------------\\
     public static class pictureFragment extends Fragment {
         public View rootView;
-        public DrawView CanvasView;
         protected ConstraintLayout CanvasL;
         protected ImageButton ManagePic, ImButFull;
 
@@ -450,6 +456,10 @@ public class TabbedStopwatch extends AppCompatActivity {
             }
         }
 
+        public void onDestroy() {
+            super.onDestroy();
+        }
+
         public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             rootView = inflater.inflate(R.layout.activity_picture, container, false);
@@ -458,10 +468,10 @@ public class TabbedStopwatch extends AppCompatActivity {
             CanvasL = (ConstraintLayout)rootView .findViewById(R.id.CanvasLayout);
             ManagePic = (ImageButton) rootView.findViewById(R.id.managePicture);
             ImButFull = (ImageButton) rootView.findViewById(R.id.imageButFull);
-
-            CanvasView = new DrawView(rootView.getContext(), 660);
-            CanvasL.addView(CanvasView);
-
+            if(CanvasView == null) {
+                CanvasView = new DrawView(rootView.getContext(), 660);
+                CanvasL.addView(CanvasView);
+            }
             ImButFull.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -834,13 +844,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                     Tab1.buttonStart.callOnClick();
                     if(Tab3 != null)
                     if(Tab3.isVisible()) {
-                        Tab3.rootView.findViewById(R.id.edit_RunnersNames).setEnabled(startTime==0);
-                        Tab3.rootView.findViewById(R.id.button_Accept).setEnabled(startTime==0);
-                        Tab3.rootView.findViewById(R.id.buttonAdd).setEnabled(startTime==0);
-                        Tab3.rootView.findViewById(R.id.button_DeleteText).setEnabled(startTime==0);
                         Tab3.rootView.findViewById(R.id.edit_laps).setEnabled(startTime==0);
-                        Tab3.rootView.findViewById(R.id.Button_speech).setEnabled(startTime==0);
-                        Tab3.rootView.findViewById(R.id.buttonAdd2).setEnabled(startTime==0);
                     }
                     return true;
                 }

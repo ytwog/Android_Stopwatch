@@ -39,13 +39,13 @@ import java.util.Comparator;
 public class Fragment_Main extends TabbedStopwatch {
     public static class MainActivity extends Fragment {
         public static final int VOICE_RECOGNITION_REQUEST_CODE = 4300;
+        protected int eachShown;
         protected float sp1, sp2;
         protected LayoutInflater LI;
-        public View rootView;
-        protected Button buttonStart, buttonReset, buttonEachLap;
+        public    View rootView;
+        protected Button buttonStart, buttonReset, buttonEachLap, arrButtons[][];
         protected TextView textTimer, textSpoken, textUpc[] = new TextView[101];
         protected TableLayout tableLayout;
-        protected Button arrButtons[][];
         protected String arrIDNumberSettings[], UpcomText[] = new String[101];
         protected TableRow arrRows[];
         protected LinearLayout LinearUp;
@@ -138,6 +138,8 @@ public class Fragment_Main extends TabbedStopwatch {
             updateStyle();
             LinearUp.setVisibility(SData.formMain ? View.VISIBLE : View.INVISIBLE);
             MainDelete.setVisibility(View.INVISIBLE);
+
+
             isCheck = false;
             isTouch = false;
             TouchedNumbers = new boolean[101];
@@ -187,7 +189,6 @@ public class Fragment_Main extends TabbedStopwatch {
                 }
                 textUpc[DefUpcoming[i]].setText(UpcomText[i]);
             }
-            Log.d("WHAT", "THAT");
         }
 
         public void UpcomingReset() {
@@ -617,6 +618,7 @@ public class Fragment_Main extends TabbedStopwatch {
             @Override
             public void onClick(View v) {
                 if(updateTime != 0 || isStarted) {
+                    eachShown += SData.getRunners();
                     for(int i = 0; i < SData.getRunners(); i++) {
                         arrButtons[i / (SData.getFieldX())][i% (SData.getFieldX())].callOnClick();
                     }
@@ -782,6 +784,9 @@ public class Fragment_Main extends TabbedStopwatch {
             for(int i = 0; i < 100; i++) {
                 arrTiming[i] = 0;
             }
+            eachShown = 0;
+            if(buttonEachLap != null)
+                buttonEachLap.setVisibility(View.VISIBLE);
             textTimer.setAlpha(1);
             MainDelete.setVisibility(View.INVISIBLE);
             MainDelete.setClickable(false);
@@ -862,6 +867,9 @@ public class Fragment_Main extends TabbedStopwatch {
                     }
                 }
                 if (isStarted && v.getVisibility() == View.VISIBLE && v.isEnabled()) {
+                    eachShown--;
+                    if(eachShown < 0)
+                        buttonEachLap.setVisibility(View.INVISIBLE);
                     //Сделать кнопку невидимой - только при динамичных кнопках
                     int idNum = v.getId();
                     UpcomingSet(idNum);
@@ -1137,6 +1145,8 @@ public class Fragment_Main extends TabbedStopwatch {
                 textUpc[i].setText(UpcomText[i]);
                 LinearUp.addView(textUpc[i]);
             }
+
+            buttonEachLap.setVisibility(eachShown >= 0 ? View.VISIBLE : View.INVISIBLE);
         }
 
         //Удаление кнопок
