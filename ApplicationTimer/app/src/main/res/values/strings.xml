@@ -74,4 +74,8 @@
     <string name="_str_SettingUpcomingText">Формат окна</string>
     <string name="_strDefault">Стандартный</string>
     <string name="_strWithoutUpcoming">Упрощенный</string>
+    <string name="_strActivateLeft1">"Осталось использований: "</string>
+    <string name="_strActivateLeft2">.</string>
+    <string name="_strActivateTitle">Данная версия является демонстрационной. Для активации полной версии введите код:</string>
+    <string name="_strActivateFull">Версия приложения: </string>
 </resources>

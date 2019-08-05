@@ -228,15 +228,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/text_Err"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textColor="@android:color/holo_red_dark"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="230dp" />
-
-            <TextView
                 android:id="@+id/text_LapsNum"
                 android:layout_width="166dp"
                 android:layout_height="24dp"
@@ -519,12 +510,93 @@
                 app:layout_constraintTop_toBottomOf="@+id/listViewDeices" />
 
             <Space
+                android:id="@+id/space"
                 android:layout_width="5dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="57dp"
                 android:layout_marginLeft="57dp"
+                android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:layout_editor_absoluteY="1389dp" />
+                app:layout_constraintTop_toBottomOf="@+id/button_send" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/activateLayout"
+                android:layout_width="381dp"
+                android:layout_height="144dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/space">
+
+                <TextView
+                    android:id="@+id/_activateTitle"
+                    android:layout_width="358dp"
+                    android:layout_height="43dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="@string/_strActivateTitle"
+                    android:textColor="@android:color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/_activateLeft" />
+
+                <TextView
+                    android:id="@+id/_activateLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@android:color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/_activateEdit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:maxLength="10"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/_activateTitle" />
+
+                <TextView
+                    android:id="@+id/_versionApp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:textColor="@android:color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/_activateEdit" />
+
+                <Button
+                    android:id="@+id/buttonActivate"
+                    android:layout_width="52dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:text="@android:string/yes"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/_activateEdit"
+                    app:layout_constraintTop_toBottomOf="@+id/_activateTitle" />
+
+            </android.support.constraint.ConstraintLayout>
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>

@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-37:12
-INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-37:12
-INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-37:12
-INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-37:12
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-39:12
+INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-39:12
+INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-39:12
+INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-39:12
 MERGED from [com.android.support:design:28.0.0] C:\Users\y2g\.gradle\caches\transforms-1\files-1.1\design-28.0.0.aar\97226364b911c0ffab8536e667626292\AndroidManifest.xml:17:1-24:12
 MERGED from [com.android.support:appcompat-v7:28.0.0] C:\Users\y2g\.gradle\caches\transforms-1\files-1.1\appcompat-v7-28.0.0.aar\cfba73dd6f168bb91ae2c675ad0ccb7f\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] C:\Users\y2g\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.3.aar\036c58d98fec926e46fcc2d219b2471b\AndroidManifest.xml:2:1-11:12
@@ -35,22 +35,22 @@ MERGED from [com.android.support:interpolator:28.0.0] C:\Users\y2g\.gradle\cache
 MERGED from [android.arch.lifecycle:livedata:1.1.1] C:\Users\y2g\.gradle\caches\transforms-1\files-1.1\livedata-1.1.1.aar\4f984094f698e59314b1e2f86a3ce671\AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.lifecycle:livedata-core:1.1.1] C:\Users\y2g\.gradle\caches\transforms-1\files-1.1\livedata-core-1.1.1.aar\099687ff02c37571dfe4a37c4b28c359\AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.core:runtime:1.1.1] C:\Users\y2g\.gradle\caches\transforms-1\files-1.1\runtime-1.1.1.aar\0171dc5e7ad14616b80b01007768f1d1\AndroidManifest.xml:17:1-22:12
-INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-37:12
-INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-37:12
-INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-37:12
+INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-39:12
+INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-39:12
+INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-39:12
 	package
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:4:5-43
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:4:5-42
 		INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-37:12
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-39:12
 		INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml
 	xmlns:dist
 		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:3:5-61
 	android:versionCode
 		INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-37:12
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:1-39:12
 		INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:2:11-69
@@ -58,28 +58,36 @@ dist:module
 ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:6:5-40
 	dist:instant
 		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:6:18-37
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:7:5-81
+	android:name
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:7:22-78
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:8:5-80
+	android:name
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:8:22-77
 uses-permission#android.permission.BLUETOOTH
-ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:7:5-68
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:9:5-68
 	android:name
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:7:22-65
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:9:22-65
 uses-permission#android.permission.BLUETOOTH_ADMIN
-ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:8:5-74
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:10:5-74
 	android:name
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:8:22-71
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:10:22-71
 uses-permission#android.permission.INTERNET
-ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:9:5-67
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:11:5-67
 	android:name
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:9:22-64
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:11:22-64
 uses-permission#android.permission.ACCESS_COARSE_LOCATION
-ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:10:5-81
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:12:5-81
 	android:name
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:10:22-78
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:12:22-78
 uses-permission#android.permission.ACCESS_FINE_LOCATION
-ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:11:5-79
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:13:5-79
 	android:name
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:11:22-76
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:13:22-76
 application
-ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:14:5-35:19
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:16:5-37:19
 MERGED from [com.android.support:design:28.0.0] C:\Users\y2g\.gradle\caches\transforms-1\files-1.1\design-28.0.0.aar\97226364b911c0ffab8536e667626292\AndroidManifest.xml:22:5-20
 MERGED from [com.android.support:design:28.0.0] C:\Users\y2g\.gradle\caches\transforms-1\files-1.1\design-28.0.0.aar\97226364b911c0ffab8536e667626292\AndroidManifest.xml:22:5-20
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] C:\Users\y2g\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.3.aar\036c58d98fec926e46fcc2d219b2471b\AndroidManifest.xml:9:5-20
@@ -91,39 +99,39 @@ MERGED from [com.android.support:versionedparcelable:28.0.0] C:\Users\y2g\.gradl
 	android:appComponentFactory
 		ADDED from [com.android.support:support-compat:28.0.0] C:\Users\y2g\.gradle\caches\transforms-1\files-1.1\support-compat-28.0.0.aar\82003304ca8befcdb9a2a356e78841a6\AndroidManifest.xml:22:18-91
 	android:supportsRtl
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:19:9-35
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:21:9-35
 	android:label
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:17:9-42
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:19:9-42
 	android:roundIcon
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:18:9-54
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:20:9-54
 	android:icon
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:16:9-43
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:18:9-43
 	android:allowBackup
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:15:9-35
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:17:9-35
 	android:theme
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:20:9-40
-activity#com.example.applicationtimer.TabbedStopwatch
-ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:22:9-30:20
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:22:9-40
+activity#com.group_stopwatch.android.TabbedStopwatch
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:24:9-32:20
 	android:label
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:24:13-46
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:26:13-46
 	android:name
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:23:13-44
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:25:13-44
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:25:13-29:29
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:27:13-31:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:26:17-69
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:28:17-69
 	android:name
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:26:25-66
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:28:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:28:17-77
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:30:17-77
 	android:name
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:28:27-74
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:30:27-74
 meta-data#preloaded_fonts
-ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:32:9-34:57
+ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:34:9-36:57
 	android:resource
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:34:13-54
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:36:13-54
 	android:name
-		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:33:13-43
+		ADDED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:35:13-43
 uses-sdk
 INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\y2g\AndroidStudioProjects\ApplicationTimer\app\src\main\AndroidManifest.xml
