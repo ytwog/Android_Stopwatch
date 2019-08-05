@@ -1,0 +1,5 @@
+# ninja log v5
+0	519	0	CMakeFiles/native-lib.dir/native-lib.cpp.o	13250af3035c3834
+521	964	0	C:/Users/y2g/AndroidStudioProjects/CAndroidProgramm1/app/build/intermediates/cmake/debug/obj/x86/libnative-lib.so	2ba67aed0369afa4
+3	4400	0	CMakeFiles/native-lib.dir/native-lib.cpp.o	13250af3035c3834
+4400	5252	0	C:/Users/y2g/AndroidStudioProjects/CAndroidProgramm1/app/build/intermediates/cmake/debug/obj/x86/libnative-lib.so	2ba67aed0369afa4
