@@ -425,11 +425,11 @@
 
             <ListView
                 android:id="@+id/listViewDeices"
-                android:layout_width="333dp"
-                android:layout_height="169dp"
+                android:layout_width="144dp"
+                android:layout_height="47dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="64dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textNameBT1" />
 
@@ -505,9 +505,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/_strSend"
-                android:visibility="invisible"
+                android:visibility="visible"
                 app:layout_constraintStart_toStartOf="@+id/listViewDeices"
-                app:layout_constraintTop_toBottomOf="@+id/listViewDeices" />
+                app:layout_constraintTop_toBottomOf="@+id/textNameBT1" />
 
             <Space
                 android:id="@+id/space"
