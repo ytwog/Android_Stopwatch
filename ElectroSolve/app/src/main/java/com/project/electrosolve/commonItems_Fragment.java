@@ -1,6 +1,7 @@
 package com.project.electrosolve;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -17,32 +18,15 @@ import android.widget.ImageButton;
 
 public class commonItems_Fragment extends Fragment {
 
+
     public commonItems_Fragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        final ImageButton lineImageButton = getView().findViewById(R.id.lineButton);
-        final ImageButton resistorImageButton = getView().findViewById(R.id.resistButton);
-        final View lineView = getView().findViewById(R.id.viewLine);
-        final View resistorView = getView().findViewById(R.id.viewResistor);
-        resistorImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                lineView.setBackgroundColor(getResources().getColor(R.color.colorWhite));
-                resistorView.setBackgroundColor(getResources().getColor(R.color.colorOrange));
-            }
-        });
-        lineImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                lineView.setBackgroundColor(getResources().getColor(R.color.colorOrange));
-                resistorView.setBackgroundColor(getResources().getColor(R.color.colorWhite));
-            }
-        });
-
-
+        Intent intentToFragment = new Intent(Intent.ACTION_SENDTO);
+        getActivity().getApplicationContext().sendBroadcast(intentToFragment);
         super.onActivityCreated(savedInstanceState);
     }
 
