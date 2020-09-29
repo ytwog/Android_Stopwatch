@@ -898,36 +898,6 @@ public class TabbedStopwatch extends AppCompatActivity {
             FW.write(lenSTR);
             FW.write(str);
             FW.close();
-            // отрываем поток для записи
-            /*
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
-                    CW.openFileOutput("config.cfg", MODE_PRIVATE)));
-            // пишем данные
-            bw.write("[versionNumber](licenceTaken)\n");                    // Метка 0
-            bw.write("Save_ver2\n");                                        // Версия сохранения
-            bw.write("[runnersNumber]\n");                                  // Метка 1
-            bw.write(String.valueOf(SData.getRunners()) + "\n");            // Количество кнопок
-            bw.write("[staticFlag]\n");                                     // Метка 2
-            bw.write((SData.getStaticButtons() ? "true" : "false") + "\n"); // Статические кнопки
-            bw.write("[lapsNumber]\n");                                     // Метка 3
-            bw.write(String.valueOf(SData.getLaps()) + "\n");               // Количество кругов
-            bw.write("[hidetimeFLag]\n");                                   // Метка 4
-            bw.write(SData.getAccuracyFlag() + "\n");                       // Точность измерений
-            bw.write("[hidetimeFLag]\n");                                   // Метка 5
-            bw.write(SData.getTimeUntilShown() + "\n");                     // Количество секунд для исчезания кнопок
-            bw.write("[slashLapsFlag]\n");                                  // Метка 6
-            bw.write((SData.getslashLaps() ? "true" : "false") + "\n");     // Отображение кругов через слэш
-            bw.write("[styleInteger]\n");                                   // Метка 7
-            bw.write(SData.styleID + "\n");                                 // Стиль приложения
-            bw.write("[onVolumeFlag]\n");                                   // Метка 8
-            bw.write((SData.OnVolumeStart ? "true" : "false") + "\n");            // Нажатие на громкость включает таймер
-            for(int i = 0; i < SData.getRunners(); i++) {
-                bw.write("[Runner ID number " + String.valueOf(i) + "]\n");   // Метки для номеров
-                bw.write(String.valueOf(arrIDNumber[i]) + "\n");            // Идентификационный номер участника i
-            }
-            // закрываем поток
-            bw.close();
-            */
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

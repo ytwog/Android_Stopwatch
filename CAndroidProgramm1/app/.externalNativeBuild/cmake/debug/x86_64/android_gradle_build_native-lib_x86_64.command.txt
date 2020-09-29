@@ -1,8 +1,0 @@
-Executable : C:\Users\y2g\AppData\Local\Android\Sdk\cmake\3.6.4111459\bin\cmake.exe
-arguments : 
---build
-C:\Users\y2g\AndroidStudioProjects\CAndroidProgramm1\app\.externalNativeBuild\cmake\debug\x86_64
---target
-native-lib
-jvmArgs : 
-

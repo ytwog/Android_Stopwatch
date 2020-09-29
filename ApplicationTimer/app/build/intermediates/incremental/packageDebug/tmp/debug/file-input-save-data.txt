@@ -1,0 +1,7 @@
+#Internal package file, do not edit.
+#Tue Sep 29 14:32:04 KRAT 2020
+0.baseType=DIRECTORY
+0.base=C\:\\Users\\y2g\\IdeaProjects\\ApplicationTimer\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\out
+0.path=classes.dex
+0.set=DEX
+count=1

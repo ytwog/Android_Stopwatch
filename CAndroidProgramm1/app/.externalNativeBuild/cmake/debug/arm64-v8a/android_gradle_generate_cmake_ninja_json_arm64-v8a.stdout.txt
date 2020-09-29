@@ -1,3 +1,0 @@
--- Configuring done
--- Generating done
--- Build files have been written to: C:/Users/y2g/AndroidStudioProjects/CAndroidProgramm1/app/.externalNativeBuild/cmake/debug/arm64-v8a

@@ -1,3 +1,0 @@
-C:/Users/y2g/AndroidStudioProjects/CAndroidProgramm1/app/.externalNativeBuild/cmake/release/x86_64/CMakeFiles/native-lib.dir
-C:/Users/y2g/AndroidStudioProjects/CAndroidProgramm1/app/.externalNativeBuild/cmake/release/x86_64/CMakeFiles/edit_cache.dir
-C:/Users/y2g/AndroidStudioProjects/CAndroidProgramm1/app/.externalNativeBuild/cmake/release/x86_64/CMakeFiles/rebuild_cache.dir
