@@ -1280,12 +1280,14 @@ id tabMode
 id tableLayout
 id tableManage
 id tableRow
+id tableSettings
 id tag_transition_group
 id tag_unhandled_key_event_manager
 id tag_unhandled_key_listeners
 id text
 id text2
 id text2Column1
+id textAddOne
 id textAddressBT1
 id textColumn1
 id textColumn2
@@ -1299,7 +1301,6 @@ id textSpacerNoTitle
 id textStart
 id textTab3Name
 id textView
-id textView11
 id textView2
 id textView3
 id textView4
@@ -1442,6 +1443,7 @@ string _StaticTrue
 string _TimeUntil
 string _VolumeButton_text
 string _accuracy_text
+string _add_One
 string _bluetoothText
 string _cancel_str
 string _eachLap

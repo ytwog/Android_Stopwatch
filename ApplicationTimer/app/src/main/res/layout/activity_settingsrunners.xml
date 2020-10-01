@@ -39,6 +39,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <EditText
+            android:id="@+id/SpeechTextParam"
+            style="@style/ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox"
+            android:layout_width="191dp"
+            android:layout_height="49dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="2"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textAddOne" />
+
         <ImageButton
             android:id="@+id/buttonAcceptDialog"
             android:layout_width="55dp"
@@ -76,7 +88,7 @@
             android:layout_height="55dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:background="@android:color/transparent"
@@ -91,7 +103,7 @@
             android:layout_height="55dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:background="@android:color/transparent"
             android:scaleX="1.2"
             android:scaleY="1.2"
@@ -107,7 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:text="@string/_participantNumSettings"
             app:layout_constraintEnd_toStartOf="@+id/RunNumberText"
             app:layout_constraintHorizontal_bias="1.0"
@@ -138,30 +150,16 @@
             app:layout_constraintTop_toBottomOf="@+id/textNumberRunners" />
 
         <TextView
-            android:id="@+id/textView11"
-            style="?attr/autoCompleteTextViewStyle"
-            android:layout_width="189dp"
-            android:layout_height="44dp"
-            android:gravity="center_horizontal"
-            android:text="@string/_strInputSpeech"
-            android:textAllCaps="false"
-            android:textSize="18sp"
+            android:id="@+id/textAddOne"
+            android:layout_width="144dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/_add_One"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buttonCancelDialog" />
 
-        <TextView
-            android:id="@+id/SpeechTextParam"
-            style="@android:style/Widget.Material.Light.TextView"
-            android:layout_width="187dp"
-            android:layout_height="19dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView11" />
     </android.support.constraint.ConstraintLayout>
 
 </LinearLayout>

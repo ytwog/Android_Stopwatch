@@ -101,6 +101,7 @@ import java.io.BufferedWriter;
  import java.util.List;
  import java.util.Set;
  import java.util.UUID;
+ import java.util.Vector;
  import java.util.logging.LogManager;
 
  import javax.crypto.Cipher;
@@ -553,7 +554,6 @@ public class TabbedStopwatch extends AppCompatActivity {
                     eText2.setText(String.valueOf(SData.Dialog_Param2));
                 }
             });
-
             return rootView;
         }
 

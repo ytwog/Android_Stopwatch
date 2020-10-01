@@ -763,10 +763,8 @@ public class Fragment_Main extends TabbedStopwatch {
                     RunButton5.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if(ok_Speech) {
-                                RunParam1.append("," + textSpoken.getText());
-                                RunButton1.callOnClick();
-                            }
+                            RunParam1.append("," + textSpoken.getText());
+                            RunButton1.callOnClick();
                         }
                     });
 

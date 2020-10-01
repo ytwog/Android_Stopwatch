@@ -78,4 +78,5 @@
     <string name="_strActivateLeft2">.</string>
     <string name="_strActivateTitle">Данная версия является демонстрационной. Для активации полной версии введите код:</string>
     <string name="_strActivateFull">Версия приложения: </string>
+    <string name="_add_One">Добавить участника</string>
 </resources>

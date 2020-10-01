@@ -33,9 +33,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -49,6 +51,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Vector;
 
 public class Fragment_Settings extends TabbedStopwatch {
     public static class SettingsActivity extends Fragment {
@@ -700,9 +703,21 @@ public class Fragment_Settings extends TabbedStopwatch {
             SendButton.setOnClickListener(Signal_Send);
             Button_BluetoothConnect.setOnClickListener(Signal_ConnectBluetooth);
             //************************************************
+            Vector<Integer> vecSettingNames = new Vector<Integer>();
+            vecSettingNames.add(123);
+            vecSettingNames.add(124);
+            loadSettingTable((LinearLayout) rootView.findViewById(R.id.tableSettings), vecSettingNames);
             return rootView;
         }
 
+
+        private void loadSettingTable(LinearLayout tableSettings, Vector<Integer> vec1) {
+            for (int q: vec1) {
+                TextView tv = new TextView(Tab3.getActivity());
+                tv.setText(String.valueOf(q));
+                tableSettings.addView(tv);
+            }
+        }
 
     }
 }
