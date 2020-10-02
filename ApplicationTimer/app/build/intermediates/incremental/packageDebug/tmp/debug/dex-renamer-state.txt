@@ -1,4 +1,4 @@
-#Thu Oct 01 22:42:29 KRAT 2020
+#Fri Oct 02 23:57:18 KRAT 2020
 base.0=C\:\\Users\\y2g\\IdeaProjects\\ApplicationTimer\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\out
 path.0=classes.dex
 renamed.0=classes.dex

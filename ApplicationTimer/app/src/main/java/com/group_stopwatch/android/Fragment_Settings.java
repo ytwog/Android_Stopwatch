@@ -16,13 +16,18 @@ import android.speech.RecognizerIntent;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.TextViewCompat;
 import android.text.Editable;
+import android.text.InputType;
+import android.text.Layout;
+import android.text.PrecomputedText;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
+import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -222,9 +227,9 @@ public class Fragment_Settings extends TabbedStopwatch {
             BTname1 = (TextView) rootView.findViewById(R.id.NameBT_1);
             editLaps = (EditText) rootView.findViewById(R.id.edit_laps);
             editWaitAfter = (EditText) rootView.findViewById(R.id.edit_WaitAfter);
-            Param1Edit = (EditText) rootView.findViewById(R.id.edit_Param1Edit);
-            Param2Edit = (EditText) rootView.findViewById(R.id.edit_Param2Edit);
-            editTimeUntil = (EditText) rootView.findViewById(R.id.edit_TimeUntil);
+            Param1Edit = new EditText(Tab3.getActivity());// rootView.findViewById(R.id.edit_Param1Edit);
+            Param2Edit = new EditText(Tab3.getActivity());// rootView.findViewById(R.id.edit_Param2Edit);
+            editTimeUntil = new EditText(Tab3.getActivity());// rootView.findViewById(R.id.edit_TimeUntil);
             radio1 = (RadioButton) rootView.findViewById(R.id.radio_1);
             radioGroup1 = (RadioGroup) rootView.findViewById(R.id.radioGroup1);
             slash1Radio = (Button) rootView.findViewById(R.id.button_withSlash);
@@ -703,19 +708,47 @@ public class Fragment_Settings extends TabbedStopwatch {
             SendButton.setOnClickListener(Signal_Send);
             Button_BluetoothConnect.setOnClickListener(Signal_ConnectBluetooth);
             //************************************************
-            Vector<Integer> vecSettingNames = new Vector<Integer>();
-            vecSettingNames.add(123);
-            vecSettingNames.add(124);
-            loadSettingTable((LinearLayout) rootView.findViewById(R.id.tableSettings), vecSettingNames);
+            Vector<String> vecSettingNames = new Vector<String>();
+            Vector<EditText> vecSettingEdits = new Vector<EditText>();
+            vecSettingNames.add(getString(R.string._TimeUntil));
+            vecSettingNames.add(getString(R.string._strParamSettings));
+            vecSettingNames.add(getString(R.string._textLengthDistanse));
+            // protected EditText editTimeUntil, editWaitAfter, Param1Edit, Param2Edit, editLaps;
+            vecSettingEdits.add(editTimeUntil);
+            vecSettingEdits.add(Param1Edit);
+            vecSettingEdits.add(Param2Edit);
+            loadSettingTable((LinearLayout) rootView.findViewById(R.id.tableSettings), vecSettingNames, vecSettingEdits);
             return rootView;
         }
 
+/*
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:theme="@android:style/Theme.Black.NoTitleBar"
+ */
 
-        private void loadSettingTable(LinearLayout tableSettings, Vector<Integer> vec1) {
-            for (int q: vec1) {
+        private void loadSettingTable(LinearLayout tableSettings, Vector<String> vec1, Vector<EditText> vec2) {
+            int iter = 0;
+            for (String q: vec1) {
                 TextView tv = new TextView(Tab3.getActivity());
-                tv.setText(String.valueOf(q));
-                tableSettings.addView(tv);
+                EditText ed = vec2.elementAt(iter);
+                ed.setInputType(InputType.TYPE_CLASS_NUMBER);
+                ed.setEms(10);
+                ed.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                TextViewCompat.setTextAppearance(ed, R.style.TextAppearance_AppCompat_Button);
+                LinearLayout ll_Vertical = new LinearLayout(Tab3.getActivity());
+                ll_Vertical.setOrientation(LinearLayout.HORIZONTAL);
+                ll_Vertical.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+                tv.setText(q);
+                tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT, 2));
+                ed.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT, 5));
+
+                ll_Vertical.addView(tv);
+                ll_Vertical.addView(ed);
+                tableSettings.addView(ll_Vertical);
+                iter++;
             }
         }
 
