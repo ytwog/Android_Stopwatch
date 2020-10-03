@@ -45,6 +45,8 @@ import android.widget.RadioGroup;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import org.xmlpull.v1.XmlPullParser;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -57,10 +59,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.logging.XMLFormatter;
 
 public class Fragment_Settings extends TabbedStopwatch {
     public static class SettingsActivity extends Fragment {
         public static UUID uuid;
+        public static EditText editLaps, Param1Edit, Param2Edit;
         public static final int VOICE_RECOGNITION_REQUEST_CODE = 4300;
         final BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
         protected Thread threadOld;
@@ -69,10 +73,10 @@ public class Fragment_Settings extends TabbedStopwatch {
         protected ImageButton Button_BluetoothConnect;
         protected Button ButtonStyle1, ButtonStyle2, ButtonStyle3, SendButton, slash1Radio, slash2Radio;
         protected TextView BTAddress1, BTname1, BluetoothStatus_text;
-        protected EditText editTimeUntil, editWaitAfter, Param1Edit, Param2Edit, editLaps;
+        protected EditText editTimeUntil, editWaitAfter;
         //Radio 1
-        protected RadioGroup radioGroup1;
-        protected RadioButton radio1;
+        protected RadioGroup radioGroup1, radioGroup2;
+        protected RadioButton radio1, radioF;
         //Radio Up
         protected RadioGroup radioGroupUp1;
         protected RadioButton radioUp1;
@@ -184,6 +188,7 @@ public class Fragment_Settings extends TabbedStopwatch {
             TempB = (Button)rootView.findViewById(R.id.button_withSlash);
             TempB.setText(sStr);
             radioGroupUp1.check(SData.formMain ? R.id.radio_up1 : R.id.radio_up2);
+            radioGroup2.check(SData.getFinishedOrLeft() ? R.id.radio_finished : R.id.radio_left);
             //SendButton.setVisibility(View.INVISIBLE);
             editLaps.setEnabled(startTime==0);
             Param1Edit.setEnabled(startTime==0);
@@ -225,13 +230,14 @@ public class Fragment_Settings extends TabbedStopwatch {
             ButtonStyle3 = (Button)rootView.findViewById(R.id.buttonStyle3);
             BTAddress1 = (TextView) rootView.findViewById(R.id.AddressBT_1);
             BTname1 = (TextView) rootView.findViewById(R.id.NameBT_1);
-            editLaps = (EditText) rootView.findViewById(R.id.edit_laps);
-            editWaitAfter = (EditText) rootView.findViewById(R.id.edit_WaitAfter);
-            Param1Edit = new EditText(Tab3.getActivity());// rootView.findViewById(R.id.edit_Param1Edit);
-            Param2Edit = new EditText(Tab3.getActivity());// rootView.findViewById(R.id.edit_Param2Edit);
-            editTimeUntil = new EditText(Tab3.getActivity());// rootView.findViewById(R.id.edit_TimeUntil);
+            editLaps = new EditText(Tab3.getActivity());
+            editWaitAfter = new EditText(Tab3.getActivity());
+            Param1Edit = new EditText(Tab3.getActivity());
+            Param2Edit = new EditText(Tab3.getActivity());
+            editTimeUntil = new EditText(Tab3.getActivity());
             radio1 = (RadioButton) rootView.findViewById(R.id.radio_1);
             radioGroup1 = (RadioGroup) rootView.findViewById(R.id.radioGroup1);
+            radioGroup2 = (RadioGroup) rootView.findViewById(R.id.radio_group2);
             slash1Radio = (Button) rootView.findViewById(R.id.button_withSlash);
             slash2Radio = (Button) rootView.findViewById(R.id.button_woSlash);
             ConstraintLayout ActivLayout = (ConstraintLayout) rootView.findViewById(R.id.activateLayout);
@@ -335,6 +341,8 @@ public class Fragment_Settings extends TabbedStopwatch {
                 @Override
                 public void onClick(View v) {
                     SData.slashLaps = true;
+                    radioGroup2.setVisibility(View.VISIBLE);
+                    ((TextView)rootView.findViewById(R.id.textView_LorF)).setTextColor(getResources().getColor(R.color.black));
                     slash1Radio.setAlpha(1);
                     slash2Radio.setAlpha(0.5f);
                 }
@@ -344,6 +352,8 @@ public class Fragment_Settings extends TabbedStopwatch {
                 @Override
                 public void onClick(View v) {
                     SData.slashLaps = false;
+                    radioGroup2.setVisibility(View.INVISIBLE);
+                    ((TextView)rootView.findViewById(R.id.textView_LorF)).setTextColor(getResources().getColor(R.color.gray));
                     slash2Radio.setAlpha(1);
                     slash1Radio.setAlpha(0.5f);
                 }
@@ -357,6 +367,17 @@ public class Fragment_Settings extends TabbedStopwatch {
             });
 
             radioGroup1.check(SData.getAccuracyFlag() ? R.id.radio_1 : R.id.radio_2);
+
+            radioGroup2.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    SData.finishedOrLeft = checkedId==R.id.radio_finished ? true : false;
+                }
+            });
+
+            radioGroup2.check(SData.getFinishedOrLeft() ? R.id.radio_finished : R.id.radio_left);
+
+
             arrIDNumberSettings = arrIDNumber;
             editLaps.setText(String.valueOf(SData.getLaps()));
             Param1Edit.setText(String.valueOf(SData.Dialog_Param1));
@@ -713,10 +734,14 @@ public class Fragment_Settings extends TabbedStopwatch {
             vecSettingNames.add(getString(R.string._TimeUntil));
             vecSettingNames.add(getString(R.string._strParamSettings));
             vecSettingNames.add(getString(R.string._textLengthDistanse));
+            vecSettingNames.add(getString(R.string._lapsNum_str));
+            vecSettingNames.add(getString(R.string._textTimeWaitAfter));
             // protected EditText editTimeUntil, editWaitAfter, Param1Edit, Param2Edit, editLaps;
             vecSettingEdits.add(editTimeUntil);
             vecSettingEdits.add(Param1Edit);
             vecSettingEdits.add(Param2Edit);
+            vecSettingEdits.add(editLaps);
+            vecSettingEdits.add(editWaitAfter);
             loadSettingTable((LinearLayout) rootView.findViewById(R.id.tableSettings), vecSettingNames, vecSettingEdits);
             return rootView;
         }
@@ -734,17 +759,17 @@ public class Fragment_Settings extends TabbedStopwatch {
                 ed.setInputType(InputType.TYPE_CLASS_NUMBER);
                 ed.setEms(10);
                 ed.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                tv.setTextColor(getResources().getColor(R.color.black));
                 TextViewCompat.setTextAppearance(ed, R.style.TextAppearance_AppCompat_Button);
                 LinearLayout ll_Vertical = new LinearLayout(Tab3.getActivity());
                 ll_Vertical.setOrientation(LinearLayout.HORIZONTAL);
                 ll_Vertical.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
+                        toDP(50)));
                 tv.setText(q);
                 tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT, 2));
                 ed.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT, 5));
-
                 ll_Vertical.addView(tv);
                 ll_Vertical.addView(ed);
                 tableSettings.addView(ll_Vertical);

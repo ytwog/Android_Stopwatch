@@ -925,9 +925,14 @@ public class Fragment_Main extends TabbedStopwatch {
                         runData[idNum].LapsTaken++;
                         if(SData.getslashLaps())
                         {
+                            String finishedOrLeft;
+                            if(SData.getFinishedOrLeft())
+                                finishedOrLeft = String.valueOf(runData[idNum / (SData.getFieldX())*(SData.getFieldX()) + idNum % (SData.getFieldX())].getLapsTaken());
+                            else
+                                finishedOrLeft = String.valueOf(SData.laps - runData[idNum / (SData.getFieldX())*(SData.getFieldX()) + idNum % (SData.getFieldX())].getLapsTaken());
                             String s = "" + (runData[(idNum / (SData.getFieldX()))*(SData.getFieldX()) +
                                     idNum % (SData.getFieldX())].getIDNumber()) + "/" +
-                                    String.valueOf(runData[idNum / (SData.getFieldX())*(SData.getFieldX()) + idNum % (SData.getFieldX())].getLapsTaken());
+                                    finishedOrLeft;
                             SpannableString sStr =  new SpannableString(s);
                             sStr.setSpan(new AbsoluteSizeSpan((int)minSize,true), 0,
                                     s.length()-1-String.valueOf(runData[idNum / (SData.getFieldX())*(SData.getFieldX()) + idNum % (SData.getFieldX())].getLapsTaken()).length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -945,9 +950,14 @@ public class Fragment_Main extends TabbedStopwatch {
                     runData[idNum].setHidden();
                     if(SData.getslashLaps())
                     {
+                        String finishedOrLeft;
+                        if(SData.getFinishedOrLeft())
+                            finishedOrLeft = String.valueOf(runData[idNum / (SData.getFieldX())*(SData.getFieldX()) + idNum % (SData.getFieldX())].getLapsTaken());
+                        else
+                            finishedOrLeft = String.valueOf(SData.laps - runData[idNum / (SData.getFieldX())*(SData.getFieldX()) + idNum % (SData.getFieldX())].getLapsTaken());
                         String s = "" + (runData[(idNum / (SData.getFieldX()))*(SData.getFieldX()) +
                                 idNum % (SData.getFieldX())].getIDNumber()) + "/" +
-                                String.valueOf(runData[idNum / (SData.getFieldX())*(SData.getFieldX()) + idNum % (SData.getFieldX())].getLapsTaken());
+                                finishedOrLeft;
                         SpannableString sStr =  new SpannableString(s);
                         sStr.setSpan(new AbsoluteSizeSpan((int)minSize,true), 0,
                                 s.length()-1-String.valueOf(runData[idNum / (SData.getFieldX())*(SData.getFieldX()) + idNum % (SData.getFieldX())].getLapsTaken()).length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -1116,8 +1126,13 @@ public class Fragment_Main extends TabbedStopwatch {
             buttonEachLap.setTextSize(minSizeLap);
             buttonEachLap.setOnClickListener(Signal_EachLap);
             for(int i = 0; i < SData.getRunners(); i++) {
-                if(SData.getslashLaps()) s = "" + (runData[i / (SData.getFieldX()) * (numX) + i % (SData.getFieldX())].getIDNumber()) + "/" +
-                        String.valueOf(runData[i / (SData.getFieldX()) * (numX) + i % (SData.getFieldX())].getLapsTaken());
+                String finishedOrLeft;
+                if(SData.getFinishedOrLeft())
+                    finishedOrLeft = String.valueOf(runData[i / (SData.getFieldX()) * (numX) + i % (SData.getFieldX())].getLapsTaken());
+                else
+                    finishedOrLeft = String.valueOf(SData.laps - runData[i / (SData.getFieldX()) * (numX) + i % (SData.getFieldX())].getLapsTaken());
+
+                if(SData.getslashLaps()) s = "" + (runData[i / (SData.getFieldX()) * (numX) + i % (SData.getFieldX())].getIDNumber()) + "/" + finishedOrLeft;
                 else s = "" + (runData[i / (SData.getFieldX()) * (numX) + i % (SData.getFieldX())].getIDNumber());
                 arrButtons[i / (SData.getFieldX())][i % (SData.getFieldX())].setTextSize(minSize);
                 sStr = new SpannableString(s);

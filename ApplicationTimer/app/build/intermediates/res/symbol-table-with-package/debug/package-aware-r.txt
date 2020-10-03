@@ -600,6 +600,7 @@ color background_floating_material_dark
 color background_floating_material_light
 color background_material_dark
 color background_material_light
+color black
 color brickYellow
 color bright_foreground_disabled_material_dark
 color bright_foreground_disabled_material_light
@@ -640,6 +641,7 @@ color error_color_material_light
 color foreground_material_dark
 color foreground_material_light
 color grassGreen
+color gray
 color highlighted_text_material_dark
 color highlighted_text_material_light
 color material_blue_grey_800
@@ -1144,11 +1146,7 @@ id dialog2
 id dimensions
 id direct
 id disableHome
-id edit_Param1Edit
-id edit_Param2Edit
-id edit_TimeUntil
 id edit_WaitAfter
-id edit_laps
 id edit_query
 id end
 id enterAlways
@@ -1224,6 +1222,9 @@ id radioGroup1
 id radioGroupUpcoming
 id radio_1
 id radio_2
+id radio_finished
+id radio_group2
+id radio_left
 id radio_up1
 id radio_up2
 id right
@@ -1306,14 +1307,10 @@ id textView3
 id textView4
 id textView5
 id textView7
+id textView_LorF
 id text_Accur
-id text_LapsNum
-id text_Param1Settings
-id text_Param2Settings
-id text_TimeUntil
 id text_Timer
 id text_UpcomingRunners
-id text_WaitAfterclicked
 id text_input_password_toggle
 id text_slashLap
 id text_style
@@ -1492,6 +1489,9 @@ string _str_Name1
 string _str_SettingUpcomingText
 string _str_VisualPicture
 string _str_address1
+string _str_finished
+string _str_left
+string _str_left_or_finished
 string _strinappropriate
 string _style1_str
 string _style2_str

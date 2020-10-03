@@ -196,6 +196,7 @@ public class TabbedStopwatch extends AppCompatActivity {
     protected static class SettingsData {
         public boolean formMain = true;
         public boolean smallView = false;
+        public boolean finishedOrLeft = true;
         protected int Dialog_Param1 = 400;
         protected int Dialog_Param2 = 3000;
         protected int Dialog_Param3 = 20;
@@ -243,6 +244,9 @@ public class TabbedStopwatch extends AppCompatActivity {
         }
         public int getFieldY() {
             return numY;
+        }
+        public boolean getFinishedOrLeft() {
+            return finishedOrLeft;
         }
 
     }
@@ -1110,7 +1114,9 @@ public class TabbedStopwatch extends AppCompatActivity {
                     Tab1.buttonStart.callOnClick();
                     if(Tab3 != null)
                     if(Tab3.isVisible()) {
-                        Tab3.rootView.findViewById(R.id.edit_laps).setEnabled(startTime==0);
+                        Fragment_Settings.SettingsActivity.editLaps.setEnabled(startTime==0);
+                        Fragment_Settings.SettingsActivity.Param1Edit.setEnabled(startTime==0);
+                        Fragment_Settings.SettingsActivity.Param2Edit.setEnabled(startTime==0);
                     }
                     return true;
                 }

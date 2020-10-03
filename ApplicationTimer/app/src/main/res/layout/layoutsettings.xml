@@ -92,96 +92,29 @@
             </RadioGroup>
 
             <EditText
-                android:id="@+id/edit_laps"
-                android:layout_width="80dp"
-                android:layout_height="37dp"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="10"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="@color/colorPrimaryDark"
-                android:theme="@android:style/Theme.Black.NoTitleBar"
-                app:layout_constraintBottom_toBottomOf="@+id/text_LapsNum"
-                app:layout_constraintEnd_toEndOf="@+id/edit_Param1Edit"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/edit_TimeUntil"
-                app:layout_constraintTop_toTopOf="@+id/text_LapsNum" />
-
-            <EditText
                 android:id="@+id/edit_WaitAfter"
                 android:layout_width="80dp"
                 android:layout_height="37dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
                 android:ems="10"
                 android:inputType="numberDecimal"
                 android:text="1"
                 android:textAppearance="@style/TextAppearance.AppCompat.Button"
                 android:textColor="@color/colorPrimaryDark"
                 android:theme="@android:style/Theme.Black.NoTitleBar"
-                app:layout_constraintBottom_toBottomOf="@+id/text_WaitAfterclicked"
-                app:layout_constraintEnd_toEndOf="@+id/edit_laps"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/edit_laps"
-                app:layout_constraintTop_toTopOf="@+id/text_WaitAfterclicked" />
+                app:layout_constraintStart_toEndOf="@+id/radioGroup1"
+                app:layout_constraintTop_toBottomOf="@+id/radioGroup1"
+                tools:visibility="invisible" />
 
-
-            <EditText
-                android:id="@+id/edit_Param1Edit"
-                android:layout_width="80dp"
-                android:layout_height="37dp"
-                android:layout_marginStart="142dp"
-                android:layout_marginLeft="142dp"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="400"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="@color/colorPrimaryDark"
-                android:theme="@android:style/Theme.Black.NoTitleBar"
-                app:layout_constraintBottom_toBottomOf="@+id/text_Param1Settings"
-                app:layout_constraintEnd_toEndOf="@+id/edit_TimeUntil"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/text_Param1Settings"
-                app:layout_constraintTop_toTopOf="@+id/text_Param1Settings" />
-
-            <EditText
-                android:id="@+id/edit_Param2Edit"
-                android:layout_width="80dp"
-                android:layout_height="37dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="3000"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="@color/colorPrimaryDark"
-                android:theme="@android:style/Theme.Black.NoTitleBar"
-                app:layout_constraintBottom_toBottomOf="@+id/text_Param2Settings"
-                app:layout_constraintEnd_toEndOf="@+id/edit_TimeUntil"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/text_Param2Settings"
-                app:layout_constraintTop_toTopOf="@+id/text_Param2Settings" />
-
-
-            <TextView
-                android:id="@+id/text_WaitAfterclicked"
-                android:layout_width="215dp"
-                android:layout_height="41dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/_textTimeWaitAfter"
-                android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="@+id/text_LapsNum"
-                app:layout_constraintTop_toBottomOf="@+id/text_LapsNum" />
 
             <TextView
                 android:id="@+id/text_UpcomingRunners"
                 android:layout_width="178dp"
                 android:layout_height="27dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/_str_SettingUpcomingText"
                 android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="@+id/text_LapsNum"
-                app:layout_constraintTop_toBottomOf="@+id/text_WaitAfterclicked" />
+                app:layout_constraintStart_toStartOf="@+id/tableSettings"
+                app:layout_constraintTop_toBottomOf="@+id/tableSettings" />
 
             <RadioGroup
                 android:id="@+id/radioGroupUpcoming"
@@ -222,114 +155,45 @@
                 android:layout_marginTop="24dp"
                 android:text="@string/_accuracy_text"
                 android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="@+id/text_LapsNum"
+                app:layout_constraintStart_toStartOf="@+id/text_UpcomingRunners"
                 app:layout_constraintTop_toBottomOf="@+id/radioGroupUpcoming" />
-
-            <TextView
-                android:id="@+id/text_TimeUntil"
-                android:layout_width="261dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="9dp"
-                android:layout_marginLeft="9dp"
-                android:gravity="center_vertical"
-                android:text="@string/_TimeUntil"
-                android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tableSettings" />
-
-            <TextView
-                android:id="@+id/text_LapsNum"
-                android:layout_width="166dp"
-                android:layout_height="24dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/_lapsNum_str"
-                android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="@+id/text_TimeUntil"
-                app:layout_constraintTop_toBottomOf="@+id/text_Param2Settings" />
-
-            <TextView
-                android:id="@+id/text_Param1Settings"
-                android:layout_width="268dp"
-                android:layout_height="37dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/_strParamSettings"
-                android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="@+id/text_TimeUntil"
-                app:layout_constraintTop_toBottomOf="@+id/text_TimeUntil" />
-
-            <TextView
-                android:id="@+id/text_Param2Settings"
-                android:layout_width="268dp"
-                android:layout_height="37dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/_textLengthDistanse"
-                android:textColor="@android:color/black"
-                app:layout_constraintStart_toStartOf="@+id/text_TimeUntil"
-                app:layout_constraintTop_toBottomOf="@+id/text_Param1Settings" />
 
             <TextView
                 android:id="@+id/text_slashLap"
                 android:layout_width="114dp"
                 android:layout_height="26dp"
-                android:layout_marginTop="65dp"
                 android:text="@string/_slashLap_str"
                 android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="@+id/text_Accur"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/text_Accur"
-                app:layout_constraintTop_toBottomOf="@+id/text_Accur" />
-
-            <EditText
-                android:id="@+id/edit_TimeUntil"
-                android:layout_width="80dp"
-                android:layout_height="37dp"
-                android:layout_marginStart="143dp"
-                android:layout_marginLeft="143dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="10"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="@color/colorPrimaryDark"
-                android:theme="@android:style/Theme.Black.NoTitleBar"
-                app:layout_constraintBottom_creator="1"
-                app:layout_constraintBottom_toBottomOf="@+id/text_TimeUntil"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/text_TimeUntil"
-                app:layout_constraintTop_creator="50"
-                app:layout_constraintTop_toTopOf="@+id/text_TimeUntil"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/radioGroup1" />
 
             <CheckBox
                 android:id="@+id/check_volumeStart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginStart="164dp"
+                android:layout_marginLeft="164dp"
                 android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="@+id/text_volumeStart"
-                app:layout_constraintEnd_toEndOf="@+id/edit_laps"
+                app:layout_constraintStart_toEndOf="@+id/text_volumeStart"
                 app:layout_constraintTop_toTopOf="@+id/text_volumeStart"
                 app:layout_constraintVertical_bias="1.0" />
 
             <TextView
                 android:id="@+id/text_style"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="19dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="100dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/_styleText_str"
                 android:textColor="@android:color/black"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/text_slashLap"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_slashLap"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/radio_group2" />
 
             <TextView
                 android:id="@+id/text_volumeStart"
@@ -447,11 +311,10 @@
                 android:id="@+id/button_withSlash"
                 android:layout_width="68dp"
                 android:layout_height="68dp"
-                android:layout_marginStart="14dp"
-                android:layout_marginLeft="14dp"
                 android:layout_marginTop="12dp"
                 android:background="@android:drawable/alert_light_frame"
                 android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="@+id/text_slashLap"
                 app:layout_constraintStart_toStartOf="@+id/text_slashLap"
                 app:layout_constraintTop_toBottomOf="@+id/text_slashLap" />
 
@@ -501,12 +364,11 @@
                 android:id="@+id/button_woSlash"
                 android:layout_width="68dp"
                 android:layout_height="68dp"
-                android:layout_marginEnd="25dp"
-                android:layout_marginRight="25dp"
                 android:background="@android:drawable/alert_light_frame"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="@+id/button_withSlash"
                 app:layout_constraintEnd_toEndOf="@+id/radioGroup1"
+                app:layout_constraintStart_toEndOf="@+id/text_slashLap"
                 app:layout_constraintTop_toTopOf="@+id/button_withSlash" />
 
             <Button
@@ -607,6 +469,40 @@
                     app:layout_constraintTop_toBottomOf="@+id/_activateTitle" />
 
             </android.support.constraint.ConstraintLayout>
+
+            <RadioGroup
+                android:id="@+id/radio_group2"
+                android:layout_width="251dp"
+                android:layout_height="38dp"
+                android:layout_marginTop="8dp"
+                android:checkedButton="@id/radio_finished"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="@+id/radioGroup1"
+                app:layout_constraintTop_toBottomOf="@+id/textView_LorF">
+
+                <RadioButton
+                    android:id="@+id/radio_finished"
+                    android:layout_width="101dp"
+                    android:layout_height="38dp"
+                    android:layout_marginRight="32dp"
+                    android:text="@string/_str_finished" />
+
+                <RadioButton
+                    android:id="@+id/radio_left"
+                    android:layout_width="99dp"
+                    android:layout_height="38dp"
+                    android:text="@string/_str_left" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/textView_LorF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/_str_left_or_finished"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="@+id/radioGroup1"
+                app:layout_constraintTop_toBottomOf="@+id/button_withSlash" />
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
