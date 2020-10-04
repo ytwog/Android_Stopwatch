@@ -201,6 +201,14 @@ public class Fragment_Settings extends TabbedStopwatch {
                 }
                 toUpdate = false;
             }
+            if(SData.slashLaps) {
+                radioGroup2.setVisibility(View.VISIBLE);
+                ((TextView)rootView.findViewById(R.id.textView_LorF)).setTextColor(getResources().getColor(R.color.black));
+
+            } else {
+                radioGroup2.setVisibility(View.INVISIBLE);
+                ((TextView)rootView.findViewById(R.id.textView_LorF)).setTextColor(getResources().getColor(R.color.gray));
+            }
             Tab1.updateStyle();
         }
 

@@ -271,15 +271,22 @@ public class TabbedStopwatch extends AppCompatActivity {
         int zeroX = _A + p1, zeroY;
         int x1 = p1;
         boolean upper = true;
+
         public DrawView(Context context, int _p4) {
             super(context);
             default_time = SData.timeUntilSHown * 1000;//(long)((double)(SData.Dialog_Param1) * 3600 / SData.Dialog_Param3);
             p4 = _p4 - 5;
             _B = (p4-p2)/2;
             zeroY = _B + p2;
-            rectf1 = new RectF(toDP(p1),toDP(p2),toDP(p1+2*_B),toDP(p4));
-            rectf2 = new RectF(toDP(p1+_B),toDP(p2),toDP(p3-_B),toDP(p4));
-            rectf3 = new RectF(toDP(p3-2*_B),toDP(p2),toDP(p3),toDP(p4));
+            if(SData.smallView) {
+                rectf1 = new RectF(toDP(p1),toDP(p2),toDP(p1+2*_B),toDP(p4));
+                rectf2 = new RectF(toDP(p1+_B),toDP(p2),toDP(p3-_B),toDP(p4));
+                rectf3 = new RectF(toDP(p3-2*_B),toDP(p2),toDP(p3),toDP(p4));
+            } else {
+                rectf1 = new RectF(toDP(p1),toDP(p2),toDP(_B-p1/2),toDP(p4/2));
+                rectf2 = new RectF(toDP(p1),toDP(p2+_B/2),toDP(_B-p1/2),toDP((p4+_B)/2));
+                rectf3 = new RectF(toDP(p1),toDP(p2+_B),toDP(_B-p1/2),toDP(p4/2+_B));
+            }
             findCoordinates(p3-p1, p4-p2, accur);
             CurrentLapTime = new long[101];
             getHolder().addCallback(this);
@@ -318,8 +325,10 @@ public class TabbedStopwatch extends AppCompatActivity {
                 arrCoordinates[i] = new Pair<>();
                 double x_predict = arrCoordinates[i-1].first;
                 double q = per_distance, q_prev;
+                int stackSaver = 1000000;
                 do
                 {
+                    stackSaver--;
                     q_prev = q;
                     if(i >= acc/2) {
                         upper = false;
@@ -331,7 +340,7 @@ public class TabbedStopwatch extends AppCompatActivity {
                     y_pot = findY(x_predict);
                     q = Math.abs(Math.sqrt(Math.pow(x_predict - arrCoordinates[i-1].first, 2) +
                             Math.pow(y_pot - arrCoordinates[i-1].second, 2)) - per_distance);
-                }while(q_prev > q);
+                }while(q_prev > q && stackSaver > 0);
                 arrCoordinates[i].first = x_predict;
                 arrCoordinates[i].second = y_pot;
             }
@@ -344,32 +353,19 @@ public class TabbedStopwatch extends AppCompatActivity {
 
         }
 
-        public void ReStart() {
-            if(drawThread == null) {
-                drawThread = new DrawThread(getHolder());
-                drawThread.setRunning(true);
-                drawThread.start();
-            }
-            else {
-                drawThread.setRunning(true);
-            }
-        }
-
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-            if(drawThread == null) {
-                drawThread = new DrawThread(getHolder());
-                drawThread.setRunning(true);
-                drawThread.start();
-            }
-            else {
-                drawThread.setRunning(true);
-            }
+            drawThread = new DrawThread(getHolder());
+            drawThread.setRunning(true);
+            drawThread.start();
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
+            joinThread();
+        }
 
+        public void joinThread() {
             drawThread.setRunning(false);
             boolean retry = true;
             while (retry) {
@@ -418,7 +414,6 @@ public class TabbedStopwatch extends AppCompatActivity {
                             canvas.drawOval(rectf1, p);
                             canvas.drawRect(rectf2, p);
                             canvas.drawOval(rectf3, p);
-
                             // Точки
                             if(isStarted)
                             {
@@ -450,7 +445,9 @@ public class TabbedStopwatch extends AppCompatActivity {
                                         toDP(zeroY + arrCoordinates[0].second.intValue()), p);
                             }
 
-                        } finally {
+                        }  catch (Exception e) {
+                            running = false;
+                        }  finally {
                             if(!running) return;
                             if (canvas != null) {
                                 surfaceHolder.unlockCanvasAndPost(canvas);
@@ -474,11 +471,16 @@ public class TabbedStopwatch extends AppCompatActivity {
         protected ConstraintLayout CanvasL;
         protected ImageButton ManagePic, ImButFull;
 
-        @Override
-
-        public void onResume() {
+        @Override public void onResume() {
             super.onResume();
-            if(SData.smallView) {
+            setPictureSize(SData.smallView);
+        }
+
+        private void setPictureSize(boolean isSmall) {
+            if(CanvasView != null) {
+                //CanvasView.joinThread();
+            }
+            if(isSmall) {
                 CanvasL.setMaxHeight(toDP(170));
                 CanvasView = new DrawView(rootView.getContext(), 160);
                 CanvasL.addView(CanvasView);
@@ -504,27 +506,12 @@ public class TabbedStopwatch extends AppCompatActivity {
             CanvasL = (ConstraintLayout)rootView .findViewById(R.id.CanvasLayout);
             ManagePic = (ImageButton) rootView.findViewById(R.id.managePicture);
             ImButFull = (ImageButton) rootView.findViewById(R.id.imageButFull);
-            //if(CanvasView == null) {
-            //    CanvasView = new DrawView(rootView.getContext(), 660);
-            //    CanvasL.addView(CanvasView);
-            //}
+
             ImButFull.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     SData.smallView = !SData.smallView;
-                    if(SData.smallView) {
-                        CanvasL.setMaxHeight(toDP(170));
-                        CanvasView = new DrawView(rootView.getContext(), 160);
-                        CanvasL.addView(CanvasView);
-                        ImButFull.getBackground().setColorFilter(Color.rgb(0x90, 0x31, 0x15), PorterDuff.Mode.MULTIPLY);
-                    }
-                    else {
-                        CanvasL.setMaxHeight(toDP(670));
-                        CanvasView = new DrawView(rootView.getContext(), 660);
-                        CanvasL.addView(CanvasView);
-                        ImButFull.getBackground().clearColorFilter();
-                    }
-
+                    setPictureSize(SData.smallView);
                 }
             });
 
