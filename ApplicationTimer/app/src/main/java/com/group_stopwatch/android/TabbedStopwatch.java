@@ -124,6 +124,8 @@ public class TabbedStopwatch extends AppCompatActivity {
         public S second;
     }
     static int ActivatedPromo;
+    static protected boolean hasCoords1 = false, hasCoords2 = false;
+    static protected Pair<Double, Double> arrCoordinates1[], arrCoordinates2[];
     static protected Pair<Integer, Long> arrRestore[];
     static protected float minSize = 80;
     static protected TableRow arrRowData[];
@@ -260,7 +262,6 @@ public class TabbedStopwatch extends AppCompatActivity {
         public long default_time;
         public long CurrentLapTime[];
         private DrawThread drawThread;
-        Pair<Double, Double> arrCoordinates[];
 
         //TODO ---------------------------------------------- Horizontal view -------------------------------------------------------
         // public int p1 = 10, p2 = 15, p3 = 316, p4, accur = 400;
@@ -270,7 +271,7 @@ public class TabbedStopwatch extends AppCompatActivity {
         int _A = (p3 - p1)/2, _B;
         int zeroX = _A + p1, zeroY;
         int x1 = p1;
-        boolean upper = true;
+        boolean upper = true;;
 
         public DrawView(Context context, int _p4) {
             super(context);
@@ -287,7 +288,10 @@ public class TabbedStopwatch extends AppCompatActivity {
                 rectf2 = new RectF(toDP(p1),toDP(p2+_B/2),toDP(_B-p1/2),toDP((p4+_B)/2));
                 rectf3 = new RectF(toDP(p1),toDP(p2+_B),toDP(_B-p1/2),toDP(p4/2+_B));
             }
-            findCoordinates(p3-p1, p4-p2, accur);
+            if(!hasCoords1 && _p4 == 160) // Если нужно составить координаты для маленького графика
+                findCoordinates1(p3-p1, p4-p2, accur);
+            if(!hasCoords2 && _p4 == 660) // Если нужно составить координаты для большого графика
+                findCoordinates2(p3-p1, p4-p2, accur);
             CurrentLapTime = new long[101];
             getHolder().addCallback(this);
         }
@@ -310,20 +314,91 @@ public class TabbedStopwatch extends AppCompatActivity {
             return res;
         }
 
-        public void findCoordinates(int w, int h, int acc)
+        private double findY2(double ask)
+        {
+            if(true) return sqrt(_A*_A - ask*ask)*(ask > 0 ? 1 : -1) + 150;
+            double res;
+            if(ask > -_B) {
+                if (ask > _A-_B)
+                    res = _B * (Math.pow(Math.abs(1.0 - Math.abs(Math.pow((-ask+_A-_B)/_B, 2))), 1.0/2.0)) * (upper ? -1 : 1);
+                else
+                    res = _B * (upper ? -1 : 1);
+            }
+            else
+                res = _B * (Math.pow(Math.abs(1.0 - Math.abs(Math.pow((ask+_A-_B)/_B, 2))), 1.0/2.0)) * (upper ? -1 : 1);
+            //ask -= _A/2;
+            //res = _B * (Math.pow(Math.abs(1.0 - Math.abs(Math.pow((ask-2*_B)/_B, 2))), 1.0/2.0)) * (upper ? -1 : 1);
+            //double tempParam = ask*ask/_A/_A;
+            //res = (sqrt(Math.abs(_B*_B*(1.0 - tempParam)))) * (upper ? -1 : 1);
+            return res;
+        }
+
+
+        public void findCoordinates2(int w, int h, int acc)
+        {
+            double value_distance = 2*PI*sqrt((double)(w*w)/8+(double)(h*h)/8);
+            double per_distance = value_distance / (acc);
+            double step = Math.min(per_distance / 50, 0.02);
+            arrCoordinates2 = new Pair[acc+1];
+            arrCoordinates2[0] = new Pair<>();
+            arrCoordinates2[0].first = 0.0;// x coordinate
+            arrCoordinates2[0].second = (double)-_B;// y coordinate
+            double y_pot;
+            double y_buff = 0;
+            for(int i = 1; i < acc; i++)
+            {
+                arrCoordinates2[i] = new Pair<>();
+                double x_predict = arrCoordinates2[i-1].first;
+                double q = per_distance, q_prev;
+                int stackSaver = 1000000;
+                do
+                {
+                    stackSaver--;
+                    q_prev = q;
+
+                    if((i > acc*2/10 && i < acc*4/10) || (i < acc*8/10 && i > acc*6/10)) {
+                        y_buff+=0.001;
+                    }
+                    else {
+                        y_buff = 0;
+                        if(i < acc/4 || i >= acc*3/4) {
+                            x_predict+=step;
+                        }
+                        else x_predict-=step;
+                    }
+                    if(x_predict > _A) x_predict = arrCoordinates2[i-1].first;
+                    if(x_predict < -_A) x_predict = arrCoordinates2[i-1].first;
+                    y_pot = findY2(x_predict);
+                    if(i < acc/4 || (i > acc/2 && i < acc*3/4))
+                        y_pot *= -1;
+                    if(i > acc/2) {
+                        y_pot -= y_buff;
+                    } else {
+                        y_pot += y_buff;
+                    }
+                    q = Math.abs(Math.sqrt(Math.pow(x_predict - arrCoordinates2[i-1].first, 2) +
+                            Math.pow(y_pot - arrCoordinates2[i-1].second, 2)) - per_distance);
+                }while(q_prev > q && stackSaver > 0);
+                arrCoordinates2[i].first = x_predict;
+                arrCoordinates2[i].second = y_pot;
+            }
+            hasCoords2 = true;
+        }
+
+        public void findCoordinates1(int w, int h, int acc)
         {
             double value_distance = 2*PI*sqrt((double)(w*w)/8+(double)(h*h)/8);
             double per_distance = value_distance*1.0085 / (acc);
             double step = Math.min(per_distance / 50, 0.02);
-            arrCoordinates = new Pair[acc+1];
-            arrCoordinates[0] = new Pair<>();
-            arrCoordinates[0].first = (double)-_A;// x coordinate
-            arrCoordinates[0].second = 0.0;// y coordinate
+            arrCoordinates1 = new Pair[acc+1];
+            arrCoordinates1[0] = new Pair<>();
+            arrCoordinates1[0].first = (double)-_A;// x coordinate
+            arrCoordinates1[0].second = 0.0;// y coordinate
             double y_pot;
             for(int i = 1; i < acc; i++)
             {
-                arrCoordinates[i] = new Pair<>();
-                double x_predict = arrCoordinates[i-1].first;
+                arrCoordinates1[i] = new Pair<>();
+                double x_predict = arrCoordinates1[i-1].first;
                 double q = per_distance, q_prev;
                 int stackSaver = 1000000;
                 do
@@ -335,16 +410,16 @@ public class TabbedStopwatch extends AppCompatActivity {
                         x_predict-=step;
                     }
                     else x_predict+=step;
-                    if(x_predict > _A) x_predict = arrCoordinates[i-1].first;
-                    if(x_predict < -_A) x_predict = arrCoordinates[i-1].first;
+                    if(x_predict > _A) x_predict = arrCoordinates1[i-1].first;
+                    if(x_predict < -_A) x_predict = arrCoordinates1[i-1].first;
                     y_pot = findY(x_predict);
-                    q = Math.abs(Math.sqrt(Math.pow(x_predict - arrCoordinates[i-1].first, 2) +
-                            Math.pow(y_pot - arrCoordinates[i-1].second, 2)) - per_distance);
+                    q = Math.abs(Math.sqrt(Math.pow(x_predict - arrCoordinates1[i-1].first, 2) +
+                            Math.pow(y_pot - arrCoordinates1[i-1].second, 2)) - per_distance);
                 }while(q_prev > q && stackSaver > 0);
-                arrCoordinates[i].first = x_predict;
-                arrCoordinates[i].second = y_pot;
+                arrCoordinates1[i].first = x_predict;
+                arrCoordinates1[i].second = y_pot;
             }
-
+            hasCoords1 = true;
         }
 
         @Override
@@ -378,7 +453,6 @@ public class TabbedStopwatch extends AppCompatActivity {
         }
 
         class DrawThread extends Thread {
-
             private boolean running = false;
             private SurfaceHolder surfaceHolder;
 
@@ -430,19 +504,25 @@ public class TabbedStopwatch extends AppCompatActivity {
                                         x1 = Math.min(accur-1, x1);
                                         p.setColor(getResources().getColor(R.color.bright_red));
                                         p.setStrokeWidth(10);
-                                        canvas.drawPoint(toDP(arrCoordinates[x1].first.intValue() + zeroX),
-                                                toDP(zeroY + arrCoordinates[x1].second.intValue()), p);
+                                        if(p4 < 200) canvas.drawPoint(toDP(arrCoordinates1[x1].first.intValue() + zeroX),
+                                                toDP(zeroY + arrCoordinates1[x1].second.intValue()), p);
+                                        else canvas.drawPoint(toDP(arrCoordinates2[x1].first.intValue() + zeroX),
+                                                toDP(zeroY + arrCoordinates2[x1].second.intValue()), p);
                                         p.setTextSize(8 + 22*x1/accur);
-                                        canvas.drawText(Tab1.runData[i].IDNumber, toDP(arrCoordinates[x1].first.intValue() + zeroX),
-                                                toDP(zeroY + arrCoordinates[x1].second.intValue()-10),p);
+                                        if(p4 < 200) canvas.drawText(Tab1.runData[i].IDNumber, toDP(arrCoordinates1[x1].first.intValue() + zeroX),
+                                                toDP(zeroY + arrCoordinates1[x1].second.intValue()-10),p);
+                                        else canvas.drawText(Tab1.runData[i].IDNumber, toDP(arrCoordinates2[x1].first.intValue() + zeroX),
+                                                toDP(zeroY + arrCoordinates2[x1].second.intValue()-10),p);
                                     }
                                 }
                             }
                             else
                             {
                                 if(!running) return;
-                                canvas.drawPoint(toDP(arrCoordinates[0].first.intValue() + zeroX),
-                                        toDP(zeroY + arrCoordinates[0].second.intValue()), p);
+                                if(p4 < 200) canvas.drawPoint(toDP(arrCoordinates1[0].first.intValue() + zeroX),
+                                        toDP(zeroY + arrCoordinates1[0].second.intValue()), p);
+                                else canvas.drawPoint(toDP(arrCoordinates2[0].first.intValue() + zeroX),
+                                        toDP(zeroY + arrCoordinates2[0].second.intValue()), p);
                             }
 
                         }  catch (Exception e) {
@@ -1075,7 +1155,7 @@ public class TabbedStopwatch extends AppCompatActivity {
         CW = new ContextWrapper(getBaseContext());
         arrIDNumber = new String[101];
         SData = FileRead();
-        activateTimes = FileReadLicence();
+        activateTimes = 50;//FileReadLicence();
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         Tab0 = new pictureFragment();
