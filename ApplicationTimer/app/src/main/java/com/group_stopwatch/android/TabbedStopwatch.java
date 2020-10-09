@@ -314,29 +314,15 @@ public class TabbedStopwatch extends AppCompatActivity {
             return res;
         }
 
-        private double findY2(double ask)
+        private double findY2(double ask, boolean boo)
         {
-            if(true) return sqrt(_A*_A - ask*ask)*(ask > 0 ? 1 : -1) + 150;
-            double res;
-            if(ask > -_B) {
-                if (ask > _A-_B)
-                    res = _B * (Math.pow(Math.abs(1.0 - Math.abs(Math.pow((-ask+_A-_B)/_B, 2))), 1.0/2.0)) * (upper ? -1 : 1);
-                else
-                    res = _B * (upper ? -1 : 1);
-            }
-            else
-                res = _B * (Math.pow(Math.abs(1.0 - Math.abs(Math.pow((ask+_A-_B)/_B, 2))), 1.0/2.0)) * (upper ? -1 : 1);
-            //ask -= _A/2;
-            //res = _B * (Math.pow(Math.abs(1.0 - Math.abs(Math.pow((ask-2*_B)/_B, 2))), 1.0/2.0)) * (upper ? -1 : 1);
-            //double tempParam = ask*ask/_A/_A;
-            //res = (sqrt(Math.abs(_B*_B*(1.0 - tempParam)))) * (upper ? -1 : 1);
-            return res;
+            return sqrt(Math.pow(_A,2) - Math.pow(ask,2))*(ask > 0 ? 1 : -1) + 170 * (ask>0 || boo?1:-1);
         }
 
 
         public void findCoordinates2(int w, int h, int acc)
         {
-            double value_distance = 2*PI*sqrt((double)(w*w)/8+(double)(h*h)/8);
+            double value_distance = 2*PI*sqrt((double)(w*w)/8+(double)(h*h)/8)*1.25;
             double per_distance = value_distance / (acc);
             double step = Math.min(per_distance / 50, 0.02);
             arrCoordinates2 = new Pair[acc+1];
@@ -344,8 +330,8 @@ public class TabbedStopwatch extends AppCompatActivity {
             arrCoordinates2[0].first = 0.0;// x coordinate
             arrCoordinates2[0].second = (double)-_B;// y coordinate
             double y_pot;
-            double y_buff = 0;
-            for(int i = 1; i < acc; i++)
+            double y_buff = 0.05;
+            for(int i = 1; i < acc*95/100; i++)
             {
                 arrCoordinates2[i] = new Pair<>();
                 double x_predict = arrCoordinates2[i-1].first;
@@ -356,20 +342,24 @@ public class TabbedStopwatch extends AppCompatActivity {
                     stackSaver--;
                     q_prev = q;
 
-                    if((i > acc*2/10 && i < acc*4/10) || (i < acc*8/10 && i > acc*6/10)) {
-                        y_buff+=0.001;
+                    boolean boo = false;
+                    if((i > acc*2.35/20 && i < acc*6/20) || (i > acc-acc*80/200 && i < acc-acc*3/18)) {
+                        if(i > acc-acc*80/200 && i < acc-acc*3/18 && i > acc/2)
+                            boo = true;
+                        y_buff+=0.01;
                     }
                     else {
-                        y_buff = 0;
+                        y_buff = 0.05;
                         if(i < acc/4 || i >= acc*3/4) {
                             x_predict+=step;
                         }
                         else x_predict-=step;
                     }
-                    if(x_predict > _A) x_predict = arrCoordinates2[i-1].first;
-                    if(x_predict < -_A) x_predict = arrCoordinates2[i-1].first;
-                    y_pot = findY2(x_predict);
-                    if(i < acc/4 || (i > acc/2 && i < acc*3/4))
+                    if(x_predict > _A || x_predict < -_A) {
+                        x_predict = arrCoordinates2[i-1].first;
+                    }
+                    y_pot = findY2(x_predict, boo);
+                    if((i < acc*6/20 || (i > acc*8.7/20)) && (i < acc-acc*80/200))
                         y_pot *= -1;
                     if(i > acc/2) {
                         y_pot -= y_buff;
@@ -381,6 +371,11 @@ public class TabbedStopwatch extends AppCompatActivity {
                 }while(q_prev > q && stackSaver > 0);
                 arrCoordinates2[i].first = x_predict;
                 arrCoordinates2[i].second = y_pot;
+            }
+            for(int i = acc*95/100; i < acc; i++) {
+                arrCoordinates2[i] = new Pair<>();
+                arrCoordinates2[i].first = 0.0;
+                arrCoordinates2[i].second = (double)-_B;
             }
             hasCoords2 = true;
         }
