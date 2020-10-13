@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-rotate>
+    <layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+        android:rotation="180">
+        <item>
+            <shape android:shape="rectangle" >
+                <solid android:color="#ffffff" />
+            </shape>
+        </item>
+        <item>
+            <shape
+                android:innerRadiusRatio="3.5"
+                android:shape="ring"
+                android:thicknessRatio="9"
+                android:useLevel="false" >
+                <solid android:color="#FF4901" />
+                <size
+                    android:height="48dip"
+                    android:width="48dip" />
+            </shape>
+        </item>
+
+        <item>
+            <shape
+                android:shape="line"
+                >
+                <stroke
+                    android:width="7dip"
+                    android:color="#FFFFFF" />
+                <size android:height="3dip" />
+            </shape>
+        </item>
+
+        <item android:drawable="@drawable/ic_launcher"
+            android:width="50dp"
+            android:gravity="center"
+            android:height="50dp"
+            />
+
+    </layer-list>
+</animated-rotate>

@@ -327,8 +327,8 @@ public class TabbedStopwatch extends AppCompatActivity {
             double step = Math.min(per_distance / 50, 0.02);
             arrCoordinates2 = new Pair[acc+1];
             arrCoordinates2[0] = new Pair<>();
-            arrCoordinates2[0].first = 0.0;// x coordinate
-            arrCoordinates2[0].second = (double)-_B;// y coordinate
+            arrCoordinates2[0].first = 0.0; // x coordinate
+            arrCoordinates2[0].second = (double)-_B; // y coordinate
             double y_pot;
             double y_buff = 0.05;
             for(int i = 1; i < acc*95/100; i++)
@@ -341,7 +341,6 @@ public class TabbedStopwatch extends AppCompatActivity {
                 {
                     stackSaver--;
                     q_prev = q;
-
                     boolean boo = false;
                     if((i > acc*2.35/20 && i < acc*6/20) || (i > acc-acc*80/200 && i < acc-acc*3/18)) {
                         if(i > acc-acc*80/200 && i < acc-acc*3/18 && i > acc/2)
@@ -1163,6 +1162,7 @@ public class TabbedStopwatch extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
+        setTheme(R.style.AppTheme);
     }
 
     public void onBackPressed() {
