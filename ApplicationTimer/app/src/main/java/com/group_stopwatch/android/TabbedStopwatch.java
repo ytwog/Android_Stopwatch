@@ -43,6 +43,7 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.text.style.AbsoluteSizeSpan;
+ import android.util.DisplayMetrics;
  import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
@@ -109,6 +110,7 @@ import java.io.BufferedWriter;
  import javax.crypto.NoSuchPaddingException;
 
  import static java.lang.Math.PI;
+ import static java.lang.Math.max;
  import static java.lang.Math.min;
  import static java.lang.Math.sqrt;
 
@@ -124,6 +126,7 @@ public class TabbedStopwatch extends AppCompatActivity {
         public S second;
     }
     static int ActivatedPromo;
+    static protected DisplayMetrics metrics;
     static protected boolean hasCoords1 = false, hasCoords2 = false;
     static protected Pair<Double, Double> arrCoordinates1[], arrCoordinates2[];
     static protected Pair<Integer, Long> arrRestore[];
@@ -268,13 +271,18 @@ public class TabbedStopwatch extends AppCompatActivity {
         public int p1 = 16, p2 = 15, p3 = 310, p4, accur = 400;
 
         RectF rectf1, rectf2, rectf3;
-        int _A = (p3 - p1)/2, _B;
-        int zeroX = _A + p1, zeroY;
-        int x1 = p1;
+        int _A, _B;
+        int zeroX, zeroY;
+        int x1;
         boolean upper = true;;
 
         public DrawView(Context context, int _p4) {
             super(context);
+            metrics = getContext().getResources().getDisplayMetrics();
+            p3 = (int) (metrics.widthPixels/(3.5));
+            _A = (p3 - p1)/2;
+            zeroX = _A + p1;
+            x1 = p1;
             default_time = SData.timeUntilSHown * 1000;//(long)((double)(SData.Dialog_Param1) * 3600 / SData.Dialog_Param3);
             p4 = _p4 - 5;
             _B = (p4-p2)/2;
@@ -544,10 +552,10 @@ public class TabbedStopwatch extends AppCompatActivity {
         public View rootView;
         protected ConstraintLayout CanvasL;
         protected ImageButton ManagePic, ImButFull;
-
+        protected boolean agreedOnShow = false;
         @Override public void onResume() {
             super.onResume();
-            setPictureSize(SData.smallView);
+            if(agreedOnShow) setPictureSize(SData.smallView);
         }
 
         private void setPictureSize(boolean isSmall) {
@@ -555,13 +563,23 @@ public class TabbedStopwatch extends AppCompatActivity {
                 //CanvasView.joinThread();
             }
             if(isSmall) {
-                CanvasL.setMaxHeight(toDP(170));
+                metrics = getContext().getResources().getDisplayMetrics();
+                Log.d("TEST", String.valueOf(metrics.widthPixels));
+                Log.d("TEST", String.valueOf(CanvasL.getWidth()));
+                int heightDesired =  (int)(CanvasL.getWidth()*160/300);
+                ViewGroup.LayoutParams t = CanvasL.getLayoutParams();
+                t.height = heightDesired;
+                CanvasL.setLayoutParams(t);
                 CanvasView = new DrawView(rootView.getContext(), 160);
                 CanvasL.addView(CanvasView);
                 ImButFull.getBackground().setColorFilter(Color.rgb(0x90, 0x31, 0x15), PorterDuff.Mode.MULTIPLY);
             }
             else {
-                CanvasL.setMaxHeight(toDP(670));
+                metrics = getContext().getResources().getDisplayMetrics();
+                int heightDesired = (int)min(CanvasL.getWidth()*2.0, metrics.heightPixels*0.9);
+                ViewGroup.LayoutParams t = CanvasL.getLayoutParams();
+                t.height = heightDesired;
+                CanvasL.setLayoutParams(t);
                 CanvasView = new DrawView(rootView.getContext(), 660);
                 CanvasL.addView(CanvasView);
                 ImButFull.getBackground().clearColorFilter();
@@ -584,6 +602,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             ImButFull.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    agreedOnShow = true;
                     SData.smallView = !SData.smallView;
                     setPictureSize(SData.smallView);
                 }
@@ -1055,60 +1074,6 @@ public class TabbedStopwatch extends AppCompatActivity {
                 FilePrint(SData);
                 return SData;
             }
-            // открываем поток для чтения
-            /*
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    openFileInput("config.cfg")));
-            String str = "";
-            // читаем содержимое
-            int stage = 0;
-            while ((str = br.readLine()) != null) {
-                Log.d("State", str);
-                stage++;
-                switch (stage) {
-                    case 1:
-                        if(!str.equals("[versionNumber](licenceTaken)")) activateTimes = -2;
-                        break;
-                    case 2:
-                        if(!str.equals("Save_ver2")) return SData;
-                        break;
-                    case 4:
-                        if(Integer.parseInt(str) > 0 && Integer.parseInt(str) < 101) SData.setRunners(Integer.parseInt(str));
-                        else return SData;
-                        break;
-                    case 6:
-                        if(str.equals("false")) SData.setStaticButtons(false);
-                        else               SData.setStaticButtons(true);
-                        break;
-                    case 8:
-                        if(Integer.parseInt(str) > 0 && Integer.parseInt(str) < 100) SData.setLaps(Integer.parseInt(str));
-                        break;
-                    case 10:
-                        if(str.equals("false")) SData.setAccuracyFlag(false);
-                        else               SData.setAccuracyFlag(true);
-                        break;
-                    case 12:
-                        if(Integer.parseInt(str) > 0 && Integer.parseInt(str) < 100) SData.setTimeUntilSHown(Integer.parseInt(str));
-                        break;
-                    case 14:
-                        if(str.equals("false")) SData.setSlashLaps(false);
-                        else               SData.setSlashLaps(true);
-                        break;
-                    case 16:
-                        SData.styleID = Integer.parseInt(str);
-                        if(SData.styleID != 0 && SData.styleID != 1 && SData.styleID != 2) SData.styleID = 0;
-                        break;
-                    case 18:
-                        if(str.equals("false")) SData.OnVolumeStart = false;
-                        else               SData.OnVolumeStart = true;
-                        break;
-                }
-                if(stage > 19 && stage % 2 == 0) {
-                    arrIDNumber[(stage / 2) - 10] = str;
-                }
-            }
-            if(stage < 1) activateTimes = -2;
-            */
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (NumberFormatException e) {
@@ -1136,6 +1101,9 @@ public class TabbedStopwatch extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

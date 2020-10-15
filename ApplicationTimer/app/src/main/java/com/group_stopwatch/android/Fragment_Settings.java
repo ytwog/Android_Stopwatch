@@ -619,7 +619,6 @@ public class Fragment_Settings extends TabbedStopwatch {
                         else {
                             SData.afterTime = Integer.parseInt(editWaitAfter.getText().toString());
                             if(CanvasView != null) CanvasView.default_time = SData.timeUntilSHown * 1000;
-                            CanvasView.default_time = SData.timeUntilSHown * 1000;
                             editWaitAfter.setError(null);
                         }
 

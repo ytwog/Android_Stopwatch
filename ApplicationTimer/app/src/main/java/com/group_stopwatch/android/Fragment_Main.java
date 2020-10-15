@@ -35,6 +35,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Locale;
 
 public class Fragment_Main extends TabbedStopwatch {
     public static class MainActivity extends Fragment {
@@ -139,7 +140,6 @@ public class Fragment_Main extends TabbedStopwatch {
             LinearUp.setVisibility(SData.formMain ? View.VISIBLE : View.INVISIBLE);
             MainDelete.setVisibility(View.INVISIBLE);
 
-
             isCheck = false;
             isTouch = false;
             TouchedNumbers = new boolean[101];
@@ -224,7 +224,7 @@ public class Fragment_Main extends TabbedStopwatch {
             LinearUp = (LinearLayout) rootView.findViewById(R.id.LinearUpcoming);
             //Предустановка переменных
             if(!BuiltOnce) {
-
+                Log.d("AAA", Locale.getDefault().getLanguage());
                 arrRestore = new Pair[5];
                 for(int i = 0; i < 5; i++){
                     arrRestore[i] = new Pair();
