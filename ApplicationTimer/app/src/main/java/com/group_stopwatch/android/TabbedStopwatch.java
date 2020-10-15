@@ -611,6 +611,7 @@ public class TabbedStopwatch extends AppCompatActivity {
             ManagePic.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(!agreedOnShow) return;
                     final AlertDialog.Builder mbuilder = new AlertDialog.Builder(getActivity());
                     LayoutInflater minflater = getActivity().getLayoutInflater();
                     mbuilder.setView(inflater.inflate(R.layout.activity_settingspicture, null))

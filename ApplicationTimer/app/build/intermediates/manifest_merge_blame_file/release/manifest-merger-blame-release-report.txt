@@ -1,0 +1,78 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    xmlns:dist="http://schemas.android.com/apk/distribution"
+4    package="com.group_stopwatch.android"
+5    android:versionCode="2"
+6    android:versionName="0.9" >
+7
+8    <uses-sdk
+9        android:minSdkVersion="15"
+9-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml
+10        android:targetSdkVersion="29" />
+10-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml
+11
+12    <dist:module dist:instant="true" />
+12-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:6:5-40
+12-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:6:18-37
+13
+14    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+14-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:7:5-81
+14-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:7:22-78
+15    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+15-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:8:5-80
+15-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:8:22-77
+16    <uses-permission android:name="android.permission.BLUETOOTH" />
+16-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:9:5-68
+16-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:9:22-65
+17    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+17-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:10:5-74
+17-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:10:22-71
+18    <uses-permission android:name="android.permission.INTERNET" />
+18-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:11:5-67
+18-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:11:22-64
+19
+20    <application
+20-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:14:5-34:19
+21        android:allowBackup="true"
+21-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:15:9-35
+22        android:appComponentFactory="android.support.v4.app.CoreComponentFactory"
+22-->[com.android.support:support-compat:28.0.0] C:\Users\y2g\.gradle\caches\transforms-2\files-2.1\00567bd0de14b33d1bf8a440dc72bff8\support-compat-28.0.0\AndroidManifest.xml:22:18-91
+23        android:icon="@mipmap/ic_launcher"
+23-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:16:9-43
+24        android:label="@string/_fullName"
+24-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:17:9-42
+25        android:roundIcon="@mipmap/ic_launcher_round"
+25-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:18:9-54
+26        android:supportsRtl="true"
+26-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:19:9-35
+27        android:theme="@style/AppTheme" >
+27-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:20:9-40
+28        <activity
+28-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:21:9-30:20
+29            android:name="com.group_stopwatch.android.TabbedStopwatch"
+29-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:22:13-44
+30            android:label="@string/_fullName"
+30-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:24:13-46
+31            android:theme="@style/WelcomeTheme" >
+31-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:23:13-48
+32            <intent-filter>
+32-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:25:13-29:29
+33                <action android:name="android.intent.action.MAIN" />
+33-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:26:17-69
+33-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:26:25-66
+34
+35                <category android:name="android.intent.category.LAUNCHER" />
+35-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:28:17-77
+35-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:28:27-74
+36            </intent-filter>
+37        </activity>
+38
+39        <meta-data
+39-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:31:9-33:57
+40            android:name="preloaded_fonts"
+40-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:32:13-43
+41            android:resource="@array/preloaded_fonts" />
+41-->C:\Users\y2g\IdeaProjects\ApplicationTimer\app\src\main\AndroidManifest.xml:33:13-54
+42    </application>
+43
+44</manifest>

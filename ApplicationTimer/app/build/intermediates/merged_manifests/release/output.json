@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "applicationId": "com.group_stopwatch.android",
+  "variantType": "BASE_APK",
+  "elements": [
+    {
+      "outputType": {
+        "type": "MERGED_MANIFESTS"
+      },
+      "apkData": {
+        "type": "MAIN",
+        "splits": [],
+        "versionCode": 2,
+        "versionName": "0.9",
+        "outputFile": "app-release.apk",
+        "fullName": "release",
+        "baseName": "release",
+        "dirName": ""
+      },
+      "path": "AndroidManifest.xml",
+      "properties": {
+        "packageId": "com.group_stopwatch.android",
+        "split": "",
+        "minSdkVersion": "15"
+      }
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+#Fri Oct 16 00:39:36 KRAT 2020
+base.0=C\:\\Users\\y2g\\IdeaProjects\\ApplicationTimer\\app\\build\\intermediates\\dex\\release\\mergeDexRelease\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
