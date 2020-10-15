@@ -1064,10 +1064,6 @@ id RunNumberText
 id SHIFT
 id SYM
 id SpeechTextParam
-id _activateEdit
-id _activateLeft
-id _activateTitle
-id _versionApp
 id action_bar
 id action_bar_activity_content
 id action_bar_container
@@ -1086,7 +1082,6 @@ id action_mode_bar_stub
 id action_mode_close_button
 id action_text
 id actions
-id activateLayout
 id activity1Layout
 id activity2layout
 id activity3layout
@@ -1106,7 +1101,6 @@ id bluetoothStatus
 id bluetoothText
 id bottom
 id buttonAcceptDialog
-id buttonActivate
 id buttonAdd2Dialog
 id buttonAddDialog
 id buttonCancelDialog

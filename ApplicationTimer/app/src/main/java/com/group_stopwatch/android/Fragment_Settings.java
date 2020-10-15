@@ -248,33 +248,10 @@ public class Fragment_Settings extends TabbedStopwatch {
             radioGroup2 = (RadioGroup) rootView.findViewById(R.id.radio_group2);
             slash1Radio = (Button) rootView.findViewById(R.id.button_withSlash);
             slash2Radio = (Button) rootView.findViewById(R.id.button_woSlash);
-            ConstraintLayout ActivLayout = (ConstraintLayout) rootView.findViewById(R.id.activateLayout);
             radioGroupUp1 = (RadioGroup) rootView.findViewById(R.id.radioGroupUpcoming);
             radioUp1 = (RadioButton) rootView.findViewById(R.id.radio_up1);
             checkVolumeStart = (CheckBox) rootView.findViewById(R.id.check_volumeStart);
-            final TextView ActivLeft = (TextView) rootView.findViewById(R.id._activateLeft);
-            final TextView ActivTitle = (TextView) rootView.findViewById(R.id._activateTitle);
-            final EditText ActivateEdit = (EditText) rootView.findViewById(R.id._activateEdit);
-            final TextView VersionApp = (TextView) rootView.findViewById(R.id._versionApp);
-            final Button buttonActivate = (Button) rootView.findViewById(R.id.buttonActivate);
-
-
-            if(activateTimes != -1) {
-                ActivLeft.setText(getResources().getString(R.string._strActivateLeft1) + activateTimes + getResources().getString(R.string._strActivateLeft2));
-                ActivTitle.setText(getResources().getString(R.string._strActivateTitle));
-                ActivLeft.setVisibility(View.VISIBLE);
-                ActivateEdit.setVisibility(View.VISIBLE);
-                VersionApp.setVisibility(View.INVISIBLE);
-                buttonActivate.setVisibility(View.VISIBLE);
-            }
-            else {
-                ActivTitle.setText(getResources().getString(R.string._strActivateFull));
-                ActivateEdit.setVisibility(View.INVISIBLE);
-                ActivLeft.setVisibility(View.INVISIBLE);
-                VersionApp.setVisibility(View.VISIBLE);
-                buttonActivate.setVisibility(View.INVISIBLE);
-                VersionApp.setText("0.8.4");
-            }
+            //final TextView VersionApp = (TextView) rootView.findViewById(R.id._versionApp);
 
             //Получение значений из главного меню
             OverallNumber = SData.getRunners();
@@ -396,56 +373,6 @@ public class Fragment_Settings extends TabbedStopwatch {
                                    //"00001133-0000-1000-8000-00805F9B34FB");
             ok_Speech = false;
 
-            buttonActivate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    byte[] data = String.valueOf(ActivateEdit.getText()).getBytes();
-                    try {
-                        MessageDigest sha = MessageDigest.getInstance("SHA-1");
-                        sha.update(data);
-                        data = sha.digest();
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                    }
-
-                    boolean ok = true;
-                    String vav = String.valueOf(data);
-                    byte[] check = new byte[]{32, 42, -8, -107, -63, 26, 8, 38, -36, 10, -58, -76, -40, 31, 2, -92, 93, 50, -16, 33};
-
-                    for(int i = 0; i < check.length; i++) {
-                        if(data[i] != check[i]) ok = false;
-                    }
-                    if(ok) {
-                        ActivTitle.setText(getResources().getString(R.string._strActivateFull));
-                        ActivateEdit.setVisibility(View.INVISIBLE);
-                        ActivLeft.setVisibility(View.INVISIBLE);
-                        VersionApp.setVisibility(View.VISIBLE);
-                        VersionApp.setText("0.8.4");
-                        buttonActivate.setVisibility(View.INVISIBLE);
-                        activateTimes = -1;
-                        FilePrintLicence(activateTimes);
-                        return;
-                    }
-                    check = new byte[]{-93, -76, -12, -104, 46, -61, 61, -71,11, 1, -10, -88, -86, 91, 29, 28, -71, 55, -113, 84};
-                    ok = true;
-                    for(int i = 0; i < check.length; i++) {
-                        if(data[i] != check[i]) ok = false;
-                    }
-                    if(ok && (ActivatedPromo % 2 == 0)) {
-                        ActivatedPromo += 1;
-                        activateTimes += 50;
-                        FilePrintLicence(activateTimes);
-                        ActivLeft.setText(getResources().getString(R.string._strActivateLeft1) + activateTimes + getResources().getString(R.string._strActivateLeft2));
-                        ActivTitle.setText(getResources().getString(R.string._strActivateTitle));
-                        ActivLeft.setVisibility(View.VISIBLE);
-                        ActivateEdit.setVisibility(View.VISIBLE);
-                        VersionApp.setVisibility(View.INVISIBLE);
-                        buttonActivate.setVisibility(View.VISIBLE);
-                        return;
-                    }
-                }
-            });
 
             editWaitAfter.addTextChangedListener(new TextWatcher() {
                 @Override
